@@ -1,0 +1,17 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/common.dir/common/common_liberror.cpp.o"
+  "CMakeFiles/common.dir/common/common_liberror.cpp.o.d"
+  "CMakeFiles/common.dir/common/common_resolver.cpp.o"
+  "CMakeFiles/common.dir/common/common_resolver.cpp.o.d"
+  "CMakeFiles/common.dir/common/common_resolvererror.cpp.o"
+  "CMakeFiles/common.dir/common/common_resolvererror.cpp.o.d"
+  "CMakeFiles/common.dir/common/common_socket.cpp.o"
+  "CMakeFiles/common.dir/common/common_socket.cpp.o.d"
+  "libcommon.a"
+  "libcommon.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/common.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

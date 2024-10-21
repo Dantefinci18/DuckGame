@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/server.dir/server/foo.cpp.o -o server  libcommon.a 
