@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/duckgame.dir/main.cpp.o -o duckgame  libsdldemo.a -lSDL2 -lSDL2_image 

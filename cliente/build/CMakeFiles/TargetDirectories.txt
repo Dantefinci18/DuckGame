@@ -1,0 +1,4 @@
+/home/echitosto/Documents/GitHub/DuckGame/cliente/build/CMakeFiles/sdldemo.dir
+/home/echitosto/Documents/GitHub/DuckGame/cliente/build/CMakeFiles/duckgame.dir
+/home/echitosto/Documents/GitHub/DuckGame/cliente/build/CMakeFiles/edit_cache.dir
+/home/echitosto/Documents/GitHub/DuckGame/cliente/build/CMakeFiles/rebuild_cache.dir
