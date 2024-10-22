@@ -6,5 +6,5 @@
     2. mkdir build (si no existe la carpeto build)
     3. cd build
     4. cmake ..
-    5. make
+    5. make && make install
     6. ./duckgame
