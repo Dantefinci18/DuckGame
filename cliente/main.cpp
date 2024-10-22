@@ -1,20 +1,41 @@
+#define ANCHO_VENTANA 800
+#define ALTO_VENTANA 600
+
 #include <SDL2/SDL.h>
 
 #include "Sdl/SdlWindow.h"
 
+#include "DuckAnimacion.h"
+
 int main() {
-    SdlWindow window(800, 600);
+    SdlWindow window(ANCHO_VENTANA, ALTO_VENTANA);
+    window.set_title("DuckGame");
+    window.fill();
+    DuckAnimacion duck(window);
     bool running = true;
 
     while (running) {
         SDL_Event event;
+        window.fill();
+        duck.render();
         SDL_WaitEvent(&event);
 
-        if (event.type == SDL_QUIT) {
-            running = false;
+        switch (event.type) {
+            case SDL_QUIT:
+                running = false;
+                break;
+
+            case SDL_KEYDOWN:
+                const SDL_KeyboardEvent& keyEvent = (SDL_KeyboardEvent&)event;
+
+                if (keyEvent.keysym.sym == SDLK_RIGHT)
+                    duck.mover_a_derecha();
+
+                break;
         }
+
+        window.render();
     }
 
-    window.render();
     return 0;
 }

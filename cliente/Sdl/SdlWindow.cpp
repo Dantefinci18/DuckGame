@@ -43,5 +43,6 @@ void SdlWindow::fill() { this->fill(0x33, 0x33, 0x33, 0xFF); }
 
 void SdlWindow::render() { SDL_RenderPresent(this->renderer); }
 
+void SdlWindow::set_title(const char* titulo) { SDL_SetWindowTitle(window, titulo); }
 
 SDL_Renderer* SdlWindow::getRenderer() const { return this->renderer; }
