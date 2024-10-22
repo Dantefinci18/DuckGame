@@ -7,6 +7,7 @@
 #include <cstring>
 
 #include <errno.h>
+#include <cerrno>
 /*
  * Clase para encapsular el `errno` de C, "el ultimó error".
  * Es una excepción genérica que se encarga de los detalles
@@ -32,7 +33,7 @@ public:
      *  */
     LibError(int error_code, const char* fmt, ...) noexcept;
 
-    virtual const char* what() const noexcept;
+    virtual const char* what() const noexcept override;
 
     virtual ~LibError();
 };

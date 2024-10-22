@@ -2,6 +2,7 @@
 
 #include "Sdl/SdlWindow.h"
 
+using namespace SDL2pp;
 int main() {
     SdlWindow window(800, 600);
     bool running = true;
