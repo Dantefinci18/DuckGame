@@ -117,17 +117,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named common
+# Target rules for targets named taller_common
 
 # Build rule for target.
-common: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common
-.PHONY : common
+taller_common: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 taller_common
+.PHONY : taller_common
 
 # fast build rule for target.
-common/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/build
-.PHONY : common/fast
+taller_common/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/build
+.PHONY : taller_common/fast
 
 #=============================================================================
 # Target rules for targets named taller_client
@@ -143,17 +143,17 @@ taller_client/fast:
 .PHONY : taller_client/fast
 
 #=============================================================================
-# Target rules for targets named server
+# Target rules for targets named taller_server
 
 # Build rule for target.
-server: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server
-.PHONY : server
+taller_server: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 taller_server
+.PHONY : taller_server
 
 # fast build rule for target.
-server/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/build
-.PHONY : server/fast
+taller_server/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_server.dir/build.make CMakeFiles/taller_server.dir/build
+.PHONY : taller_server/fast
 
 #=============================================================================
 # Target rules for targets named SDL2pp
@@ -197,7 +197,7 @@ common/common_liberror.o: common/common_liberror.cpp.o
 
 # target to build an object file
 common/common_liberror.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_liberror.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_liberror.cpp.o
 .PHONY : common/common_liberror.cpp.o
 
 common/common_liberror.i: common/common_liberror.cpp.i
@@ -205,7 +205,7 @@ common/common_liberror.i: common/common_liberror.cpp.i
 
 # target to preprocess a source file
 common/common_liberror.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_liberror.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_liberror.cpp.i
 .PHONY : common/common_liberror.cpp.i
 
 common/common_liberror.s: common/common_liberror.cpp.s
@@ -213,7 +213,7 @@ common/common_liberror.s: common/common_liberror.cpp.s
 
 # target to generate assembly for a file
 common/common_liberror.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_liberror.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_liberror.cpp.s
 .PHONY : common/common_liberror.cpp.s
 
 common/common_resolver.o: common/common_resolver.cpp.o
@@ -221,7 +221,7 @@ common/common_resolver.o: common/common_resolver.cpp.o
 
 # target to build an object file
 common/common_resolver.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_resolver.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_resolver.cpp.o
 .PHONY : common/common_resolver.cpp.o
 
 common/common_resolver.i: common/common_resolver.cpp.i
@@ -229,7 +229,7 @@ common/common_resolver.i: common/common_resolver.cpp.i
 
 # target to preprocess a source file
 common/common_resolver.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_resolver.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_resolver.cpp.i
 .PHONY : common/common_resolver.cpp.i
 
 common/common_resolver.s: common/common_resolver.cpp.s
@@ -237,7 +237,7 @@ common/common_resolver.s: common/common_resolver.cpp.s
 
 # target to generate assembly for a file
 common/common_resolver.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_resolver.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_resolver.cpp.s
 .PHONY : common/common_resolver.cpp.s
 
 common/common_resolvererror.o: common/common_resolvererror.cpp.o
@@ -245,7 +245,7 @@ common/common_resolvererror.o: common/common_resolvererror.cpp.o
 
 # target to build an object file
 common/common_resolvererror.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_resolvererror.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_resolvererror.cpp.o
 .PHONY : common/common_resolvererror.cpp.o
 
 common/common_resolvererror.i: common/common_resolvererror.cpp.i
@@ -253,7 +253,7 @@ common/common_resolvererror.i: common/common_resolvererror.cpp.i
 
 # target to preprocess a source file
 common/common_resolvererror.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_resolvererror.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_resolvererror.cpp.i
 .PHONY : common/common_resolvererror.cpp.i
 
 common/common_resolvererror.s: common/common_resolvererror.cpp.s
@@ -261,7 +261,7 @@ common/common_resolvererror.s: common/common_resolvererror.cpp.s
 
 # target to generate assembly for a file
 common/common_resolvererror.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_resolvererror.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_resolvererror.cpp.s
 .PHONY : common/common_resolvererror.cpp.s
 
 common/common_socket.o: common/common_socket.cpp.o
@@ -269,7 +269,7 @@ common/common_socket.o: common/common_socket.cpp.o
 
 # target to build an object file
 common/common_socket.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_socket.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_socket.cpp.o
 .PHONY : common/common_socket.cpp.o
 
 common/common_socket.i: common/common_socket.cpp.i
@@ -277,7 +277,7 @@ common/common_socket.i: common/common_socket.cpp.i
 
 # target to preprocess a source file
 common/common_socket.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_socket.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_socket.cpp.i
 .PHONY : common/common_socket.cpp.i
 
 common/common_socket.s: common/common_socket.cpp.s
@@ -285,7 +285,7 @@ common/common_socket.s: common/common_socket.cpp.s
 
 # target to generate assembly for a file
 common/common_socket.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/common/common_socket.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_common.dir/build.make CMakeFiles/taller_common.dir/common/common_socket.cpp.s
 .PHONY : common/common_socket.cpp.s
 
 server/foo.o: server/foo.cpp.o
@@ -293,7 +293,7 @@ server/foo.o: server/foo.cpp.o
 
 # target to build an object file
 server/foo.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/foo.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_server.dir/build.make CMakeFiles/taller_server.dir/server/foo.cpp.o
 .PHONY : server/foo.cpp.o
 
 server/foo.i: server/foo.cpp.i
@@ -301,7 +301,7 @@ server/foo.i: server/foo.cpp.i
 
 # target to preprocess a source file
 server/foo.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/foo.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_server.dir/build.make CMakeFiles/taller_server.dir/server/foo.cpp.i
 .PHONY : server/foo.cpp.i
 
 server/foo.s: server/foo.cpp.s
@@ -309,7 +309,7 @@ server/foo.s: server/foo.cpp.s
 
 # target to generate assembly for a file
 server/foo.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/foo.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_server.dir/build.make CMakeFiles/taller_server.dir/server/foo.cpp.s
 .PHONY : server/foo.cpp.s
 
 # Help Target
@@ -321,9 +321,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... SDL2pp"
-	@echo "... common"
-	@echo "... server"
 	@echo "... taller_client"
+	@echo "... taller_common"
+	@echo "... taller_server"
 	@echo "... cliente/main.o"
 	@echo "... cliente/main.i"
 	@echo "... cliente/main.s"

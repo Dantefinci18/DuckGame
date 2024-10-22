@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/taller_server.dir/server/foo.cpp.o -o taller_server  libtaller_common.a 

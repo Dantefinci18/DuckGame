@@ -224,11 +224,17 @@ SDL2_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/SDL2
 //Enable / disable client program.
 TALLER_CLIENT:BOOL=ON
 
+//Enable / disable editor program.
+TALLER_EDITOR:BOOL=ON
+
 //Enable / disable warnings as errors.
 TALLER_MAKE_WARNINGS_AS_ERRORS:BOOL=ON
 
 //Enable / disable server program.
 TALLER_SERVER:BOOL=ON
+
+//Enable / disable tests.
+TALLER_TESTS:BOOL=ON
 
 //Value Computed by CMake
 libSDL2pp_BINARY_DIR:STATIC=/home/echitosto/Documents/GitHub/DuckGame/build/_deps/libsdl2pp-build

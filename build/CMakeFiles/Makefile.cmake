@@ -122,8 +122,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/common.dir/DependInfo.cmake"
+  "CMakeFiles/taller_common.dir/DependInfo.cmake"
   "CMakeFiles/taller_client.dir/DependInfo.cmake"
-  "CMakeFiles/server.dir/DependInfo.cmake"
+  "CMakeFiles/taller_server.dir/DependInfo.cmake"
   "_deps/libsdl2pp-build/CMakeFiles/SDL2pp.dir/DependInfo.cmake"
   )

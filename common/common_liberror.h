@@ -2,7 +2,11 @@
 #define LIB_ERROR_H
 
 #include <exception>
+#include <cstdarg>
+#include <cstdio>
+#include <cstring>
 
+#include <errno.h>
 /*
  * Clase para encapsular el `errno` de C, "el ultimó error".
  * Es una excepción genérica que se encarga de los detalles

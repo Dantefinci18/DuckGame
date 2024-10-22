@@ -92,7 +92,7 @@ taller_client_EXTERNAL_OBJECTS =
 
 taller_client: CMakeFiles/taller_client.dir/cliente/main.cpp.o
 taller_client: CMakeFiles/taller_client.dir/build.make
-taller_client: libcommon.a
+taller_client: libtaller_common.a
 taller_client: _deps/libsdl2pp-build/libSDL2pp.so.8.3.0
 taller_client: /usr/lib/x86_64-linux-gnu/libSDL2main.a
 taller_client: /usr/lib/x86_64-linux-gnu/libSDL2.so
