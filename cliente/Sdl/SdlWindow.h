@@ -1,11 +1,11 @@
 #ifndef __SDL_WINDOW_H__
 #define __SDL_WINDOW_H__
 
-class SDL_Window;
-class SDL_Renderer;
-class SDL_Texture;
+struct SDL_Window;
+struct SDL_Renderer;
+struct SDL_Texture;
 
-class SdlWindow {
+struct SdlWindow {
 public:
     /**
      * Ctor standalone
