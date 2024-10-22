@@ -6,7 +6,7 @@
 
 DuckAnimacion::DuckAnimacion(SdlWindow& window):
         window(window),
-        movimientos("/home/dante/Taller/DuckGame/Imagenes/DuckMovimientos.png", window),
+        movimientos("../Imagenes/DuckMovimientos.png", window),
         srcArea(0, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK) {}
 
 void DuckAnimacion::render() {
