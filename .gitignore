@@ -31,7 +31,6 @@
 *.out
 *.app
 client
-server
 
 # Mac
 .DS_Store
