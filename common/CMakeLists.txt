@@ -1,5 +1,6 @@
 target_sources(taller_common
   PRIVATE
+  common_liberror.cpp
   common_resolver.cpp
   common_resolvererror.cpp
   common_socket.cpp

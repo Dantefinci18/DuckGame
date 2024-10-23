@@ -1,2 +1,0 @@
-/usr/bin/ar qc libtaller_common.a CMakeFiles/taller_common.dir/common/common_liberror.cpp.o CMakeFiles/taller_common.dir/common/common_resolver.cpp.o CMakeFiles/taller_common.dir/common/common_resolvererror.cpp.o CMakeFiles/taller_common.dir/common/common_socket.cpp.o
-/usr/bin/ranlib libtaller_common.a

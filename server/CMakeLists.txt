@@ -1,6 +1,9 @@
 target_sources(taller_server
     PUBLIC
     foo.h
+    Game.h
+    Player.h
+    Vector.h
     PRIVATE
     foo.cpp
 )
