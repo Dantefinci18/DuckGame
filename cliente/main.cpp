@@ -12,30 +12,46 @@ int main() {
     window.set_title("DuckGame");
     window.fill();
     DuckAnimacion duck(window);
+    duck.start();
     bool running = true;
 
     while (running) {
         SDL_Event event;
         window.fill();
         duck.render();
-        SDL_WaitEvent(&event);
 
-        switch (event.type) {
-            case SDL_QUIT:
-                running = false;
-                break;
+        if (SDL_PollEvent(&event) == 1) {
+            switch (event.type) {
+                case SDL_QUIT:
+                    running = false;
+                    break;
 
-            case SDL_KEYDOWN:
-                const SDL_KeyboardEvent& keyEvent = (SDL_KeyboardEvent&)event;
+                case SDL_KEYDOWN:
+                    if (event.key.repeat == 0) {
+                        const SDL_KeyboardEvent& keyEvent = (SDL_KeyboardEvent&)event;
 
-                if (keyEvent.keysym.sym == SDLK_RIGHT)
-                    duck.mover_a_derecha();
+                        if (keyEvent.keysym.sym == SDLK_RIGHT) {
+                            duck.mover_a_derecha();
+                        }
+                    }
 
-                break;
+                    break;
+
+                case SDL_KEYUP:
+                    const SDL_KeyboardEvent& keyEvent = (SDL_KeyboardEvent&)event;
+                    auto key = keyEvent.keysym.sym;
+
+                    if (key == SDLK_RIGHT)
+                        duck.quieto();
+
+                    break;
+            }
         }
 
         window.render();
     }
 
+    duck.stop();
+    duck.join();
     return 0;
 }
