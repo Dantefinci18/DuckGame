@@ -1,0 +1,2 @@
+/usr/bin/ar qc libsdldemo.a CMakeFiles/sdldemo.dir/DuckAnimacion.cpp.o CMakeFiles/sdldemo.dir/cliente_protocolo.cpp.o CMakeFiles/sdldemo.dir/cliente.cpp.o CMakeFiles/sdldemo.dir/cliente_sender.cpp.o CMakeFiles/sdldemo.dir/cliente_receiver.cpp.o CMakeFiles/sdldemo.dir/Sdl/Area.cpp.o CMakeFiles/sdldemo.dir/Sdl/SdlTexture.cpp.o CMakeFiles/sdldemo.dir/Sdl/SdlException.cpp.o CMakeFiles/sdldemo.dir/Sdl/SdlWindow.cpp.o
+/usr/bin/ranlib libsdldemo.a
