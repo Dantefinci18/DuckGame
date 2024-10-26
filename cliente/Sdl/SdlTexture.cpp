@@ -23,9 +23,9 @@ SDL_Texture* SdlTexture::loadTexture(const std::string& filename) {
     return texture;
 }
 
-int SdlTexture::render(const Area& src, const Area& dest) const {
+int SdlTexture::render(const Area& src, const Area& dest, SDL_RendererFlip flip) const {
     SDL_Rect sdlSrc = {src.getX(), src.getY(), src.getWidth(), src.getHeight()};
     SDL_Rect sdlDest = {dest.getX(), dest.getY(), dest.getWidth(), dest.getHeight()};
 
-    return SDL_RenderCopy(this->renderer, this->texture, &sdlSrc, &sdlDest);
+    return SDL_RenderCopyEx(this->renderer, this->texture, &sdlSrc, &sdlDest,0,nullptr,flip);
 }
