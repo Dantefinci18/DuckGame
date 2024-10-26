@@ -1,9 +1,14 @@
 #include "foo.h"
 #include "Game.h"
+#include "Platform.h"
+#include <vector>
 int main() {
-    Player player({0.0f, 0.0f});
+    Player player({100.0f, 300.0f});
     Queue<std::string> commands;
-    Game* game = new Game(player, commands);
+    Platform platform({100.0f, 100.0f}, 100.0, 30.0);
+    std::vector<Platform> platforms;
+    platforms.push_back(platform);
+    Game* game = new Game(player, commands, platforms);
     game->start();
 
     while (true) {
