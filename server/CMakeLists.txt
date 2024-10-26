@@ -4,6 +4,8 @@ target_sources(taller_server
     Game.h
     Player.h
     Vector.h
+    Platform.h
+    Collidable.h
     PRIVATE
     foo.cpp
 )
