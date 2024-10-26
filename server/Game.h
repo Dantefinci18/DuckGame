@@ -13,15 +13,14 @@ class Game : Thread {
     public:
     virtual void run() override {
         // Change this to a config
-        const int targetFPS = 15;
-        std::chrono::milliseconds interval(1000 / targetFPS);
+        const float targetFPS = 5.0f;
+        const float targetFrameTime = 1.0f / targetFPS;
 
         while (true) {
-            auto start = std::chrono::steady_clock::now();
+            auto frameStartTime = std::chrono::high_resolution_clock::now();
             std::string command;
             bool found = commands.try_pop(command);
             if (found) {
-                std::cout << "found!" << std::endl;
                 if (command == "d") {
                     player.set_direction({1.0f, 0.0f});
                 }
@@ -41,15 +40,16 @@ class Game : Thread {
                 // YOu shouldn't update for each platform. If you want to check all collisiones then pass al collidibles.
                 player.update(platform);
             }
-            player.print_position();
+            //player.print_position();
             for (auto& platform : platforms) {
-                platform.print_position();
+                //platform.print_position();
             }
             
-            auto end = std::chrono::steady_clock::now();
-            std::chrono::duration<double, std::milli> elapsed = end - start;
-            std::this_thread::sleep_for(interval - elapsed);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            auto frameEndTime = std::chrono::high_resolution_clock::now();
+            float frameDuration = std::chrono::duration<float>(frameEndTime - frameStartTime).count();
+            if (frameDuration < targetFrameTime) {
+                std::this_thread::sleep_for(std::chrono::duration<float>(targetFrameTime - frameDuration));
+            }
         }
     }
 

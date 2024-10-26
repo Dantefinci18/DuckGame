@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/taller_client.dir/cliente/main.cpp.o -o taller_client  libtaller_common.a cliente/libsdldemo.a -lSDL2 -lSDL2_image 

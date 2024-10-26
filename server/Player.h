@@ -4,50 +4,44 @@
 #include <iostream>
 class Player : public Collidable {
     private:
-        Vector direction;
+        Vector velocity;
         float speed;
-        float velocity_y;
-        bool jumping;
+        bool is_on_ground;
+        bool is_standing_on_something;
     public:
     void move() {
-        
-        velocity_y -= 9.8;
-        position.x += direction.x * speed;
-        position.y += velocity_y ;
+        velocity.y -= 0.98;
+        position.y += velocity.y;
+        position.x += velocity.x * speed;
         if (position.y < 0) {
             position.y = 0;
-            velocity_y = -9.8;
-            jumping = false;
+            velocity.y = 0;
+            is_on_ground = true;
         }
+        
     }
 
     void set_direction(const Vector& dir) {
-        direction = dir;
+        velocity = dir;
     }
 
     void jump() {
-        if (!jumping) {
-            jumping = true;
-            velocity_y = 60.0f;
+        if (is_able_to_jump()) {
+            is_on_ground = false;
+            velocity.y = 10.0f;
         }
     }
 
     void update(Collidable& other) {
         move();
         onCollision(other);
-    }
-    
-    void print_bounding_box() const {
-        std::cout << "Player position:" << "\n"
-            << "left: " <<  std::to_string(left()) << ", "
-            << "right: " <<  std::to_string(right()) << ", "
-            << "top: " <<  std::to_string(top()) << ", "
-            << "bottom: " <<  std::to_string(bottom()) << std::endl;;
+        print_position();
+        other.print_position();
+        //std::cout << velocity.to_string() << ", isOnGround" << std::to_string(is_on_ground) << std::endl;
+        //std::cout << velocity.to_string() << std::endl;
     }
 
-    void print_position() const {
-        std::cout << "Player position" << "(" << position.x << ", " << position.y << "), ";
-    }
+    
 
     virtual CollidableType getType() const override {
         return CollidableType::Player;
@@ -60,20 +54,38 @@ class Player : public Collidable {
             CollidableSide side = getCollisionSide(platform);
             if (side == CollidableSide::Top) {
                 position.y = platform.top();
-                jumping = false;  
-                velocity_y = -9.8;
+                velocity.y = 0;
+                is_standing_on_something = true;  
             }
 
-            if (side == CollidableSide::Bottom) {
-                position.y = platform.bottom();
+            else if (side == CollidableSide::Bottom) {
+                position.y = platform.bottom() - height;
+                velocity.y = -velocity.y;
             }
 
-            if (side == CollidableSide::Left || side == CollidableSide::Right) {
-                direction.reverse();
+            else if (side == CollidableSide::Left || side == CollidableSide::Right) {
+                velocity.x = -velocity.x;
+            } else {
+                is_standing_on_something = false;
             }
-
         }
     }
+
+    void print_bounding_box() const {
+        std::cout << "Player box: ("
+            << "left: " <<  std::to_string(left()) << ", "
+            << "right: " <<  std::to_string(right()) << ", "
+            << "top: " <<  std::to_string(top()) << ", "
+            << "bottom: " <<  std::to_string(bottom()) << std::endl;;
+    }
+
+    void print_position() const override {
+        std::cout << "Player position" << "(" << position.x << ", " << position.y << ")\n";
+    }
+
+    bool is_able_to_jump() {
+        return is_on_ground || is_standing_on_something;
+    }
     virtual ~Player() {}
-    Player(Vector initialPosition) : Collidable(initialPosition, 10.0f, 20.0f), direction(Vector(0,0)), speed(20.0f), velocity_y(-9.8f), jumping(false) {}
+    Player(Vector initialPosition) : Collidable(initialPosition, 10.0f, 20.0f), velocity(Vector(0,0)), speed(3.0f), is_on_ground(false), is_standing_on_something(false) {}
 };

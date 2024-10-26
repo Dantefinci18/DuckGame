@@ -15,14 +15,14 @@ class Platform : public Collidable {
     }
     virtual ~Platform() {}
     void print_bounding_box() const {
-        std::cout << "Platform position:" << "\n" 
+        std::cout << "Platform box: (" 
             << "left: " <<  std::to_string(left()) << ", "
             << "right: " <<  std::to_string(right()) << ", "
             << "top: " <<  std::to_string(top()) << ", "
             << "bottom: " <<  std::to_string(bottom()) << std::endl;
     }
 
-    void print_position() const {
+    void print_position() const override {
         std::cout << "Platform position" << "(" << position.x << ", " << position.y << ")\n";
     }
 };
