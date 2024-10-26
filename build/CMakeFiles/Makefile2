@@ -179,8 +179,8 @@ CMakeFiles/taller_common.dir/clean:
 # Target rules for target CMakeFiles/taller_client.dir
 
 # All Build rule for target.
-CMakeFiles/taller_client.dir/all: _deps/libsdl2pp-build/CMakeFiles/SDL2pp.dir/all
 CMakeFiles/taller_client.dir/all: CMakeFiles/taller_common.dir/all
+CMakeFiles/taller_client.dir/all: _deps/libsdl2pp-build/CMakeFiles/SDL2pp.dir/all
 CMakeFiles/taller_client.dir/all: cliente/CMakeFiles/sdldemo.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_client.dir/build.make CMakeFiles/taller_client.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/taller_client.dir/build.make CMakeFiles/taller_client.dir/build

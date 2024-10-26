@@ -3,11 +3,12 @@
 
 #include "../common/common_thread.h"
 #include "cliente_protocolo.h"
+#include "../common/common_queue.h"
 #include <atomic>
 
 class ClienteReceiver : public Thread{
     public:
-        explicit ClienteReceiver(ClienteProtocolo &protocolo);
+        explicit ClienteReceiver(ClienteProtocolo &protocolo, Queue<Evento> &queue_eventos, std::atomic<bool> &cliente_conectado);
         void run() override;
         void stop() override;
         void join() override;
@@ -15,7 +16,8 @@ class ClienteReceiver : public Thread{
     
     private:
         ClienteProtocolo &protocolo;
-        std::atomic<bool> keep_running {true};
+        Queue<Evento> &queue_eventos;
+        std::atomic<bool> &cliente_conectado;
 
 
 };
