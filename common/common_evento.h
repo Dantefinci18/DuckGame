@@ -12,6 +12,7 @@ struct __attribute__((__packed__)) Evento{
     uint8_t x;
     uint8_t y;
     uint8_t direccion;
+    
 };
 
 #endif

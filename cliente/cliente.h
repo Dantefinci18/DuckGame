@@ -18,7 +18,7 @@ class Cliente {
         ClienteReceiver receiver;
         Queue<Evento> queue_eventos;
         Queue<ComandoAccion> queue_acciones;
-        std::atomic<bool> conectado;
+        std::atomic<bool> conectado {true};
         void ingresar_accion(bool &conectado);
 
 

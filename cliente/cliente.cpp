@@ -6,10 +6,11 @@ Cliente::Cliente(const char* hostname, const char* servname) : protocolo(hostnam
 
 void Cliente::start(){
     std::cout << "Cliente conectado" << std::endl;
-    receiver.run();
-    sender.run();
+    receiver.start();
+    sender.start();
     bool esta_conectado = true;
-    while (esta_conectado && conectado){
+    while (esta_conectado){
+        std::cout << "adsadsa" << std::endl;
         ingresar_accion(esta_conectado);  
 
         Evento evento;
