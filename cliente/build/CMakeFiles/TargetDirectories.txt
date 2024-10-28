@@ -1,0 +1,4 @@
+/home/mati/Escritorio/tp_grupal/DuckGame/cliente/build/CMakeFiles/sdldemo.dir
+/home/mati/Escritorio/tp_grupal/DuckGame/cliente/build/CMakeFiles/duckgame.dir
+/home/mati/Escritorio/tp_grupal/DuckGame/cliente/build/CMakeFiles/edit_cache.dir
+/home/mati/Escritorio/tp_grupal/DuckGame/cliente/build/CMakeFiles/rebuild_cache.dir

@@ -5,6 +5,7 @@ target_sources(taller_common
   common_resolvererror.cpp
   common_socket.cpp
   PUBLIC
+  common_evento.h
   common_liberror.h
   common_resolver.h
   common_resolvererror.h
