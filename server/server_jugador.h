@@ -4,7 +4,7 @@
 #include <string>
 #include <tuple>
 
-#include "common_socket.h"
+#include "../common/common_socket.h"
 #include "server_monitor.h"
 #include "server_receiver.h"
 #include "server_sender.h"
@@ -16,7 +16,7 @@ private:
     Receiver receiver;
 
 public:
-    explicit Jugador(/*Queue<>& comandos,*/ Monitor& monitor,
+    explicit Jugador(Queue<ComandoAccion> &comandos, Monitor& monitor,
                      Socket&& conexion);
 
     void run();

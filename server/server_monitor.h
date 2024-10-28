@@ -5,7 +5,7 @@
 #include <mutex>
 #include <string>
 
-#include "common_queue.h"
+#include "../common/common_queue.h"
 #include "../common/estado.h"
 
 class Monitor {

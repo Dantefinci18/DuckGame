@@ -2,6 +2,7 @@
 #define SERVER_PROTOCOLO_H
 
 #include "common/common_socket.h"
+#include "common/common_accion.h"
 
 class ProtocoloServidor{
     private:
@@ -9,6 +10,7 @@ class ProtocoloServidor{
 
     public:
         explicit ProtocoloServidor(Socket&& conexion);
+        ComandoAccion recibir_accion();
 
         void cerrar_conexion();
 };

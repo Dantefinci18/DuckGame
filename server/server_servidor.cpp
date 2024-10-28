@@ -3,7 +3,7 @@
 #include <string>
 
 Servidor::Servidor(const char* nombre_servidor):
-        skt(nombre_servidor), aceptador(/*eventos,*/ monitor, skt), gameloop(/*eventos,*/ monitor) {}
+        skt(nombre_servidor), aceptador(comandos_acciones,monitor, skt), gameloop(comandos_acciones,monitor) {}
 
 void Servidor::run() {
     aceptador.start();

@@ -2,7 +2,7 @@
 #include "../common/common_queue.h"
 #include "../common/common_evento.h"
 
-Cliente::Cliente(const char* hostname, const char* servname) : protocolo(hostname, servname), receiver(protocolo, queue_eventos,conectado),sender(protocolo) {}
+Cliente::Cliente(const char* hostname, const char* servname) : protocolo(hostname, servname), receiver(protocolo, queue_eventos,conectado),sender(protocolo, queue_acciones) {}
 
 void Cliente::start(){
 

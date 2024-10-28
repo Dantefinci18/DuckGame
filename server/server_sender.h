@@ -4,10 +4,10 @@
 #include <mutex>
 #include <string>
 
-#include "common_queue.h"
-#include "common_socket.h"
-#include "common_thread.h"
-#include "common/estado.h"
+#include "../common/common_queue.h"
+#include "../common/common_socket.h"
+#include "../common/common_thread.h"
+#include "../common/estado.h"
 #include "server_monitor.h"
 #include "server_protocolo.h"
 

@@ -1,8 +1,8 @@
 #include "server_gameloop.h"
 #include "../common/estado.h"
 
-Gameloop::Gameloop(/*Queue<>& eventos,*/ Monitor& monitor):
-    /*eventos(eventos),*/ monitor(monitor) {}
+Gameloop::Gameloop(Queue<ComandoAccion> &comandos_acciones ,Monitor& monitor):
+ comandos_acciones(comandos_acciones), monitor(monitor) {}
 
 void Gameloop::ejecutar_eventos() {
 

@@ -4,12 +4,12 @@
 #include <tuple>
 #include <utility>
 
-#include "common_queue.h"
+#include "../common/common_queue.h"
 #include "server_protocolo.h"
 
-Jugador::Jugador(/*Queue<>& comandos,*/ Monitor& monitor,
+Jugador::Jugador(Queue<ComandoAccion>& comandos,Monitor& monitor,
                  Socket&& conexion):
-        protocolo(std::move(conexion)), sender(protocolo, monitor), receiver(/*comandos,*/ protocolo) {}
+        protocolo(std::move(conexion)), sender(protocolo, monitor),receiver(protocolo, comandos) {}
 
 void Jugador::run() {
     sender.start();

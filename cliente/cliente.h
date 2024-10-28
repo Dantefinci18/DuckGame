@@ -7,6 +7,7 @@
 #include <atomic>
 #include "../common/common_queue.h"
 #include "../common/common_evento.h"
+#include "../common/common_accion.h"
 #include <SDL2/SDL.h>
 
 
@@ -16,6 +17,7 @@ class Cliente {
         ClienteSender sender;
         ClienteReceiver receiver;
         Queue<Evento> queue_eventos;
+        Queue<ComandoAccion> queue_acciones;
         std::atomic<bool> conectado {true};
 
     

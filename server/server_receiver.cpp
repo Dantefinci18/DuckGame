@@ -1,15 +1,17 @@
 #include "server_receiver.h"
 
+
 #include <sstream>
 #include <string>
 
-Receiver::Receiver(/*Queue<>& eventos,*/ ProtocoloServidor& protocolo):
-        /*eventos(eventos),*/ protocolo(protocolo) {}
+Receiver::Receiver(ProtocoloServidor& protocolo, Queue<ComandoAccion>& acciones):
+        acciones(acciones), protocolo(protocolo) {}
 
 void Receiver::run() {
     try {
         while (_keep_running) {
-            //Recibo los eventos y los pusheo en eventos
+            ComandoAccion accion = protocolo.recibir_accion();
+            acciones.push(accion);
         }
 
     } catch (std::exception& e) {
