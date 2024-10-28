@@ -26,6 +26,7 @@ class Cliente {
         void start();
         void stop();
         void join();
+        void ingresar_accion(bool conectado);
         ~Cliente();
 };
 
