@@ -4,7 +4,6 @@
 #include "cliente_sender.h"
 #include "cliente_receiver.h"
 #include "cliente_protocolo.h"
-#include "estado.h"
 #include <atomic>
 #include "../common/common_queue.h"
 #include "../common/common_evento.h"
