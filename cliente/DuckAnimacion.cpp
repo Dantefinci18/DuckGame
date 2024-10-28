@@ -10,6 +10,7 @@ DuckAnimacion::DuckAnimacion(SdlWindow& window):
         window(window), movimientos("../Imagenes/DuckMovimientos.png", window) {}
 
 void DuckAnimacion::run() {
+    std::cout << "DuckAnimacion running" << std::endl;
     while (_keep_running) {
         if (moverse_a_derecha) {
             x_des += DESPLAZAMIENTO;

@@ -18,7 +18,9 @@ class Cliente {
         ClienteReceiver receiver;
         Queue<Evento> queue_eventos;
         Queue<ComandoAccion> queue_acciones;
-        std::atomic<bool> conectado {true};
+        std::atomic<bool> conectado;
+        void ingresar_accion(bool &conectado);
+
 
     
     public:
@@ -26,7 +28,6 @@ class Cliente {
         void start();
         void stop();
         void join();
-        void ingresar_accion(bool conectado);
         ~Cliente();
 };
 

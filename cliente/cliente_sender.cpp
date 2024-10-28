@@ -5,7 +5,7 @@ ClienteSender::ClienteSender(ClienteProtocolo &protocolo, Queue<ComandoAccion> &
 
 void ClienteSender::run(){
     while(_keep_running){
-
+        std::cout << "Sender running" << std::endl;
         ComandoAccion accion = queue_acciones.pop();
         try{
             if (!protocolo.enviar_accion(accion)){

@@ -5,6 +5,8 @@ ClienteReceiver::ClienteReceiver(ClienteProtocolo &protocolo, Queue<Evento> &que
 
 void ClienteReceiver::run(){
     Evento evento;
+    
+    std::cout << "Receiver running" << std::endl;
     while(_keep_running){
         if (protocolo.recibir_evento(evento)){
             try{
