@@ -1,4 +1,4 @@
-#define ANCHO_IMG_DUCK_TOTAL 192
+#define ANCHO_IMG_DUCK_TOTAL 400
 #define DESPLAZAMIENTO 2
 #define TIEMPO_EN_DEPLAZARSE 150
 
@@ -10,7 +10,6 @@ DuckAnimacion::DuckAnimacion(SdlWindow& window):
         window(window), movimientos("../Imagenes/DuckMovimientos.png", window) {}
 
 void DuckAnimacion::run() {
-    std::cout << "DuckAnimacion running" << std::endl;
     while (_keep_running) {
         if (moverse_a_derecha) {
             x_des += DESPLAZAMIENTO;
@@ -35,6 +34,7 @@ void DuckAnimacion::run() {
                 x_img = 0;
             }
         }
+
     }
 }
 

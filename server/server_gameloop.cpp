@@ -28,7 +28,6 @@ void Gameloop::run() {
         }
 
         for (auto& platform : platforms) {
-            // YOu shouldn't update for each platform. If you want to check all collisiones then pass al collidibles.
             player.update(platform);
         }
         
@@ -40,4 +39,9 @@ void Gameloop::run() {
 
 void Gameloop::agregar_plataforma(Platform plataforma){
     platforms.push_back(plataforma);
+}
+
+void Gameloop::ejecutar_eventos() {
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }

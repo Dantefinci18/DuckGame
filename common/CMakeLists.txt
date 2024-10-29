@@ -4,6 +4,7 @@ target_sources(taller_common
   common_resolver.cpp
   common_resolvererror.cpp
   common_socket.cpp
+  common_serializador.cpp
   PUBLIC
   common_accion.h
   common_evento.h
@@ -13,4 +14,5 @@ target_sources(taller_common
   common_socket.h
   common_thread.h
   common_queue.h
+  common_serializador.h
 )

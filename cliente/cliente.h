@@ -20,6 +20,7 @@ class Cliente {
         Queue<ComandoAccion> queue_acciones;
         std::atomic<bool> conectado {true};
         void ingresar_accion(bool &conectado);
+        void procesar_eventos(Evento &evento);
 
 
     

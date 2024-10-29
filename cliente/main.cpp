@@ -9,6 +9,7 @@
 #include "cliente.h"
 
 int main(int argc, char* argv[]) {
+   
     if (argc != 3) {
         std::cerr << "Cantidad de argumentos invalida" << std::endl;
         return 1;
@@ -19,10 +20,16 @@ int main(int argc, char* argv[]) {
 
     SdlWindow window(ANCHO_VENTANA, ALTO_VENTANA);
     window.set_title("DuckGame");
+
     SdlTexture fondo("../Imagenes/Fondo.png", window);
+    
+
     Area srcArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
+
+    SDL_RenderClear(window.getRenderer());
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
+    SDL_RenderPresent(window.getRenderer());
 
     DuckAnimacion duck(window);
     duck.start();
@@ -33,5 +40,7 @@ int main(int argc, char* argv[]) {
     duck.stop();
     duck.join();
 
+    SDL_Quit(); 
     return 0;
 }
+

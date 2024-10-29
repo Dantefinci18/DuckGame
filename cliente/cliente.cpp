@@ -18,6 +18,12 @@ void Cliente::start() {
     join();
 }
 
+void Cliente::procesar_eventos(Evento &evento) {
+    
+
+
+}
+
 void Cliente::ingresar_accion(bool &conectado) {  
     SDL_Event evento;
     std::string ultima_tecla_presionada;
@@ -26,7 +32,7 @@ void Cliente::ingresar_accion(bool &conectado) {
 
         Evento evento_recibido;
         if (queue_eventos.try_pop(evento_recibido)) {
-            // procesar
+            //procesar_eventos(evento_recibido);
         }
 
         while (SDL_PollEvent(&evento)) {
