@@ -13,15 +13,7 @@ void Cliente::start() {
     receiver.start();
     sender.start();
     bool esta_conectado = true;
-    while (esta_conectado) {
-        std::cout << "adsadsa" << std::endl;
-        ingresar_accion(esta_conectado);
-
-        Evento evento;
-        if (queue_eventos.try_pop(evento)) {
-            // procesar
-        }
-    }
+    ingresar_accion(esta_conectado);
     stop();
     join();
 }
@@ -31,6 +23,12 @@ void Cliente::ingresar_accion(bool &conectado) {
     std::string ultima_tecla_presionada;
 
     while (conectado) {
+
+        Evento evento_recibido;
+        if (queue_eventos.try_pop(evento_recibido)) {
+            // procesar
+        }
+
         while (SDL_PollEvent(&evento)) {
             switch (evento.type) {
                 case SDL_QUIT:
@@ -71,9 +69,6 @@ void Cliente::ingresar_accion(bool &conectado) {
                             ultima_tecla_presionada.clear();
                         }
                     }
-                    break;
-
-                default:
                     break;
             }
         }

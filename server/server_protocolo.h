@@ -3,6 +3,7 @@
 
 #include "common/common_socket.h"
 #include "common/common_accion.h"
+#include "Vector.h"
 
 class ProtocoloServidor{
     private:
@@ -11,6 +12,7 @@ class ProtocoloServidor{
     public:
         explicit ProtocoloServidor(Socket&& conexion);
         ComandoAccion recibir_accion();
+        void enviar_estado(Vector posicion);
 
         void cerrar_conexion();
 };

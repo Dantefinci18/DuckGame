@@ -39,5 +39,3 @@ void ClienteProtocolo::cerrar_conexion() {
     socket.shutdown(2);
     socket.close();
 }
-
-ClienteProtocolo::~ClienteProtocolo() {}

@@ -7,18 +7,19 @@
 
 #include "../common/common_queue.h"
 #include "../common/estado.h"
+#include "Vector.h"
 
 class Monitor {
 private:
-    std::list<Queue<Estado>*> queues_de_estados;
+    std::list<Queue<Vector>*> queues_de_estados;
     std::mutex mtx;
 
 public:
-    void agregar_queue(Queue<Estado>& queue);
+    void agregar_queue(Queue<Vector>& queue);
 
-    void eliminar_queue(Queue<Estado>& queue);
+    void eliminar_queue(Queue<Vector>& queue);
 
-    void enviar_estado(const Estado& estado);
+    void enviar_estado(const Vector& estado);
 };
 
 #endif

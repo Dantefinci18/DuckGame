@@ -7,7 +7,8 @@ Sender::Sender(ProtocoloServidor& protocolo, Monitor& monitor):
 
 void Sender::enviar_estados() {
     while (_keep_running) {
-        //enviar estados
+        Vector posicion = cola_estados.pop();
+        protocolo.enviar_estado(posicion);
     }
 }
 

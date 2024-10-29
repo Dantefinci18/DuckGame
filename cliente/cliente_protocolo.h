@@ -10,7 +10,6 @@ class ClienteProtocolo{
         void cerrar_conexion();
         bool enviar_accion(ComandoAccion &accion);
         bool recibir_evento(Evento &evento);
-        ~ClienteProtocolo();
 
     private:
         Socket socket;

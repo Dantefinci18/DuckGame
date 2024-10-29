@@ -28,7 +28,6 @@ class Cliente {
         void start();
         void stop();
         void join();
-        ~Cliente();
 };
 
 
