@@ -1,37 +1,41 @@
 #include "cliente.h"
-#include "../common/common_queue.h"
+
 #include "../common/common_evento.h"
+#include "../common/common_queue.h"
 
-Cliente::Cliente(const char* hostname, const char* servname) : protocolo(hostname, servname), receiver(protocolo, queue_eventos,conectado),sender(protocolo, queue_acciones) {}
+Cliente::Cliente(const char* hostname, const char* servname):
+        protocolo(hostname, servname),
+        receiver(protocolo, queue_eventos, conectado),
+        sender(protocolo, queue_acciones) {}
 
-void Cliente::start(){
+void Cliente::start() {
     std::cout << "Cliente conectado" << std::endl;
     receiver.start();
     sender.start();
     bool esta_conectado = true;
-    while (esta_conectado){
+    while (esta_conectado) {
         std::cout << "adsadsa" << std::endl;
-        ingresar_accion(esta_conectado);  
+        ingresar_accion(esta_conectado);
 
         Evento evento;
-        if (queue_eventos.try_pop(evento)){
-            //procesar
+        if (queue_eventos.try_pop(evento)) {
+            // procesar
         }
     }
     stop();
     join();
 }
 
-void Cliente::ingresar_accion(bool &conectado) {  
+void Cliente::ingresar_accion(bool& conectado) {
     SDL_Event evento;
 
-    while (conectado) { 
+    while (conectado) {
         while (SDL_PollEvent(&evento)) {
             switch (evento.type) {
                 case SDL_QUIT:
                     conectado = false;
                     break;
-                    
+
                 case SDL_KEYDOWN:
                     switch (evento.key.keysym.sym) {
                         case SDLK_LEFT:
@@ -70,7 +74,7 @@ void Cliente::ingresar_accion(bool &conectado) {
 }
 
 
-void Cliente::stop(){
+void Cliente::stop() {
     receiver.stop();
     sender.stop();
     protocolo.cerrar_conexion();
@@ -78,9 +82,7 @@ void Cliente::stop(){
     queue_acciones.close();
 }
 
-void Cliente::join(){
+void Cliente::join() {
     receiver.join();
     sender.join();
 }
-
-Cliente::~Cliente(){}
