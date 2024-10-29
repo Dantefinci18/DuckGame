@@ -2,7 +2,7 @@
 #include "../common/common_queue.h"
 #include "../common/common_evento.h"
 
-Cliente::Cliente(const char* hostname, const char* servname) : protocolo(hostname, servname), receiver(protocolo, queue_eventos,conectado),sender(protocolo, queue_acciones) {}
+Cliente::Cliente(const char* hostname, const char* servname) : protocolo(hostname, servname), receiver(protocolo, queue_eventos, conectado), sender(protocolo, queue_acciones) {}
 
 void Cliente::start(){
     std::cout << "Cliente conectado" << std::endl;
@@ -15,15 +15,17 @@ void Cliente::start(){
 
         Evento evento;
         if (queue_eventos.try_pop(evento)){
-            //procesar
+            // procesar
         }
     }
     stop();
     join();
 }
 
+
 void Cliente::ingresar_accion(bool &conectado) {  
     SDL_Event evento;
+    std::string ultima_tecla_presionada;
 
     while (conectado) { 
         while (SDL_PollEvent(&evento)) {
@@ -33,32 +35,38 @@ void Cliente::ingresar_accion(bool &conectado) {
                     break;
                     
                 case SDL_KEYDOWN:
-                    switch (evento.key.keysym.sym) {
-                        case SDLK_LEFT:
+                    if (evento.key.keysym.sym == SDLK_LEFT) {
+                        if (ultima_tecla_presionada != "izquierda") {
                             std::cout << "Se presionó la tecla izquierda" << std::endl;
                             queue_acciones.push(ComandoAccion::IZQUIERDA);
-                            break;
-                        case SDLK_RIGHT:
+                            ultima_tecla_presionada = "izquierda";
+                        }
+                    } else if (evento.key.keysym.sym == SDLK_RIGHT) {
+                        if (ultima_tecla_presionada != "derecha") {
                             std::cout << "Se presionó la tecla derecha" << std::endl;
                             queue_acciones.push(ComandoAccion::DERECHA);
-                            break;
-                        default:
-                            break;
+                            ultima_tecla_presionada = "derecha";
+                        }
+                    } else if (evento.key.keysym.sym == SDLK_SPACE) {
+                        std::cout << "Se presionó la tecla de salto" << std::endl;
+                        queue_acciones.push(ComandoAccion::SALTAR);
+                        ultima_tecla_presionada = "saltar";
                     }
                     break;
 
                 case SDL_KEYUP:
-                    switch (evento.key.keysym.sym) {
-                        case SDLK_LEFT:
-                            std::cout << "Se soltó la tecla izquierda" << std::endl;
-                            queue_acciones.push(ComandoAccion::STOP_IZQUIERDA);
-                            break;
-                        case SDLK_RIGHT:
-                            std::cout << "Se soltó la tecla derecha" << std::endl;
-                            queue_acciones.push(ComandoAccion::STOP_DERECHA);
-                            break;
-                        default:
-                            break;
+                    if (evento.key.keysym.sym == SDLK_LEFT) {
+                        std::cout << "Se soltó la tecla izquierda" << std::endl;
+                        queue_acciones.push(ComandoAccion::STOP_IZQUIERDA);
+                        if (ultima_tecla_presionada == "izquierda") {
+                            ultima_tecla_presionada.clear();
+                        }
+                    } else if (evento.key.keysym.sym == SDLK_RIGHT) {
+                        std::cout << "Se soltó la tecla derecha" << std::endl;
+                        queue_acciones.push(ComandoAccion::STOP_DERECHA);
+                        if (ultima_tecla_presionada == "derecha") {
+                            ultima_tecla_presionada.clear();
+                        }
                     }
                     break;
 
@@ -68,7 +76,6 @@ void Cliente::ingresar_accion(bool &conectado) {
         }
     }
 }
-
 
 void Cliente::stop(){
     receiver.stop();
