@@ -6,20 +6,20 @@
 #include <tuple>
 #include <utility>
 
-#include "common_queue.h"
-#include "common_socket.h"
-#include "common_thread.h"
+#include "../common/common_queue.h"
+#include "../common/common_socket.h"
+#include "../common/common_thread.h"
+#include "../common/common_accion.h"
 #include "server_protocolo.h"
 
 class Receiver: public Thread {
 private:
-    //Queue<>& eventos;
     ProtocoloServidor& protocolo;
+    Queue<ComandoAccion>& acciones;
     std::mutex mtx;
 
 public:
-    explicit Receiver(/*Queue<std::tuple<>& eventos,*/
-                      ProtocoloServidor& protocolo);
+    explicit Receiver(ProtocoloServidor& protocolo, Queue<ComandoAccion>& acciones);
 
     void run() override;
 

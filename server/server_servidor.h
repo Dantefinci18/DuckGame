@@ -4,8 +4,9 @@
 #include <string>
 #include <tuple>
 
-#include "common_queue.h"
-#include "common_thread.h"
+#include "../common/common_queue.h"
+#include "../common/common_thread.h"
+#include "../common/common_accion.h"
 #include "server_aceptador.h"
 #include "server_gameloop.h"
 #include "server_monitor.h"
@@ -13,7 +14,7 @@
 class Servidor {
 private:
     Socket skt;
-    //Queue<> eventos;
+    Queue<ComandoAccion> comandos_acciones;
     Monitor monitor;
     Aceptador aceptador;
     Gameloop gameloop;

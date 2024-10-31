@@ -83,6 +83,10 @@ class Player : public Collidable {
         std::cout << "Player position" << "(" << position.x << ", " << position.y << ")\n";
     }
 
+    Vector get_posicion(){
+        return position;
+    }
+
     bool is_able_to_jump() {
         return is_on_ground || is_standing_on_something;
     }

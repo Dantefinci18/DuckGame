@@ -6,21 +6,23 @@
 #include <string>
 #include <tuple>
 
-#include "common_queue.h"
-#include "common_thread.h"
+#include "../common/common_queue.h"
+#include "../common/common_thread.h"
+#include "../common/common_accion.h"
+#include "Player.h"
 #include "server_monitor.h"
 
 class Gameloop: public Thread {
 private:
-    //Queue<>& eventos;
-    //Juego juego;
+    Queue<ComandoAccion>& comandos_acciones;
+    Player player;
     Monitor& monitor;
     std::mutex mtx;
 
     void ejecutar_eventos();
 
 public:
-    explicit Gameloop(/*Queue<>& eventos,*/ Monitor& monitor);
+    explicit Gameloop(Queue<ComandoAccion> &comandos_acciones, Monitor& monitor);
 
     void run() override;
 };

@@ -5,11 +5,11 @@
 #include <tuple>
 #include <utility>
 
-#include "common_liberror.h"
+#include "../common/common_liberror.h"
 
-Aceptador::Aceptador(/*Queue<>& comandos,*/ Monitor& monitor,
+Aceptador::Aceptador(Queue<ComandoAccion>& comandos,Monitor& monitor,
                      Socket& skt):
-        skt(skt), /*comandos(comandos),*/ monitor(monitor) {}
+        skt(skt), comandos(comandos), monitor(monitor) {}
 
 void Aceptador::run() {
     while (_keep_running) {
@@ -17,7 +17,7 @@ void Aceptador::run() {
 
             Socket conexion = skt.accept();
             eliminar_desconectados();
-            auto jugador = new Jugador(/*comandos,*/ monitor, std::move(conexion));
+            auto jugador = new Jugador(comandos,monitor, std::move(conexion));
             jugador->run();
             jugadores.push_back(jugador);
 
