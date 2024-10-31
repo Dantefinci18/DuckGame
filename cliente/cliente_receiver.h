@@ -10,9 +10,6 @@ class ClienteReceiver : public Thread{
     public:
         explicit ClienteReceiver(ClienteProtocolo &protocolo, Queue<Evento> &queue_eventos, std::atomic<bool> &cliente_conectado);
         void run() override;
-        void stop() override;
-        void join() override;
-        ~ClienteReceiver();
     
     private:
         ClienteProtocolo &protocolo;

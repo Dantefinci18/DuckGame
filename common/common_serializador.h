@@ -10,7 +10,6 @@
 
 class Serializador {
 public:
-    Serializador();
 
     std::vector<uint8_t> serializar_accion(ComandoAccion &accion);
 
@@ -20,6 +19,5 @@ public:
 
     Evento deserializar_evento(const uint8_t* x_data, const uint8_t* y_data);
 
-    ~Serializador();
 };
 #endif //COMMON_SERIALIZADOR_H

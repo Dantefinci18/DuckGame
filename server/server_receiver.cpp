@@ -11,7 +11,12 @@ void Receiver::run() {
     try {
         while (_keep_running) {
             ComandoAccion accion = protocolo.recibir_accion();
-        
+
+            if(accion == NONE){
+                _keep_running = false;
+                break;
+            }
+            
             acciones.push(accion);
         }
 

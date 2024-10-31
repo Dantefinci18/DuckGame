@@ -16,7 +16,6 @@ class Gameloop: public Thread {
 private:
     Queue<ComandoAccion>& comandos_acciones;
     Player player;
-    std::vector<Platform> platforms;
     Monitor& monitor;
     std::mutex mtx;
 
@@ -26,8 +25,6 @@ public:
     explicit Gameloop(Queue<ComandoAccion> &comandos_acciones, Monitor& monitor);
 
     void run() override;
-
-    void agregar_plataforma(Platform plataaforma);
 };
 
 #endif

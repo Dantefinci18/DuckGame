@@ -17,7 +17,7 @@ ComandoAccion ProtocoloServidor::recibir_accion() {
     conexion.recvall(data, sizeof(data), &was_closed);
 
     if (was_closed) {
-        throw std::runtime_error("Error al recibir accion");
+        return NONE;
     }
 
     return serializador.deserializar_accion(data);

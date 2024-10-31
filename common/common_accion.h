@@ -7,10 +7,9 @@
 enum ComandoAccion : uint8_t{
     DERECHA,
     IZQUIERDA,
-    STOP_IZQUIERDA,
-    STOP_DERECHA,
-    SALTAR
-   
+    QUIETO,
+    SALTAR,
+    NONE
 };
 
 #endif // COMMON_ACCION_H

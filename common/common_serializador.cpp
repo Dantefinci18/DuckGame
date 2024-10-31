@@ -2,8 +2,6 @@
 #include <bitset>
 #include <iostream>
 
-Serializador::Serializador() {}
-
 std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
     std::bitset<8> bits(accion);  
 
@@ -64,8 +62,3 @@ Evento Serializador::deserializar_evento(const uint8_t* x_data, const uint8_t* y
 
     return evento; 
 }
-
-
-
-
-Serializador::~Serializador() {}
