@@ -30,7 +30,7 @@ void Cliente::procesar_eventos_recibidos() {
 }
 
 void Cliente::enviar_accion(ComandoAccion *tecla_anterior, ComandoAccion accion){
-     if (*tecla_anterior != accion) {
+     if (*tecla_anterior != accion && conectado) {
         queue_acciones.push(accion);
         *tecla_anterior = accion;    
     }
@@ -75,7 +75,6 @@ void Cliente::ejecutar_juego() {
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
     duck.start();  
-    SDL_Event evento;
     ComandoAccion tecla_anterior =  QUIETO;
 
     while (conectado) {

@@ -5,7 +5,7 @@
 #include <string>
 
 Receiver::Receiver(ProtocoloServidor& protocolo, Queue<ComandoAccion>& acciones):
-        acciones(acciones), protocolo(protocolo) {}
+        protocolo(protocolo) ,acciones(acciones) {}
 
 void Receiver::run() {
     try {

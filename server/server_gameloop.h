@@ -15,8 +15,8 @@
 class Gameloop: public Thread {
 private:
     Queue<ComandoAccion>& comandos_acciones;
-    Player player;
     Monitor& monitor;
+    Player player;
     std::mutex mtx;
 
     void ejecutar_eventos();

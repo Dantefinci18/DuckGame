@@ -18,8 +18,8 @@ class Cliente {
         SdlWindow window;
         DuckAnimacion duck;
         ClienteProtocolo protocolo;
-        ClienteSender sender;
         ClienteReceiver receiver;
+        ClienteSender sender;
         Queue<Evento> queue_eventos;
         Queue<ComandoAccion> queue_acciones;
         std::atomic<bool> conectado {true};

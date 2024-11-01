@@ -3,9 +3,9 @@
 #include <string>
 #include <SDL2/SDL_render.h>
 
-class SDL_Texture;
-class SDL_Renderer;
-class SdlWindow;
+struct SDL_Texture;
+struct SDL_Renderer;
+struct SdlWindow;
 class Area;
 
 class SdlTexture {

@@ -71,7 +71,7 @@ class Player : public Collidable {
         }
     }
 
-    void print_bounding_box() const {
+    void print_bounding_box() const override{
         std::cout << "Player box: ("
             << "left: " <<  std::to_string(left()) << ", "
             << "right: " <<  std::to_string(right()) << ", "
