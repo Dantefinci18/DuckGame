@@ -4,22 +4,24 @@
 #include <list>
 #include <mutex>
 #include <string>
-
+#include <unordered_map>
 #include "../common/common_queue.h"
-#include "../common/estado.h"
+#include "../common/common_evento.h"
 #include "Vector.h"
+#include "server_jugador.h"
 
-class Monitor {
-private:
-    std::list<Queue<Vector>*> queues_de_estados;
-    std::mutex mtx;
+class PlayerMonitor {
+    private:
+        std::unordered_map<int, Jugador*> jugadores;
+        std::mutex mtx;
 
-public:
-    void agregar_queue(Queue<Vector>& queue);
-
-    void eliminar_queue(Queue<Vector>& queue);
-
-    void enviar_estado(const Vector& estado);
+    public:
+        void agregar_jugador(Jugador* jugador);
+        void eliminar_jugador(int id);
+        void broadcast_evento(Evento evento);
+        Player* get_player(int id);
+        
+        void procesar_acciones(std::vector<Accion> acciones);
 };
 
 #endif

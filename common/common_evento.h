@@ -7,6 +7,7 @@
 
 
 struct __attribute__((__packed__)) Evento{
+    int id;
     float x;
     float y;
     

@@ -1,6 +1,7 @@
 #ifndef COLLIDABLE_H
 #define COLLIDABLE_H
 #include "Vector.h"
+#include <iostream>
 #include <algorithm>
 enum class CollidableType {
     Platform,

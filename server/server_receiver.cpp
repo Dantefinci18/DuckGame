@@ -4,19 +4,19 @@
 #include <sstream>
 #include <string>
 
-Receiver::Receiver(ProtocoloServidor& protocolo, Queue<ComandoAccion>& acciones):
-        acciones(acciones), protocolo(protocolo) {}
+Receiver::Receiver(ProtocoloServidor& protocolo, Queue<Accion>& acciones, int id):
+        protocolo(protocolo), acciones(acciones), id(id) {}
 
 void Receiver::run() {
     try {
         while (_keep_running) {
-            ComandoAccion accion = protocolo.recibir_accion();
+            ComandoAccion command = protocolo.recibir_accion();
 
-            if(accion == NONE){
+            if(command == NONE){
                 _keep_running = false;
                 break;
             }
-            
+            Accion accion(id, command);
             acciones.push(accion);
         }
 

@@ -1,7 +1,7 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 #include "Collidable.h"
-#include <iostream>
+
 class Platform : public Collidable {
     public:
     Platform(Vector position, float width, float height) : Collidable(position, width, height) {}
@@ -14,7 +14,7 @@ class Platform : public Collidable {
         return;
     }
     virtual ~Platform() {}
-    void print_bounding_box() const {
+    void print_bounding_box() const override {
         std::cout << "Platform box: (" 
             << "left: " <<  std::to_string(left()) << ", "
             << "right: " <<  std::to_string(right()) << ", "

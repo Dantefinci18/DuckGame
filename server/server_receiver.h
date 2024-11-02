@@ -15,11 +15,12 @@
 class Receiver: public Thread {
 private:
     ProtocoloServidor& protocolo;
-    Queue<ComandoAccion>& acciones;
+    Queue<Accion>& acciones;
+    int id;
     std::mutex mtx;
 
 public:
-    explicit Receiver(ProtocoloServidor& protocolo, Queue<ComandoAccion>& acciones);
+    explicit Receiver(ProtocoloServidor& protocolo, Queue<Accion>& acciones, int id);
 
     void run() override;
 

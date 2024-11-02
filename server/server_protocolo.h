@@ -14,7 +14,9 @@ class ProtocoloServidor{
     public:
         explicit ProtocoloServidor(Socket&& conexion);
         ComandoAccion recibir_accion();
-        void enviar_estado(Vector posicion);
+        
+        bool enviar_id(int id);
+        void enviar_estado(Evento evento);
 
         void cerrar_conexion();
 };

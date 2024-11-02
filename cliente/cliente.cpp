@@ -24,6 +24,7 @@ void Cliente::start() {
 void Cliente::procesar_eventos_recibidos() {
     Evento evento_recibido;
     if (queue_eventos.try_pop(evento_recibido)) {
+        std::cout << "moviendo patito" << std::endl;
         duck.mover_a_una_posicion(evento_recibido.x,evento_recibido.y);
     }
 

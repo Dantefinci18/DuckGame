@@ -16,14 +16,14 @@ class Aceptador: public Thread {
 private:
     Socket& skt;
     std::list<Jugador*> jugadores;
-    Queue<ComandoAccion>& comandos;
-    Monitor& monitor;
+    Queue<Accion>& comandos;
+    PlayerMonitor& monitor;
 
     void eliminar_desconectados();
     void cerrar_conexiones();
 
 public:
-    explicit Aceptador(Queue<ComandoAccion> &comandos, Monitor& monitor,
+    explicit Aceptador(Queue<Accion> &comandos, PlayerMonitor& monitor,
                        Socket& skt);
 
     void run() override;

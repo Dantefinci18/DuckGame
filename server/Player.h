@@ -1,3 +1,5 @@
+#ifndef PLAYER_H
+#define PLAYER_H
 #include "Vector.h"
 #include "Collidable.h"
 #include "Platform.h"
@@ -32,11 +34,14 @@ class Player : public Collidable {
         }
     }
 
-    void update(Collidable& other) {
+    void update(std::vector<Collidable*> others) {
         move();
-        onCollision(other);
+        for (auto collidable : others) {
+            onCollision(*collidable);
+            collidable->print_position();
+        }
+
         print_position();
-        other.print_position();
         //std::cout << velocity.to_string() << ", isOnGround" << std::to_string(is_on_ground) << std::endl;
         //std::cout << velocity.to_string() << std::endl;
     }
@@ -71,7 +76,7 @@ class Player : public Collidable {
         }
     }
 
-    void print_bounding_box() const {
+    void print_bounding_box() const override {
         std::cout << "Player box: ("
             << "left: " <<  std::to_string(left()) << ", "
             << "right: " <<  std::to_string(right()) << ", "
@@ -93,3 +98,4 @@ class Player : public Collidable {
     virtual ~Player() {}
     Player(Vector initialPosition) : Collidable(initialPosition, 10.0f, 20.0f), velocity(Vector(0,0)), speed(3.0f), is_on_ground(false), is_standing_on_something(false) {}
 };
+#endif

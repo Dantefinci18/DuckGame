@@ -17,7 +17,12 @@ public:
 
     std::vector<uint8_t> serializar_evento(const Evento& evento);
 
-    Evento deserializar_evento(const uint8_t* x_data, const uint8_t* y_data);
+    Evento deserializar_evento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data);
+
+    std::vector<uint8_t> serializar_id(int id);
+    int deserializar_id(const uint8_t* id_binary);
+
+    void imprimir_uint8_t_array(const uint8_t* array, size_t size);
 
 };
 #endif //COMMON_SERIALIZADOR_H

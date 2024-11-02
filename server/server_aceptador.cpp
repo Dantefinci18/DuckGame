@@ -7,19 +7,22 @@
 
 #include "../common/common_liberror.h"
 
-Aceptador::Aceptador(Queue<ComandoAccion>& comandos,Monitor& monitor,
+Aceptador::Aceptador(Queue<Accion>& comandos, PlayerMonitor& monitor,
                      Socket& skt):
         skt(skt), comandos(comandos), monitor(monitor) {}
 
 void Aceptador::run() {
     while (_keep_running) {
+        int cantJugadores = 0;
         try {
 
             Socket conexion = skt.accept();
             eliminar_desconectados();
-            auto jugador = new Jugador(comandos,monitor, std::move(conexion));
+            auto jugador = new Jugador(comandos, std::move(conexion));
             jugador->run();
             jugadores.push_back(jugador);
+            monitor.agregar_jugador(jugador);
+            cantJugadores++;
 
         } catch (const LibError& e) {}
     }

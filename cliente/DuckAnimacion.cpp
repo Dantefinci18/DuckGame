@@ -1,6 +1,6 @@
 #define ANCHO_IMG_DUCK_TOTAL 400
 #define DESPLAZAMIENTO 3
-#define TIEMPO_EN_DEPLAZARSE 150
+#define TIEMPO_EN_DEPLAZARSE 30
 
 #include "DuckAnimacion.h"
 
