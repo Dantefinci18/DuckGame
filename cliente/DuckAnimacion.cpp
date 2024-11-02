@@ -13,38 +13,44 @@ DuckAnimacion::DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial
         y_actual(y_inicial) {}
 
 void DuckAnimacion::run() {
+    const int updateInterval = 15; 
+    Uint32 lastUpdate = SDL_GetTicks(); 
+
     while (_keep_running) {
+        Uint32 currentTime = SDL_GetTicks();
         
-        if (x_actual < x_des) {
-            x_actual = x_des;
-            flip = SDL_FLIP_NONE;
-            std::cout << x_actual << std::endl;
-            if (x_img < ANCHO_IMG_DUCK_TOTAL) {
-                x_img += ANCHO_IMG_DUCK;
-                SDL_Delay(TIEMPO_EN_DEPLAZARSE);
+        if (currentTime - lastUpdate >= updateInterval) {
+            lastUpdate = currentTime;
+
+            if (x_actual < x_des) {
+                x_actual += DESPLAZAMIENTO; 
+                flip = SDL_FLIP_NONE;
+                
+                if (x_img < ANCHO_IMG_DUCK_TOTAL) {
+                    x_img += ANCHO_IMG_DUCK;
+                } else {
+                    x_img = 0;
+                }
+
+            } else if (x_actual > x_des) {
+                x_actual -= DESPLAZAMIENTO;
+                flip = SDL_FLIP_HORIZONTAL;
+
+                if (x_img < ANCHO_IMG_DUCK_TOTAL) {
+                    x_img += ANCHO_IMG_DUCK;
+                } else {
+                    x_img = 0;
+                }
 
             } else {
-                x_img = 0;
+                x_img = 0; 
             }
-
-                //SDL_Delay(TIEMPO_EN_DEPLAZARSE);
-        }else if(x_actual > x_des){
-            x_actual = x_des;
-            flip = SDL_FLIP_HORIZONTAL;
-
-            if (x_img < ANCHO_IMG_DUCK_TOTAL) {
-                x_img += ANCHO_IMG_DUCK;
-                SDL_Delay(TIEMPO_EN_DEPLAZARSE);
-
-            } else {
-                x_img = 0;
-            }
-        
-        }else{
-            x_img = 0;
         }
+        
+        SDL_Delay(1); 
     }
 }
+
 
 
 void DuckAnimacion::render() {
