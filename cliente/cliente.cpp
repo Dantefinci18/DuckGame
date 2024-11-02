@@ -37,7 +37,7 @@ void Cliente::procesar_eventos_recibidos() {
 }
 
 void Cliente::enviar_accion(ComandoAccion *tecla_anterior, ComandoAccion accion){
-     if (*tecla_anterior != accion) {
+     if (*tecla_anterior != accion && conectado) {
         queue_acciones.push(accion);
         *tecla_anterior = accion;    
     }
