@@ -40,33 +40,34 @@ void Cliente::enviar_accion(ComandoAccion *tecla_anterior, ComandoAccion accion)
 void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior){
     SDL_Event evento;
     if (SDL_PollEvent(&evento)) {
-            switch (evento.type) {
-                case SDL_QUIT:
-                    conectado = false;
-                    break;
+        switch (evento.type) {
+            case SDL_QUIT:
+                conectado = false;
+                break;
 
-                case SDL_KEYDOWN:
-                    if (evento.key.keysym.sym == SDLK_LEFT) {
-                        enviar_accion(tecla_anterior,IZQUIERDA);
-                    
-                    } else if (evento.key.keysym.sym == SDLK_RIGHT) {
-                        enviar_accion(tecla_anterior,DERECHA);
+            case SDL_KEYDOWN:
+                if (evento.key.keysym.sym == SDLK_LEFT) {
+                    enviar_accion(tecla_anterior,IZQUIERDA);
+                
+                } else if (evento.key.keysym.sym == SDLK_RIGHT) {
+                    enviar_accion(tecla_anterior,DERECHA);
 
-                    } else if (evento.key.keysym.sym == SDLK_SPACE) {
-                        enviar_accion(tecla_anterior,SALTAR);
-                    }
-                    break;
+                } else if (evento.key.keysym.sym == SDLK_SPACE) {
+                    enviar_accion(tecla_anterior,SALTAR);
+                }
+                break;
 
-                case SDL_KEYUP:
-                    if (evento.key.keysym.sym == SDLK_LEFT || evento.key.keysym.sym == SDLK_RIGHT) {
-                        enviar_accion(tecla_anterior,QUIETO);
+            case SDL_KEYUP:
+                if (evento.key.keysym.sym == SDLK_LEFT || evento.key.keysym.sym == SDLK_RIGHT) {
+                    enviar_accion(tecla_anterior,QUIETO);
+                }
+                if (evento.key.keysym.sym == SDLK_SPACE) {
+                    *tecla_anterior = ComandoAccion::QUIETO;
+                }
+                break;
 
-                    break;
-
-            }
         }
     }
-
 }
 
 void Cliente::ejecutar_juego() {
