@@ -28,7 +28,6 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones) {
         ComandoAccion command = accion.get_command();
         Player* player = get_player(id);
         if (command == DERECHA) {
-            std::cout << "accion!" << std::endl;
             player->set_direction({1.0f, 0.0f});
         
         } else if (command == IZQUIERDA) {
@@ -46,11 +45,9 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones) {
     // Update world
     for (auto& player : jugadores) {
         Vector anterior = player.second->get_fisicas()->get_posicion();
-        std::cout<< "anterior: " << anterior.to_string() << std::endl;
         int id = player.first;
         //TODO: Cambiar para pasarle todos los colisionables cuando los haya.
         player.second->update_fisicas(std::vector<Collidable*>());
-        std::cout<< "post update: " << anterior.to_string() << std::endl;
         
         Vector pos_pato = player.second->get_fisicas()->get_posicion();
         // TODO: Metodo player.deberia_actualizar() para saber si enviar un evento

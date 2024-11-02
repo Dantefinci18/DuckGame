@@ -25,7 +25,6 @@ ComandoAccion ProtocoloServidor::recibir_accion() {
 
 bool ProtocoloServidor::enviar_id(int id) {
     bool was_closed = false;
-    std::cout << "sending id" << id << std::endl;
     std::vector<uint8_t> buffer= serializador.serializar_id(id);
 
     conexion.sendall(buffer.data(), buffer.size(), &was_closed);

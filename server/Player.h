@@ -41,7 +41,6 @@ class Player : public Collidable {
             collidable->print_position();
         }
 
-        print_position();
         //std::cout << velocity.to_string() << ", isOnGround" << std::to_string(is_on_ground) << std::endl;
         //std::cout << velocity.to_string() << std::endl;
     }

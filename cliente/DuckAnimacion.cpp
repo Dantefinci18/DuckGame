@@ -1,6 +1,6 @@
 #define ANCHO_IMG_DUCK_TOTAL 400
 #define DESPLAZAMIENTO 3
-#define TIEMPO_EN_DEPLAZARSE 0
+#define TIEMPO_EN_DEPLAZARSE 150
 
 #include "DuckAnimacion.h"
 
@@ -21,7 +21,6 @@ void DuckAnimacion::run() {
             std::cout << x_actual << std::endl;
             if (x_img < ANCHO_IMG_DUCK_TOTAL) {
                 x_img += ANCHO_IMG_DUCK;
-                std::cout << "here" <<std::endl;
                 SDL_Delay(TIEMPO_EN_DEPLAZARSE);
 
             } else {
@@ -35,7 +34,6 @@ void DuckAnimacion::run() {
 
             if (x_img < ANCHO_IMG_DUCK_TOTAL) {
                 x_img += ANCHO_IMG_DUCK;
-                std::cout << "here" <<std::endl;
                 SDL_Delay(TIEMPO_EN_DEPLAZARSE);
 
             } else {

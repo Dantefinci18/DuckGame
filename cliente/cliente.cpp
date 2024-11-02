@@ -23,9 +23,15 @@ void Cliente::start() {
 
 void Cliente::procesar_eventos_recibidos() {
     Evento evento_recibido;
-    if (queue_eventos.try_pop(evento_recibido)) {
-        std::cout << "moviendo patito" << std::endl;
+    bool tried = queue_eventos.try_pop(evento_recibido);
+    if (tried) {
         duck.mover_a_una_posicion(evento_recibido.x,evento_recibido.y);
+    }
+    while (tried) {
+        tried = queue_eventos.try_pop(evento_recibido);
+        if (tried) {
+            duck.mover_a_una_posicion(evento_recibido.x,evento_recibido.y);
+        }
     }
 
 }
@@ -78,14 +84,26 @@ void Cliente::ejecutar_juego() {
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
     duck.start();  
     SDL_Event evento;
-    ComandoAccion tecla_anterior =  QUIETO;
+    const int frameDelay = 1000 / 15; // 15 FPS para renderizado
+    Uint32 lastRenderTime = SDL_GetTicks();
+
+    ComandoAccion tecla_anterior = QUIETO;
 
     while (conectado) {
-        fondo.render(srcArea,destArea,SDL_FLIP_NONE);
-        duck.render();
+        Uint32 currentTime = SDL_GetTicks();
+
+        // Renderiza la animación y la escena cada 15 FPS
+        if (currentTime - lastRenderTime >= frameDelay) {
+            lastRenderTime = currentTime;
+
+            fondo.render(srcArea, destArea, SDL_FLIP_NONE);
+            duck.render();
+            window.render();
+        }
+
+        // Procesa eventos recibidos y eventos de teclado sin bloquear
         procesar_eventos_recibidos();
         controlar_eventos_del_teclado(&tecla_anterior);
-        window.render();
     }
 }
 

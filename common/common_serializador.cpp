@@ -57,7 +57,6 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
 
 Evento Serializador::deserializar_evento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data) {
     Evento evento; 
-    imprimir_uint8_t_array(id_data, 32);
     // Deserializar x
     uint32_t x_bits = 0;
     for (int i = 0; i < 32; ++i) {
