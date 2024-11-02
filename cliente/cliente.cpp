@@ -23,10 +23,8 @@ void Cliente::start() {
 
 void Cliente::procesar_eventos_recibidos() {
     Evento evento_recibido;
-    bool tried = queue_eventos.try_pop(evento_recibido);
-    if (tried) {
-        duck.mover_a_una_posicion(evento_recibido.x,evento_recibido.y);
-    }
+    bool tried = true;
+    
     while (tried) {
         tried = queue_eventos.try_pop(evento_recibido);
         if (tried) {
@@ -83,7 +81,6 @@ void Cliente::ejecutar_juego() {
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
     duck.start();  
-    SDL_Event evento;
     const int frameDelay = 1000 / 15; // 15 FPS para renderizado
     Uint32 lastRenderTime = SDL_GetTicks();
 
@@ -104,8 +101,12 @@ void Cliente::ejecutar_juego() {
         // Procesa eventos recibidos y eventos de teclado sin bloquear
         procesar_eventos_recibidos();
         controlar_eventos_del_teclado(&tecla_anterior);
+
+        // Pausa breve para reducir el uso de CPU
+        SDL_Delay(1);
     }
 }
+
 
 void Cliente::stop() {
     receiver.stop();

@@ -31,14 +31,14 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
 
     // Serializar x
     uint32_t x_bits;
-    memcpy(&x_bits, &evento.x, sizeof(float));  // Usar memcpy
+    memcpy(&x_bits, &evento.x, sizeof(float));  
     for (int i = 0; i < 32; ++i) {
         bits[i] = (x_bits >> (31 - i)) & 1;
     }
 
     // Serializar y
     uint32_t y_bits;
-    memcpy(&y_bits, &evento.y, sizeof(float));  // Usar memcpy
+    memcpy(&y_bits, &evento.y, sizeof(float));
     for (int i = 0; i < 32; ++i) {
         bits[32 + i] = (y_bits >> (31 - i)) & 1; 
     }
@@ -62,15 +62,14 @@ Evento Serializador::deserializar_evento(const uint8_t* id_data, const uint8_t* 
     for (int i = 0; i < 32; ++i) {
         x_bits |= (x_data[31 - i] << i);  
     }
-    memcpy(&evento.x, &x_bits, sizeof(float));  // Usar memcpy
+    memcpy(&evento.x, &x_bits, sizeof(float)); 
 
     // Deserializar y
     uint32_t y_bits = 0;
     for (int i = 0; i < 32; ++i) {
         y_bits |= (y_data[31 - i] << i);  
     }
-    memcpy(&evento.y, &y_bits, sizeof(float));  // Usar memcpy
-
+    memcpy(&evento.y, &y_bits, sizeof(float));  
     evento.id = deserializar_id(id_data);
 
     std::cout << "Valor de x deserializado: " << evento.x << std::endl;
@@ -82,10 +81,11 @@ Evento Serializador::deserializar_evento(const uint8_t* id_data, const uint8_t* 
 std::vector<uint8_t> Serializador::serializar_id(int id) {
     std::vector<uint8_t> binary_bits;
 
-    for (int i = sizeof(int) * 8 - 1; i >= 0; --i) {
-        uint8_t bit = (id >> i) & i;
-        binary_bits.push_back(bit);
+    uint32_t id_bits = static_cast<uint32_t>(id);
+    for (int i = 0; i < 32; ++i) {
+        binary_bits.push_back((id_bits >> (31 - i)) & 1);
     }
+
     return binary_bits;
 }
 

@@ -43,18 +43,6 @@ void ProtocoloServidor::enviar_estado(Evento evento) {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 void ProtocoloServidor::cerrar_conexion() {
     conexion.shutdown(2);
     conexion.close();
