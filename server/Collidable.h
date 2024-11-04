@@ -5,7 +5,8 @@
 #include <algorithm>
 enum class CollidableType {
     Platform,
-    Player // Future types can be added here
+    Player,
+    Box // Future types can be added here
 };
 
 enum class CollidableSide {
@@ -44,28 +45,21 @@ class Collidable {
 
         // Determine which side of the box was collided with
         CollidableSide getCollisionSide(const Collidable& other) const {
+
             if (!isColliding(other)) {
                 return CollidableSide::None;
             }
             print_bounding_box();
             //print_position();
             other.print_bounding_box();
-            //other.print_position();
             float leftDistance = abs(other.left() - right());
             float rightDistance = abs(other.right() - left());
             float topDistance = abs(other.top() - bottom());
             float bottomDistance = abs(other.bottom() - top());
-            /*
-             Calculate the distances to determine the side of collision
-            float leftDistance = (other.position.x + other.width) - position.x;   // Distance to the left side of 'this'
-            float rightDistance = (other.position.x - (position.x + width));      // Distance to the right side of 'this'
-            float bottomDistance = (other.position.y + other.height) - position.y; // Distance to the bottom side of 'this'
-            float topDistance = (other.position.y - (position.y + height));        // Distance to the top side of 'this'
-            */
-            // Find the smallest distance
+
             float minDistance = std::min({leftDistance, rightDistance, bottomDistance, topDistance});
-            std::cout << std::to_string(leftDistance) << ", " << std::to_string(rightDistance) << ", " << std::to_string(bottomDistance) << ", " << std::to_string(topDistance) << ")" << std::endl;
-            std::cout << "--------------------------------------------";
+            //std::cout << std::to_string(leftDistance) << ", " << std::to_string(rightDistance) << ", " << std::to_string(bottomDistance) << ", " << std::to_string(topDistance) << ")" << std::endl;
+            //std::cout << "--------------------------------------------";
             if (minDistance == leftDistance) {
                 std::cout << "left\n";
                 return CollidableSide::Left;

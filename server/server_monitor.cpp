@@ -21,7 +21,7 @@ Player* PlayerMonitor::get_player(int id) {
     return jugadores[id]->get_fisicas();
 }
 
-void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones) {
+void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables) {
     for (auto& accion : acciones) {
         
         int id = accion.get_player_id();
@@ -47,7 +47,7 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones) {
         Vector anterior = player.second->get_fisicas()->get_posicion();
         int id = player.first;
         //TODO: Cambiar para pasarle todos los colisionables cuando los haya.
-        player.second->update_fisicas(std::vector<Collidable*>());
+        player.second->update_fisicas(collidables);
         
         Vector pos_pato = player.second->get_fisicas()->get_posicion();
         // TODO: Metodo player.deberia_actualizar() para saber si enviar un evento

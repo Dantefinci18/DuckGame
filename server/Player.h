@@ -12,7 +12,7 @@ class Player : public Collidable {
         bool is_standing_on_something;
     public:
     void move() {
-        velocity.y -= 0.98;
+        velocity.y -= 0.2;
         position.y += velocity.y;
         position.x += velocity.x * speed;
         if (position.y < 0) {
@@ -38,7 +38,6 @@ class Player : public Collidable {
         move();
         for (auto collidable : others) {
             onCollision(*collidable);
-            collidable->print_position();
         }
 
         //std::cout << velocity.to_string() << ", isOnGround" << std::to_string(is_on_ground) << std::endl;

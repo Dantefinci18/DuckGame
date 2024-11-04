@@ -8,7 +8,7 @@
 
 Cliente::Cliente(const char* hostname, const char* servname):
         window(ANCHO_VENTANA,ALTO_VENTANA),
-        duck(window,100.0f, 150.0f),
+        duck(window,200.0f, 300.0f),
         protocolo(hostname, servname),
         receiver(protocolo, queue_eventos, conectado),
         sender(protocolo, queue_acciones) {}

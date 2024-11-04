@@ -21,7 +21,7 @@ class PlayerMonitor {
         void broadcast_evento(Evento evento);
         Player* get_player(int id);
         
-        void procesar_acciones(std::vector<Accion> acciones);
+        void procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables);
 };
 
 #endif

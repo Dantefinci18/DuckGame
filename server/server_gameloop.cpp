@@ -2,7 +2,7 @@
 #include "../common/common_evento.h"
 
 Gameloop::Gameloop(Queue<Accion> &comandos_acciones, PlayerMonitor& monitor):
- comandos_acciones(comandos_acciones), monitor(monitor) {}
+ comandos_acciones(comandos_acciones), monitor(monitor), mapa(1) {}
 
 void Gameloop::run() {
     while (_keep_running) {
@@ -19,7 +19,7 @@ void Gameloop::procesar_acciones() {
         acciones.push_back(accion);
         tried = comandos_acciones.try_pop(accion);
     }
-    monitor.procesar_acciones(acciones);
+    monitor.procesar_acciones(acciones, mapa.getCollidables());
 }
 
 void Gameloop::sleep() {

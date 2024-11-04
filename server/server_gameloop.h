@@ -10,13 +10,14 @@
 #include "../common/common_thread.h"
 #include "../common/common_accion.h"
 #include "server_monitor.h"
-
+#include "server_mapa.h"
 
 class Gameloop: public Thread {
 private:
     Queue<Accion>& comandos_acciones;
     PlayerMonitor& monitor;
     std::mutex mtx;
+    Mapa mapa;
 
     void sleep();
     void procesar_acciones();
