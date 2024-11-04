@@ -5,7 +5,8 @@
 #include <algorithm>
 enum class CollidableType {
     Platform,
-    Player // Future types can be added here
+    Player,
+    Box // Future types can be added here
 };
 
 enum class CollidableSide {
