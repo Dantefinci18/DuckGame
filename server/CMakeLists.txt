@@ -5,6 +5,7 @@ target_sources(taller_server
     Vector.h
     Platform.h
     Collidable.h
+    Box.h
     server_aceptador.h
     server_gameloop.h
     server_receiver.h
