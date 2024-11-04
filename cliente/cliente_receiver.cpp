@@ -1,11 +1,12 @@
 #include "cliente_receiver.h"
 
 
-ClienteReceiver::ClienteReceiver(ClienteProtocolo &protocolo, Queue<Evento> &queue_eventos, std::atomic<bool> &cliente_conectado) : protocolo(protocolo), queue_eventos(queue_eventos), cliente_conectado(cliente_conectado){}
+ClienteReceiver::ClienteReceiver(ClienteProtocolo &protocolo, Queue<Evento> &queue_eventos, std::atomic<bool> &cliente_conectado) : protocolo(protocolo), queue_eventos(queue_eventos), cliente_conectado(cliente_conectado), id(-1){}
 
 void ClienteReceiver::run(){
     Evento evento;
-    
+    id = protocolo.recibir_id();
+    std::cout << "id for client" << id << std::endl;
     while(_keep_running){
         try{
             if (protocolo.recibir_evento(evento)){
@@ -23,4 +24,8 @@ void ClienteReceiver::run(){
     }
     cliente_conectado = false;
     
+}
+
+int ClienteReceiver::get_id() {
+    return id;
 }

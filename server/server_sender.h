@@ -7,22 +7,21 @@
 #include "../common/common_queue.h"
 #include "../common/common_socket.h"
 #include "../common/common_thread.h"
-#include "../common/estado.h"
-#include "server_monitor.h"
+#include "../common/common_evento.h"
 #include "server_protocolo.h"
 #include "Vector.h"
 
 class Sender: public Thread {
 private:
     ProtocoloServidor& protocolo;
-    Queue<Vector> cola_estados;
-    Monitor& monitor;
+    Queue<Evento>& cola_eventos;
     std::mutex mtx;
+    int id;
 
-    void enviar_estados();
+    void enviar_eventos();
 
 public:
-    explicit Sender(ProtocoloServidor& protocolo, Monitor& monitor);
+    explicit Sender(ProtocoloServidor& protocolo, Queue<Evento>& cola_eventos, int id);
 
     void stop() override;
 

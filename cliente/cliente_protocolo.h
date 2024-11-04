@@ -10,6 +10,7 @@ class ClienteProtocolo{
         explicit ClienteProtocolo(const char* hostname, const char* servname);
         void cerrar_conexion();
         bool enviar_accion(ComandoAccion &accion);
+        int recibir_id();
         bool recibir_evento(Evento &evento);
 
     private:

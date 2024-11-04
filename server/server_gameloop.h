@@ -9,20 +9,20 @@
 #include "../common/common_queue.h"
 #include "../common/common_thread.h"
 #include "../common/common_accion.h"
-#include "Player.h"
 #include "server_monitor.h"
+
 
 class Gameloop: public Thread {
 private:
-    Queue<ComandoAccion>& comandos_acciones;
-    Monitor& monitor;
-    Player player;
+    Queue<Accion>& comandos_acciones;
+    PlayerMonitor& monitor;
     std::mutex mtx;
 
-    void ejecutar_eventos();
+    void sleep();
+    void procesar_acciones();
 
 public:
-    explicit Gameloop(Queue<ComandoAccion> &comandos_acciones, Monitor& monitor);
+    explicit Gameloop(Queue<Accion>& comandos_acciones, PlayerMonitor& monitor);
 
     void run() override;
 };

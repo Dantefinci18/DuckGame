@@ -20,6 +20,16 @@ bool ClienteProtocolo::enviar_accion(ComandoAccion &accion) {
     return !was_closed;  
 }
 
+int ClienteProtocolo::recibir_id() {
+    bool was_closed = false;
+    uint8_t data[32];
+    socket.recvall(data, sizeof(data), &was_closed);
+
+    if (was_closed) {
+        return -1;
+    }
+    return serializador.deserializar_id(data);
+}
 
 bool ClienteProtocolo::recibir_evento(Evento &evento) {
     bool was_closed = false;
@@ -36,22 +46,16 @@ bool ClienteProtocolo::recibir_evento(Evento &evento) {
         return false;
     }
 
-    evento = serializador.deserializar_evento(x, y);
+    uint8_t id[32];
+    socket.recvall(id, sizeof(id), &was_closed);
+    if (was_closed) {
+        return false;
+    }
+
+    evento = serializador.deserializar_evento(id, x, y);
 
     return !was_closed;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 void ClienteProtocolo::cerrar_conexion() {
     socket.shutdown(2);

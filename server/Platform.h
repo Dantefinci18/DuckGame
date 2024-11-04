@@ -1,7 +1,7 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 #include "Collidable.h"
-#include <iostream>
+
 class Platform : public Collidable {
     public:
     Platform(Vector position, float width, float height) : Collidable(position, width, height) {}

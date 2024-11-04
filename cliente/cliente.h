@@ -19,10 +19,12 @@ class Cliente {
         DuckAnimacion duck;
         ClienteProtocolo protocolo;
         ClienteReceiver receiver;
+        int id;
         ClienteSender sender;
         Queue<Evento> queue_eventos;
         Queue<ComandoAccion> queue_acciones;
         std::atomic<bool> conectado {true};
+        
         void ejecutar_juego();
         void procesar_eventos_recibidos();
         void enviar_accion(ComandoAccion *tecla_anterior, ComandoAccion accion);
@@ -35,6 +37,7 @@ class Cliente {
     public:
         explicit Cliente(const char* hostname, const char* servname);
         void start();
+        int generar_id();
 };
 
 

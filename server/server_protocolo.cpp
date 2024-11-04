@@ -23,13 +23,17 @@ ComandoAccion ProtocoloServidor::recibir_accion() {
     return serializador.deserializar_accion(data);
 }
 
-
-void ProtocoloServidor::enviar_estado(Vector posicion) {
+bool ProtocoloServidor::enviar_id(int id) {
     bool was_closed = false;
+    std::vector<uint8_t> buffer= serializador.serializar_id(id);
 
-    Evento evento;
-    evento.x = posicion.x;
-    evento.y = posicion.y;
+    conexion.sendall(buffer.data(), buffer.size(), &was_closed);
+
+    return !was_closed; 
+}
+
+void ProtocoloServidor::enviar_estado(Evento evento) {
+    bool was_closed = false;
 
     std::vector<uint8_t> bits = serializador.serializar_evento(evento);
     
@@ -38,18 +42,6 @@ void ProtocoloServidor::enviar_estado(Vector posicion) {
         throw std::runtime_error("Error al enviar estado");
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 void ProtocoloServidor::cerrar_conexion() {
     conexion.shutdown(2);

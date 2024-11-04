@@ -1,48 +1,27 @@
 #include "server_gameloop.h"
-#include "../common/estado.h"
+#include "../common/common_evento.h"
 
-Gameloop::Gameloop(Queue<ComandoAccion> &comandos_acciones ,Monitor& monitor):
- comandos_acciones(comandos_acciones), monitor(monitor), player({100.0f, 150.0f}) {}
+Gameloop::Gameloop(Queue<Accion> &comandos_acciones, PlayerMonitor& monitor):
+ comandos_acciones(comandos_acciones), monitor(monitor) {}
 
 void Gameloop::run() {
-    
-    /*const float targetFPS = 5.0f;
-    const float targetFrameTime = 1.0f / targetFPS;*/
-
-    ComandoAccion accion;
-    Vector anterior = player.get_posicion();
-
     while (_keep_running) {
-        if(comandos_acciones.try_pop(accion)){
-        //auto frameStartTime = std::chrono::high_resolution_clock::now();
-        
-            if (accion == DERECHA) {
-                player.set_direction({1.0f, 0.0f});
-            
-            } else if (accion == IZQUIERDA) {
-                player.set_direction({-1.0f, 0.0f});
-            
-            } else if (accion == SALTAR) {
-                player.jump();
-            
-            } else if (accion == QUIETO) {
-                player.set_direction({0.0f, 0.0f});
-            
-            }
-        }
-        
-        player.move();
-        Vector pos_pato = player.get_posicion();
-
-        if(anterior.x != pos_pato.x)
-            monitor.enviar_estado(pos_pato);
-        
-        anterior = pos_pato;
-        ejecutar_eventos();
+        procesar_acciones();
+        sleep();
     }
 }
 
-void Gameloop::ejecutar_eventos() {
+void Gameloop::procesar_acciones() {
+    std::vector<Accion> acciones;
+    Accion accion;
+    bool tried = comandos_acciones.try_pop(accion);
+    while (tried) {
+        acciones.push_back(accion);
+        tried = comandos_acciones.try_pop(accion);
+    }
+    monitor.procesar_acciones(acciones);
+}
 
-   std::this_thread::sleep_for(std::chrono::milliseconds(150));
+void Gameloop::sleep() {
+   std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }

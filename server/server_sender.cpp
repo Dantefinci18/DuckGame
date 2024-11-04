@@ -2,34 +2,30 @@
 
 #include <string>
 
-Sender::Sender(ProtocoloServidor& protocolo, Monitor& monitor):
-        protocolo(protocolo), monitor(monitor) {}
+Sender::Sender(ProtocoloServidor& protocolo, Queue<Evento>& cola_eventos, int id):
+        protocolo(protocolo), cola_eventos(cola_eventos), id(id) {}
 
-void Sender::enviar_estados() {
+void Sender::enviar_eventos() {
+    protocolo.enviar_id(id);
     while (_keep_running) {
-        Vector posicion = cola_estados.pop();
-        protocolo.enviar_estado(posicion);
+        Evento estado = cola_eventos.pop();
+        protocolo.enviar_estado(estado);
     }
 }
 
 
 void Sender::stop() {
     _keep_running = false;
-    cola_estados.close();
+    cola_eventos.close();
 }
 
 void Sender::run() {
-    monitor.agregar_queue(cola_estados);
-
     try {
-        enviar_estados();
-
+        enviar_eventos();
     } catch (std::exception& e) {
         if (_keep_running)
             std::cerr << "Error de escritura: " << e.what() << "\n";
     }
-
-    monitor.eliminar_queue(cola_estados);
 }
 
 bool Sender::se_cerro() { return !_keep_running; }

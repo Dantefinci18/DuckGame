@@ -14,8 +14,8 @@
 class Servidor {
 private:
     Socket skt;
-    Queue<ComandoAccion> comandos_acciones;
-    Monitor monitor;
+    Queue<Accion> comandos_acciones;
+    PlayerMonitor monitor;
     Aceptador aceptador;
     Gameloop gameloop;
 
