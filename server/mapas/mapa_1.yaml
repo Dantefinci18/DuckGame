@@ -1,0 +1,26 @@
+collidables:
+  - type: Platform
+    x: 50
+    y: 50
+    width: 700
+    height: 20
+  - type: Platform
+    x: 100
+    y: 200
+    width: 200
+    height: 20
+  - type: Platform
+    x: 500
+    y: 200
+    width: 200
+    height: 20
+  - type: Platform
+    x: 300
+    y: 350
+    width: 150
+    height: 20
+  - type: Platform
+    x: 200
+    y: 500
+    width: 400
+    height: 20

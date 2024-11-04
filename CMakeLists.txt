@@ -81,6 +81,14 @@ endif()
 
 if(TALLER_SERVER)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!
+    include(FetchContent)
+    FetchContent_Declare(
+        yaml-cpp
+        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+        GIT_TAG master # Puedes cambiar a una versión específica si lo prefieres
+    )
+    FetchContent_MakeAvailable(yaml-cpp)
+
     add_executable(taller_server)
 
     # Make them depend on taller_common lib
@@ -93,5 +101,5 @@ if(TALLER_SERVER)
     set_project_warnings(taller_server ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
     # Link the taller_common lib target
-    target_link_libraries(taller_server taller_common)
+    target_link_libraries(taller_server taller_common yaml-cpp)
 endif()

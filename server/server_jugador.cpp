@@ -13,7 +13,7 @@ Jugador::Jugador(Queue<Accion>& comandos, Socket&& conexion):
         id(generar_id()),
         sender(protocolo, cola_eventos, id), 
         receiver(protocolo, comandos, id),
-        playerPhysics({100.0f,150.0f}) {}
+        playerPhysics({300.0f,300.0f}) {}
 
 void Jugador::run() {
     sender.start();

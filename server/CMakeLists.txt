@@ -13,6 +13,7 @@ target_sources(taller_server
     server_protocolo.h
     server_jugador.h
     server_servidor.h
+    server_mapa.h
 
     PRIVATE
     server_main.cpp
@@ -24,5 +25,5 @@ target_sources(taller_server
     server_protocolo.cpp
     server_jugador.cpp
     server_servidor.cpp
-
+    server_mapa.cpp
 )
