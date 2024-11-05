@@ -34,6 +34,12 @@ int ClienteProtocolo::recibir_id() {
 bool ClienteProtocolo::recibir_evento(Evento &evento) {
     bool was_closed = false;
 
+    uint8_t tipo[32];
+    socket.recvall(tipo, sizeof(tipo), &was_closed);
+    if (was_closed) {
+        return false;
+    }
+
     uint8_t x[32];
     socket.recvall(x, sizeof(x), &was_closed);
     if (was_closed) {
@@ -52,7 +58,13 @@ bool ClienteProtocolo::recibir_evento(Evento &evento) {
         return false;
     }
 
-    evento = serializador.deserializar_evento(id, x, y);
+    uint8_t id_2[32];
+    socket.recvall(id_2, sizeof(id_2), &was_closed);
+    if (was_closed) {
+        return false;
+    }
+
+    evento = serializador.deserializar_evento(tipo, x, y, id, id_2);
 
     return !was_closed;
 }

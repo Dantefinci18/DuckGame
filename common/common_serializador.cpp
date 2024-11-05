@@ -26,7 +26,7 @@ ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
     return accion;
 }
 
-std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
+/*std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     std::vector<uint8_t> bits(96); 
 
     // Serializar x
@@ -53,9 +53,77 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     std::cout << "Valor de y preserializar: " << evento.y << std::endl;
     std::cout << "Valor de id preserializar: " << evento.id << std::endl;
     return bits; 
+}*/
+
+std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
+    std::vector<uint8_t> bits(160);
+
+    uint32_t tipo_bits = static_cast<uint32_t>(evento.tipo);
+    for (int i = 0; i < 32; ++i) {
+        bits[i] = (tipo_bits >> (31 - i)) & 1;
+    }
+
+    uint32_t x_bits;
+    memcpy(&x_bits, &evento.x, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[32 + i] = (x_bits >> (31 - i)) & 1;
+    }
+
+    uint32_t y_bits;
+    memcpy(&y_bits, &evento.y, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[64 + i] = (y_bits >> (31 - i)) & 1;
+    }
+
+    uint32_t id_bits = static_cast<uint32_t>(evento.id);
+    for (int i = 0; i < 32; ++i) {
+        bits[96 + i] = (id_bits >> (31 - i)) & 1;
+    }
+
+    uint32_t id2_bits = static_cast<uint32_t>(evento.id_2);
+    for (int i = 0; i < 32; ++i) {
+        bits[128 + i] = (id2_bits >> (31 - i)) & 1;
+    }
+
+    std::cout << "Valor de tipo preserializar: " << evento.tipo << std::endl;
+    std::cout << "Valor de x preserializar: " << evento.x << std::endl;
+    std::cout << "Valor de y preserializar: " << evento.y << std::endl;
+    std::cout << "Valor de id preserializar: " << evento.id << std::endl;
+    std::cout << "Valor de id2 preserializar: " << evento.id_2 << std::endl;
+
+    return bits;
 }
 
-Evento Serializador::deserializar_evento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data) {
+Evento Serializador::deserializar_evento(const uint8_t* tipo_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* id_data, const uint8_t* id2_data) {
+    Evento evento;
+
+    evento.tipo = deserializar_id(tipo_data);
+
+    uint32_t x_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        x_bits |= (x_data[31 - i] << i);
+    }
+    memcpy(&evento.x, &x_bits, sizeof(float));
+
+    uint32_t y_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        y_bits |= (y_data[31 - i] << i);
+    }
+    memcpy(&evento.y, &y_bits, sizeof(float));
+
+    evento.id = deserializar_id(id_data);
+    evento.id_2 = deserializar_id(id2_data);
+
+    std::cout << "Valor de tipo deserializado: " << evento.tipo << std::endl;
+    std::cout << "Valor de x deserializado: " << evento.x << std::endl;
+    std::cout << "Valor de y deserializado: " << evento.y << std::endl;
+    std::cout << "Valor de id deserializado: " << evento.id << std::endl;
+    std::cout << "Valor de id2 deserializado: " << evento.id_2 << std::endl;
+
+    return evento;
+}
+
+/*Evento Serializador::deserializar_evento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data) {
     Evento evento; 
     // Deserializar x
     uint32_t x_bits = 0;
@@ -76,7 +144,7 @@ Evento Serializador::deserializar_evento(const uint8_t* id_data, const uint8_t* 
     std::cout << "Valor de y deserializado: " << evento.y << std::endl;
     std::cout << "Valor de id deserializado: " << evento.id << std::endl;
     return evento; 
-}
+}*/
 
 std::vector<uint8_t> Serializador::serializar_id(int id) {
     std::vector<uint8_t> binary_bits;

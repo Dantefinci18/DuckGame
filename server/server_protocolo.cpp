@@ -43,6 +43,19 @@ void ProtocoloServidor::enviar_estado(Evento evento) {
     }
 }
 
+/*
+- EVENTO_SPAWN_JUGADOR(id_jugador, x, y,...)
+- EVENTO_MOVIMIENTO_JUGADOR (id_jugador, x, y,...)
+- EVENTO_SPAWN_OBJETO(id_objeto, x, y)
+- EVENTO_DISPARAR(id_jugador)
+- EVENTO_PICKUP(id_objeto, id_jugador)
+***** Hasta acá sirve el enviar_evento (devberia llamarse asi más que enviar_estado)
+
+- EVENTO_ESTADO_ACTUAL(jugadores, objetos, mapa) <- esto se enviaria al principio cuando se une un jugador.
+*/
+
+
+
 void ProtocoloServidor::cerrar_conexion() {
     conexion.shutdown(2);
     conexion.close();

@@ -51,11 +51,15 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones) {
         
         Vector pos_pato = player.second->get_fisicas()->get_posicion();
         // TODO: Metodo player.deberia_actualizar() para saber si enviar un evento
+        
+        //Por ahora si no se usa algo como x e y, o id2 ponerlo en 0
         if (anterior.x != pos_pato.x || anterior.y != pos_pato.y) {
             Evento evento;
-            evento.id = id;
+            evento.tipo = MOVIMIENTO_JUGADOR;
             evento.x = pos_pato.x;
             evento.y = pos_pato.y;
+            evento.id = id;
+            evento.id_2 = 0;
             broadcast_evento(evento);
         }
     }
