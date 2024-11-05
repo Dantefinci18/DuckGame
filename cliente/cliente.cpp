@@ -7,8 +7,8 @@
 #include "../common/common_queue.h"
 
 Cliente::Cliente(const char* hostname, const char* servname):
-        window(ANCHO_VENTANA,ALTO_VENTANA),
-        duck(window,100.0f, 150.0f),
+        window(ANCHO_VENTANA, ALTO_VENTANA),
+        duck(window, 100.0f, 150.0f),
         protocolo(hostname, servname),
         receiver(protocolo, queue_eventos, conectado),
         sender(protocolo, queue_acciones) {}
@@ -24,24 +24,23 @@ void Cliente::start() {
 void Cliente::procesar_eventos_recibidos() {
     Evento evento_recibido;
     bool tried = true;
-    
+
     while (tried) {
         tried = queue_eventos.try_pop(evento_recibido);
         if (tried) {
-            duck.mover_a_una_posicion(evento_recibido.x,evento_recibido.y);
+            duck.mover_a_una_posicion(evento_recibido.x, evento_recibido.y);
         }
     }
-
 }
 
-void Cliente::enviar_accion(ComandoAccion *tecla_anterior, ComandoAccion accion){
-     if (*tecla_anterior != accion && conectado) {
+void Cliente::enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion) {
+    if (*tecla_anterior != accion && conectado) {
         queue_acciones.push(accion);
-        *tecla_anterior = accion;    
+        *tecla_anterior = accion;
     }
 }
 
-void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior){
+void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
     SDL_Event evento;
     if (SDL_PollEvent(&evento)) {
         switch (evento.type) {
@@ -51,25 +50,24 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior){
 
             case SDL_KEYDOWN:
                 if (evento.key.keysym.sym == SDLK_LEFT) {
-                    enviar_accion(tecla_anterior,IZQUIERDA);
-                
+                    enviar_accion(tecla_anterior, IZQUIERDA);
+
                 } else if (evento.key.keysym.sym == SDLK_RIGHT) {
-                    enviar_accion(tecla_anterior,DERECHA);
+                    enviar_accion(tecla_anterior, DERECHA);
 
                 } else if (evento.key.keysym.sym == SDLK_SPACE) {
-                    enviar_accion(tecla_anterior,SALTAR);
+                    enviar_accion(tecla_anterior, SALTAR);
                 }
                 break;
 
             case SDL_KEYUP:
                 if (evento.key.keysym.sym == SDLK_LEFT || evento.key.keysym.sym == SDLK_RIGHT) {
-                    enviar_accion(tecla_anterior,QUIETO);
+                    enviar_accion(tecla_anterior, QUIETO);
                 }
                 if (evento.key.keysym.sym == SDLK_SPACE) {
                     *tecla_anterior = ComandoAccion::QUIETO;
                 }
                 break;
-
         }
     }
 }
@@ -80,8 +78,7 @@ void Cliente::ejecutar_juego() {
     Area srcArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
-    duck.start();  
-    const int frameDelay = 1000 / 15; // 15 FPS para renderizado
+    const int frameDelay = 1000 / 12;  // 15 FPS para renderizado
     Uint32 lastRenderTime = SDL_GetTicks();
 
     ComandoAccion tecla_anterior = QUIETO;
@@ -93,9 +90,12 @@ void Cliente::ejecutar_juego() {
         if (currentTime - lastRenderTime >= frameDelay) {
             lastRenderTime = currentTime;
 
-            fondo.render(srcArea, destArea, SDL_FLIP_NONE);
-            duck.render();
-            window.render();
+            // fondo.render(srcArea, destArea, SDL_FLIP_NONE);
+            if (!duck.esta_quieto()) {
+                fondo.render(srcArea, destArea, SDL_FLIP_NONE);
+                duck.render();
+                window.render();
+            }
         }
 
         // Procesa eventos recibidos y eventos de teclado sin bloquear
@@ -111,14 +111,12 @@ void Cliente::ejecutar_juego() {
 void Cliente::stop() {
     receiver.stop();
     sender.stop();
-    duck.stop();
     protocolo.cerrar_conexion();
     queue_eventos.close();
     queue_acciones.close();
 }
 
 void Cliente::join() {
-    duck.join();
     receiver.join();
     sender.join();
 }
