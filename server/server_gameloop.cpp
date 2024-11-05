@@ -24,4 +24,4 @@ void Gameloop::procesar_acciones() {
     monitor.procesar_acciones(acciones, mapa.getCollidables());
 }
 
-void Gameloop::sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(90)); }
+void Gameloop::sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(100)); }

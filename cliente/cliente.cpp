@@ -78,7 +78,7 @@ void Cliente::ejecutar_juego() {
     Area srcArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
-    const int frameDelay = 1000 / 12;  // 15 FPS para renderizado
+    const int frameDelay = 100;  // 10 FPS para renderizado
     Uint32 lastRenderTime = SDL_GetTicks();
 
     ComandoAccion tecla_anterior = QUIETO;
