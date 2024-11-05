@@ -1,5 +1,7 @@
 #include "server_gameloop.h"
+
 #include "../common/common_evento.h"
+
 
 Gameloop::Gameloop(Queue<Accion> &comandos_acciones, PlayerMonitor& monitor):
  comandos_acciones(comandos_acciones), monitor(monitor), mapa(1) {}
@@ -22,6 +24,4 @@ void Gameloop::procesar_acciones() {
     monitor.procesar_acciones(acciones, mapa.getCollidables());
 }
 
-void Gameloop::sleep() {
-   std::this_thread::sleep_for(std::chrono::milliseconds(50));
-}
+void Gameloop::sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(90)); }

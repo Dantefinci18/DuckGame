@@ -4,18 +4,16 @@
 #define ANCHO_IMG_DUCK 32
 #define ALTO_IMG_DUCK 38
 
-#include "../common/common_thread.h"
+#include <SDL2/SDL.h>
+
 #include "Sdl/Area.h"
 #include "Sdl/SdlTexture.h"
 #include "Sdl/SdlWindow.h"
-#include <SDL2/SDL.h>
 
-class DuckAnimacion: public Thread {
+class DuckAnimacion {
 private:
-    SdlWindow& window;
     SdlTexture movimientos;
-    bool moverse_a_derecha = false;
-    bool moverse_a_izquierda = false;
+    bool quieto = false;
     int x_img = 0;
     float x_actual;
     float y_actual;
@@ -25,13 +23,9 @@ private:
 
 public:
     explicit DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial);
-    void run() override;
     void render();
+    bool esta_quieto();
     void mover_a_una_posicion(float x, float y);
-    void dejar_de_moverse_a_derecha();
-    void dejar_de_moverse_a_izquierda();
-    void mover_a_derecha();
-    void mover_a_izquierda();
 };
 
 #endif
