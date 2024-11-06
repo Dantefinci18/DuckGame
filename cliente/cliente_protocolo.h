@@ -7,7 +7,7 @@
 #include "../common/common_serializador.h"
 class ClienteProtocolo{
     public:
-        explicit ClienteProtocolo(const char* hostname, const char* servname);
+        explicit ClienteProtocolo(Socket&& socket);
         void cerrar_conexion();
         bool enviar_accion(ComandoAccion &accion);
         int recibir_id();

@@ -17,7 +17,7 @@ project(taller_tp
     VERSION 1.0
     HOMEPAGE_URL "https://github.com/URL-HERE"
     LANGUAGES CXX
-    )
+)
 
 option(TALLER_TESTS "Enable / disable tests." ON)
 option(TALLER_CLIENT "Enable / disable client program." ON)
@@ -34,7 +34,6 @@ add_library(taller_common STATIC)
 # add the source files that make the lib
 # HEY!! TODO XXX: add more subfolders here
 add_subdirectory(common/)
-
 
 # set compiler warnings to the targets
 include(cmake/CompilerWarnings.cmake)
@@ -59,6 +58,7 @@ endif()
 
 # Program section
 # ---------------
+# Client
 if(TALLER_CLIENT)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!
     add_executable(taller_client)
@@ -77,7 +77,41 @@ if(TALLER_CLIENT)
 
     # Link the taller_common lib target
     target_link_libraries(taller_client taller_common sdldemo SDL2 SDL2_image)
+
+    # Qt5 configuration for client
+    find_package(Qt5 REQUIRED COMPONENTS Widgets)
+    
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
+    set(CMAKE_AUTOUIC ON)
+
+    file(GLOB UISOURCES cliente/interfaz_lobby/*.ui)
+
+    qt5_wrap_ui(UIS_HEADERS ${UISOURCES})
+
+    qt5_wrap_cpp(MOC_HEADERS cliente/interfaz_lobby/mainwindow.h)
+
+    target_include_directories(taller_client
+        PRIVATE
+            ${CMAKE_BINARY_DIR}  
+    )
+
+    qt5_add_resources(RESOURCES ${CMAKE_SOURCE_DIR}/cliente/interfaz_lobby/resources.qrc)
+
+    target_sources(taller_client PRIVATE ${RESOURCES})
+
+    target_sources(taller_client
+        PRIVATE
+            ${UIS_HEADERS}       
+            ${MOC_HEADERS}      
+    )
+
+    target_link_libraries(taller_client
+        Qt5::Widgets
+        sdldemo
+    )
 endif()
+
 
 if(TALLER_SERVER)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!
