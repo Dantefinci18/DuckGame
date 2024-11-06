@@ -27,20 +27,25 @@ option(TALLER_MAKE_WARNINGS_AS_ERRORS "Enable / disable warnings as errors." OFF
 
 message(CMAKE_CXX_COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")
 
-# Definir la biblioteca común entre el cliente, servidor y editor
+# Define target: lib common between client, server and editor programs
+# HEY TODO XXX: change the name to something that you like
 add_library(taller_common STATIC)
 
-# Añadir subdirectorios
+# add the source files that make the lib
+# HEY!! TODO XXX: add more subfolders here
 add_subdirectory(common/)
 
-# Habilitar warnings para los targets
+# set compiler warnings to the targets
 include(cmake/CompilerWarnings.cmake)
 set_project_warnings(taller_common ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
-# Directorios de cabeceras para la biblioteca
+# Say where the headers will be found required by library target
+# Make this PUBLIC so any dependant linking lib will inherit this
+# location (so our dependants will not have to explicitly request this)
 target_include_directories(taller_common PUBLIC .)
 
-# Instalar libSDL2pp para cliente o editor
+# Install libSDL2pp (for client or editor)
+# HEY!! TODO XXX: add more dependendies (either for client, server or editor)
 if(TALLER_CLIENT OR TALLER_EDITOR)
     include(FetchContent)
     FetchContent_Declare(
@@ -53,48 +58,27 @@ endif()
 
 # Program section
 # ---------------
+# Client
 if(TALLER_CLIENT)
+    # HEY!! TODO XXX: Change the name of the executable to the one you like!
     add_executable(taller_client)
 
-    # Añadir dependencia de taller_common
+    # Make them depend on taller_common lib
     add_dependencies(taller_client taller_common SDL2pp::SDL2pp)
 
-    # Añadir archivos fuente y habilitar warnings
+    # Add source files and enable warnings
+    # HEY!! TODO XXX: add more subfolders here
     add_subdirectory(cliente)
 
     set_project_warnings(taller_client ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
-    # Incluir los headers de SDL2pp
+    # add libSDL2pp's headers
     target_include_directories(taller_client PRIVATE ${libSDL2pp_SOURCE_DIR})
 
-    # Linkear la librería taller_common y SDL2
+    # Link the taller_common lib target
     target_link_libraries(taller_client taller_common sdldemo SDL2 SDL2_image)
-endif()
 
-if(TALLER_SERVER)
-    include(FetchContent)
-    FetchContent_Declare(
-        yaml-cpp
-        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-        GIT_TAG master # Puedes cambiar a una versión específica si lo prefieres
-    )
-    FetchContent_MakeAvailable(yaml-cpp)
-
-    add_executable(taller_server)
-
-    # Añadir dependencia de taller_common
-    add_dependencies(taller_server taller_common)
-
-    # Añadir archivos fuente y habilitar warnings
-    add_subdirectory(server)
-
-    set_project_warnings(taller_server ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
-
-    # Linkear la librería taller_common y yaml-cpp
-    target_link_libraries(taller_server taller_common yaml-cpp)
-endif()
-
-if(TALLER_CLIENT)
+    # Qt5 configuration for client
     find_package(Qt5 REQUIRED COMPONENTS Widgets)
     
     set(CMAKE_AUTOMOC ON)
@@ -126,4 +110,30 @@ if(TALLER_CLIENT)
         Qt5::Widgets
         sdldemo
     )
+endif()
+
+
+if(TALLER_SERVER)
+    # HEY!! TODO XXX: Change the name of the executable to the one you like!
+    include(FetchContent)
+    FetchContent_Declare(
+        yaml-cpp
+        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+        GIT_TAG master # Puedes cambiar a una versión específica si lo prefieres
+    )
+    FetchContent_MakeAvailable(yaml-cpp)
+
+    add_executable(taller_server)
+
+    # Make them depend on taller_common lib
+    add_dependencies(taller_server taller_common)
+
+    # Add source files and enable warnings
+    # HEY!! TODO XXX: add more subfolders here
+    add_subdirectory(server)
+
+    set_project_warnings(taller_server ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
+
+    # Link the taller_common lib target
+    target_link_libraries(taller_server taller_common yaml-cpp)
 endif()
