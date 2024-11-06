@@ -29,6 +29,7 @@ class Player : public Collidable {
 
     void jump() {
         if (is_able_to_jump()) {
+            std::cout << "is_able" << std::endl;
             is_on_ground = false;
             velocity.y = 10.0f;
         }
@@ -36,9 +37,17 @@ class Player : public Collidable {
 
     void update(std::vector<Collidable*> others) {
         move();
+        bool collide = false;
         for (auto collidable : others) {
-            onCollision(*collidable);
+            bool did_collide = onCollision(*collidable);
+            if (did_collide) {
+                collide = did_collide;
+            }
         }
+
+        if (!collide) {
+            is_standing_on_something = false;
+        } 
 
         //std::cout << velocity.to_string() << ", isOnGround" << std::to_string(is_on_ground) << std::endl;
         //std::cout << velocity.to_string() << std::endl;
@@ -50,7 +59,7 @@ class Player : public Collidable {
         return CollidableType::Player;
     }
 
-    virtual void onCollision(Collidable& other) override {
+    virtual bool onCollision(Collidable& other) override {
         if (other.getType() == CollidableType::Platform) {
             Platform& platform = static_cast<Platform&>(other);
             
@@ -58,20 +67,23 @@ class Player : public Collidable {
             if (side == CollidableSide::Top) {
                 position.y = platform.top();
                 velocity.y = 0;
-                is_standing_on_something = true;  
+                is_standing_on_something = true;
+                return true;  
             }
 
             else if (side == CollidableSide::Bottom) {
                 position.y = platform.bottom() - height;
                 velocity.y = -velocity.y;
+                return true;
             }
 
             else if (side == CollidableSide::Left || side == CollidableSide::Right) {
                 velocity.x = -velocity.x;
-            } else {
-                is_standing_on_something = false;
+                return true;
             }
+            return false;
         }
+        return false;
     }
 
     void print_bounding_box() const override {
@@ -91,6 +103,7 @@ class Player : public Collidable {
     }
 
     bool is_able_to_jump() {
+        std::cout << is_on_ground << is_standing_on_something << std::endl;
         return is_on_ground || is_standing_on_something;
     }
     virtual ~Player() {}

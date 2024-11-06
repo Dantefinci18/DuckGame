@@ -9,8 +9,8 @@ class Box : public Collidable {
         return CollidableType::Box;
     }
 
-    virtual void onCollision([[maybe_unused]]Collidable& other) override {
-        return;
+    virtual bool onCollision([[maybe_unused]]Collidable& other) override {
+        return false;
     }
     virtual ~Box() {}
     void print_bounding_box() const override {

@@ -10,8 +10,8 @@ class Platform : public Collidable {
         return CollidableType::Platform;
     }
 
-    virtual void onCollision([[maybe_unused]]Collidable& other) override {
-        return;
+    virtual bool onCollision([[maybe_unused]]Collidable& other) override {
+        return false;
     }
     virtual ~Platform() {}
     void print_bounding_box() const override {

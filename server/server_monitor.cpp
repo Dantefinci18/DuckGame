@@ -34,6 +34,7 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
             player->set_direction({-1.0f, 0.0f});
         
         } else if (command == SALTAR) {
+            std::cout << "jumps" << std::endl;
             player->jump();
         
         } else if (command == QUIETO) {

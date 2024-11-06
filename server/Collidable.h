@@ -49,9 +49,9 @@ class Collidable {
             if (!isColliding(other)) {
                 return CollidableSide::None;
             }
-            print_bounding_box();
+            //print_bounding_box();
             //print_position();
-            other.print_bounding_box();
+            //other.print_bounding_box();
             float leftDistance = abs(other.left() - right());
             float rightDistance = abs(other.right() - left());
             float topDistance = abs(other.top() - bottom());
@@ -70,7 +70,6 @@ class Collidable {
                 std::cout << "bottom\n";
                 return CollidableSide::Bottom;
             } else {
-                std::cout << "top\n";
                 return CollidableSide::Top;
             }
         }
@@ -80,7 +79,7 @@ class Collidable {
         virtual void print_position() const = 0;
         virtual CollidableType getType() const = 0;
 
-        virtual void onCollision(Collidable& other) = 0;
+        virtual bool onCollision(Collidable& other) = 0;
 
         virtual ~Collidable() {}
         Collidable(const Vector& initialPosition, float width, float height) : position(initialPosition), width(width), height(height) {}
