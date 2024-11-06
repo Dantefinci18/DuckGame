@@ -10,6 +10,7 @@
 #include "../common/common_queue.h"
 #include "../common/common_evento.h"
 #include "../common/common_accion.h"
+#include "../common/common_socket.h"
 #include <SDL2/SDL.h>
 
 
@@ -35,7 +36,7 @@ class Cliente {
 
     
     public:
-        explicit Cliente(const char* hostname, const char* servname);
+        explicit Cliente(Socket&& socket);
         void start();
         int generar_id();
 };

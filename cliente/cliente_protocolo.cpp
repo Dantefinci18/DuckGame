@@ -5,10 +5,8 @@
 #include <cstring>
 
 
-ClienteProtocolo::ClienteProtocolo(const char* hostname, const char* servname) : socket(hostname, servname) {}
-#include <bitset>
-#include <string>
-#include <iostream>
+ClienteProtocolo::ClienteProtocolo(Socket&& socket) : socket(std::move(socket)) {}
+
 
 bool ClienteProtocolo::enviar_accion(ComandoAccion &accion) {
     bool was_closed = false;

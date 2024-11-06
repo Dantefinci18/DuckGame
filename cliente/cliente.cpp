@@ -6,10 +6,10 @@
 #include "../common/common_evento.h"
 #include "../common/common_queue.h"
 
-Cliente::Cliente(const char* hostname, const char* servname):
+Cliente::Cliente(Socket&& socket):
         window(ANCHO_VENTANA,ALTO_VENTANA),
         duck(window,200.0f, 300.0f),
-        protocolo(hostname, servname),
+        protocolo(std::move(socket)),
         receiver(protocolo, queue_eventos, conectado),
         sender(protocolo, queue_acciones) {}
 

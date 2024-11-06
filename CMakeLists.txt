@@ -17,7 +17,7 @@ project(taller_tp
     VERSION 1.0
     HOMEPAGE_URL "https://github.com/URL-HERE"
     LANGUAGES CXX
-    )
+)
 
 option(TALLER_TESTS "Enable / disable tests." ON)
 option(TALLER_CLIENT "Enable / disable client program." ON)
@@ -27,26 +27,20 @@ option(TALLER_MAKE_WARNINGS_AS_ERRORS "Enable / disable warnings as errors." OFF
 
 message(CMAKE_CXX_COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")
 
-# Define target: lib common between client, server and editor programs
-# HEY TODO XXX: change the name to something that you like
+# Definir la biblioteca común entre el cliente, servidor y editor
 add_library(taller_common STATIC)
 
-# add the source files that make the lib
-# HEY!! TODO XXX: add more subfolders here
+# Añadir subdirectorios
 add_subdirectory(common/)
 
-
-# set compiler warnings to the targets
+# Habilitar warnings para los targets
 include(cmake/CompilerWarnings.cmake)
 set_project_warnings(taller_common ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
-# Say where the headers will be found required by library target
-# Make this PUBLIC so any dependant linking lib will inherit this
-# location (so our dependants will not have to explicitly request this)
+# Directorios de cabeceras para la biblioteca
 target_include_directories(taller_common PUBLIC .)
 
-# Install libSDL2pp (for client or editor)
-# HEY!! TODO XXX: add more dependendies (either for client, server or editor)
+# Instalar libSDL2pp para cliente o editor
 if(TALLER_CLIENT OR TALLER_EDITOR)
     include(FetchContent)
     FetchContent_Declare(
@@ -60,27 +54,24 @@ endif()
 # Program section
 # ---------------
 if(TALLER_CLIENT)
-    # HEY!! TODO XXX: Change the name of the executable to the one you like!
     add_executable(taller_client)
 
-    # Make them depend on taller_common lib
+    # Añadir dependencia de taller_common
     add_dependencies(taller_client taller_common SDL2pp::SDL2pp)
 
-    # Add source files and enable warnings
-    # HEY!! TODO XXX: add more subfolders here
+    # Añadir archivos fuente y habilitar warnings
     add_subdirectory(cliente)
 
     set_project_warnings(taller_client ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
-    # add libSDL2pp's headers
+    # Incluir los headers de SDL2pp
     target_include_directories(taller_client PRIVATE ${libSDL2pp_SOURCE_DIR})
 
-    # Link the taller_common lib target
+    # Linkear la librería taller_common y SDL2
     target_link_libraries(taller_client taller_common sdldemo SDL2 SDL2_image)
 endif()
 
 if(TALLER_SERVER)
-    # HEY!! TODO XXX: Change the name of the executable to the one you like!
     include(FetchContent)
     FetchContent_Declare(
         yaml-cpp
@@ -91,15 +82,48 @@ if(TALLER_SERVER)
 
     add_executable(taller_server)
 
-    # Make them depend on taller_common lib
+    # Añadir dependencia de taller_common
     add_dependencies(taller_server taller_common)
 
-    # Add source files and enable warnings
-    # HEY!! TODO XXX: add more subfolders here
+    # Añadir archivos fuente y habilitar warnings
     add_subdirectory(server)
 
     set_project_warnings(taller_server ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
-    # Link the taller_common lib target
+    # Linkear la librería taller_common y yaml-cpp
     target_link_libraries(taller_server taller_common yaml-cpp)
+endif()
+
+if(TALLER_CLIENT)
+    find_package(Qt5 REQUIRED COMPONENTS Widgets)
+    
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
+    set(CMAKE_AUTOUIC ON)
+
+    file(GLOB UISOURCES cliente/interfaz_lobby/*.ui)
+
+    qt5_wrap_ui(UIS_HEADERS ${UISOURCES})
+
+    qt5_wrap_cpp(MOC_HEADERS cliente/interfaz_lobby/mainwindow.h)
+
+    target_include_directories(taller_client
+        PRIVATE
+            ${CMAKE_BINARY_DIR}  
+    )
+
+    qt5_add_resources(RESOURCES ${CMAKE_SOURCE_DIR}/cliente/interfaz_lobby/resources.qrc)
+
+    target_sources(taller_client PRIVATE ${RESOURCES})
+
+    target_sources(taller_client
+        PRIVATE
+            ${UIS_HEADERS}       
+            ${MOC_HEADERS}      
+    )
+
+    target_link_libraries(taller_client
+        Qt5::Widgets
+        sdldemo
+    )
 endif()
