@@ -7,6 +7,7 @@ target_sources(taller_client
     cliente_sender.cpp
     cliente_receiver.cpp
     lobby.cpp
+    enemigo.cpp
     interfaz_lobby/mainwindow.cpp
     interfaz_lobby/resources.qrc
 
@@ -16,6 +17,7 @@ target_sources(taller_client
     cliente_sender.h
     cliente_receiver.h
     lobby.h
+    enemigo.h
     interfaz_lobby/mainwindow.h
 )
 

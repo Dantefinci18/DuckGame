@@ -6,7 +6,7 @@
 #include <cstdint>
 
 
-struct __attribute__((__packed__)) Evento{
+struct  Evento{
     int id;
     float x;
     float y;
