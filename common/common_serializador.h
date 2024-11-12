@@ -7,6 +7,9 @@
 
 #include "../common/common_accion.h"
 #include "../common/common_evento.h"
+#include "../server/Collidable.h"
+#include "../server/Platform.h"
+#include "../server/Player.h"
 
 class Serializador {
 public:
@@ -23,6 +26,9 @@ public:
     int deserializar_id(const uint8_t* id_binary);
 
     void imprimir_uint8_t_array(const uint8_t* array, size_t size);
+
+    std::vector<uint8_t> serializar_collidable(const Collidable& collidable);
+    Collidable* deserializar_collidable(const uint8_t* collidable_data);
 
 };
 #endif //COMMON_SERIALIZADOR_H

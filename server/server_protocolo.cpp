@@ -54,6 +54,27 @@ void ProtocoloServidor::enviar_estado(Evento evento) {
 - EVENTO_ESTADO_ACTUAL(jugadores, objetos, mapa) <- esto se enviaria al principio cuando se une un jugador.
 */
 
+void ProtocoloServidor::enviar_mapa(const std::vector<Collidable*>& collidables) {
+    bool was_closed = false;
+
+    int cantidad = collidables.size();
+    std::vector<uint8_t> buffer = serializador.serializar_id(cantidad);
+    conexion.sendall(buffer.data(), buffer.size(), &was_closed);
+    if (was_closed) {
+        throw std::runtime_error("Error al enviar la cantidad de collidables");
+    }
+
+    for (const auto& collidable : collidables) {
+        std::vector<uint8_t> collidable_data = serializador.serializar_collidable(*collidable);
+        conexion.sendall(collidable_data.data(), collidable_data.size(), &was_closed);
+        if (was_closed) {
+            throw std::runtime_error("Error al enviar collidable");
+        }
+    }
+}
+
+
+
 
 
 void ProtocoloServidor::cerrar_conexion() {

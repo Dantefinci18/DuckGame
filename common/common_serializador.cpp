@@ -171,3 +171,85 @@ void Serializador::imprimir_uint8_t_array(const uint8_t* array, size_t size) {
     }
     std::cout<<std::endl;
 }
+
+std::vector<uint8_t> Serializador::serializar_collidable(const Collidable& collidable) {
+    std::vector<uint8_t> bits(160);
+
+    uint32_t tipo_bits = static_cast<uint32_t>(collidable.getType());
+    for (int i = 0; i < 32; ++i) {
+        bits[i] = (tipo_bits >> (31 - i)) & 1;
+    }
+
+    uint32_t x_bits;
+    memcpy(&x_bits, &collidable.position.x, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[32 + i] = (x_bits >> (31 - i)) & 1;
+    }
+
+    uint32_t y_bits;
+    memcpy(&y_bits, &collidable.position.y, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[64 + i] = (y_bits >> (31 - i)) & 1;
+    }
+
+    uint32_t width_bits;
+    memcpy(&width_bits, &collidable.width, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[96 + i] = (width_bits >> (31 - i)) & 1;
+    }
+
+    uint32_t height_bits;
+    memcpy(&height_bits, &collidable.height, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[128 + i] = (height_bits >> (31 - i)) & 1;
+    }
+
+    return bits;
+}
+
+Collidable* Serializador::deserializar_collidable(const uint8_t* collidable_data) {
+
+    uint32_t tipo_bits = 0;
+    for (int i = 0; i < 32; i++) {
+        tipo_bits |= (collidable_data[i] << (31 - i));
+    }
+    CollidableType tipo = static_cast<CollidableType>(tipo_bits);
+
+    uint32_t x_bits = 0;
+    for (int i = 0; i < 32; i++) {
+        x_bits |= (collidable_data[32 + i] << (31 - i));
+    }
+    float x;
+    memcpy(&x, &x_bits, sizeof(float));
+
+    uint32_t y_bits = 0;
+    for (int i = 0; i < 32; i++) {
+        y_bits |= (collidable_data[64 + i] << (31 - i));
+    }
+    float y;
+    memcpy(&y, &y_bits, sizeof(float));
+
+    uint32_t width_bits = 0;
+    for (int i = 0; i < 32; i++) {
+        width_bits |= (collidable_data[96 + i] << (31 - i));
+    }
+    float width;
+    memcpy(&width, &width_bits, sizeof(float));
+
+    uint32_t height_bits = 0;
+    for (int i = 0; i < 32; i++) {
+        height_bits |= (collidable_data[128 + i] << (31 - i));
+    }
+    float height;
+    memcpy(&height, &height_bits, sizeof(float));
+
+    Vector position(x, y);
+
+    if (tipo == CollidableType::Platform) {
+        return new Platform(position, width, height);
+    } else if (tipo == CollidableType::Player) {
+        return new Player(position);
+    }
+
+    return nullptr;
+}
