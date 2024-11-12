@@ -49,9 +49,9 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
         bits[64 + i] = (id_bits >> (31 - i)) & 1; 
     }
 
-    std::cout << "Valor de x preserializar: " << evento.x << std::endl;
-    std::cout << "Valor de y preserializar: " << evento.y << std::endl;
-    std::cout << "Valor de id preserializar: " << evento.id << std::endl;
+    //std::cout << "Valor de x preserializar: " << evento.x << std::endl;
+    //std::cout << "Valor de y preserializar: " << evento.y << std::endl;
+    //std::cout << "Valor de id preserializar: " << evento.id << std::endl;
     return bits; 
 }
 
@@ -72,9 +72,9 @@ Evento Serializador::deserializar_evento(const uint8_t* id_data, const uint8_t* 
     memcpy(&evento.y, &y_bits, sizeof(float));  
     evento.id = deserializar_id(id_data);
 
-    std::cout << "Valor de x deserializado: " << evento.x << std::endl;
-    std::cout << "Valor de y deserializado: " << evento.y << std::endl;
-    std::cout << "Valor de id deserializado: " << evento.id << std::endl;
+    //std::cout << "Valor de x deserializado: " << evento.x << std::endl;
+    //std::cout << "Valor de y deserializado: " << evento.y << std::endl;
+    //std::cout << "Valor de id deserializado: " << evento.id << std::endl;
     return evento; 
 }
 

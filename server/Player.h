@@ -12,7 +12,9 @@ class Player : public Collidable {
         bool is_standing_on_something;
     public:
     void move() {
-        velocity.y -= 0.2;
+        if (velocity.y > -5) {
+            velocity.y -= 1;
+        }
         position.y += velocity.y;
         position.x += velocity.x * speed;
         if (position.y < 0) {
@@ -31,7 +33,7 @@ class Player : public Collidable {
         if (is_able_to_jump()) {
             std::cout << "is_able" << std::endl;
             is_on_ground = false;
-            velocity.y = 5.0f;
+            velocity.y = 10.0f;
         }
     }
 
@@ -78,7 +80,7 @@ class Player : public Collidable {
             }
 
             else if (side == CollidableSide::Left || side == CollidableSide::Right) {
-                velocity.x = -velocity.x;
+                velocity.x = 0;
                 return true;
             }
             return false;

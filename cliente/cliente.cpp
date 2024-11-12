@@ -27,6 +27,7 @@ void Cliente::procesar_eventos_recibidos() {
     while (tried) {
         tried = queue_eventos.try_pop(evento_recibido);
         if (tried) {
+            std::cout << evento_recibido.id << std::endl;
             if (evento_recibido.id != id) { 
                 auto it = enemigos.find(evento_recibido.id);
                 if (it != enemigos.end()) {
