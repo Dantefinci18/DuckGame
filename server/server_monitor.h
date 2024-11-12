@@ -18,7 +18,7 @@ class PlayerMonitor {
     public:
         void agregar_jugador(Jugador* jugador);
         void eliminar_jugador(int id);
-        void broadcast_evento(Evento evento);
+        void broadcast_evento(const Evento& evento);
         Player* get_player(int id);
         
         void procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables);

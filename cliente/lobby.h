@@ -2,6 +2,7 @@
 #define LOBBY_H
 
 #include "../common/common_socket.h"
+#include "../common/common_serializador.h"
 #include "cliente_protocolo.h"
 
 
@@ -13,6 +14,7 @@ public:
     Socket get_socket();
 private:
     Socket socket;
+    Serializador serializador;
 
   
 };

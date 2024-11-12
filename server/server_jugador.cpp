@@ -22,8 +22,25 @@ void Jugador::run() {
 
 bool Jugador::esta_conectado() { return !receiver.se_cerro() && !sender.se_cerro(); }
 
-void Jugador::enviar_evento(Evento evento) {
-    cola_eventos.try_push(evento);
+void Jugador::enviar_evento(const Evento& evento) {
+    std::unique_ptr<Evento> evento_ptr;
+
+    switch (evento.get_tipo()) {
+        case Evento::EventoMovimiento: {
+            const EventoMovimiento& evento_movimiento = static_cast<const EventoMovimiento&>(evento);
+            evento_ptr = std::make_unique<EventoMovimiento>(evento_movimiento.id, evento_movimiento.x, evento_movimiento.y);
+            break;
+        }
+        case Evento::EventoMapa: {
+            const EventoMapa& evento_mapa = static_cast<const EventoMapa&>(evento);
+            evento_ptr = std::make_unique<EventoMapa>(evento_mapa.collidables);
+            break;
+        }
+        default:
+            return; 
+    }
+
+    cola_eventos.try_push(std::move(evento_ptr));
 }
 
 void Jugador::stop() {

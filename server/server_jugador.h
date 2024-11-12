@@ -13,7 +13,7 @@
 class Jugador {
 private:
     ProtocoloServidor protocolo;
-    Queue<Evento> cola_eventos;
+    Queue<std::unique_ptr<Evento>> cola_eventos;
     int id;
     Sender sender;
     Receiver receiver;
@@ -29,7 +29,7 @@ public:
 
     bool esta_conectado();
 
-    void enviar_evento(Evento evento);
+    void enviar_evento(const Evento& evento);
 
     void cerrar_conexion();
 

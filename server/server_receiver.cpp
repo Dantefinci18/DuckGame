@@ -17,7 +17,7 @@ void Receiver::run() {
                 break;
             }
             Accion accion(id, command);
-            acciones.push(accion);
+            acciones.push(std::move(accion));
         }
 
     } catch (std::exception& e) {

@@ -3,6 +3,7 @@
 #include <bitset>
 #include <iostream>
 #include <cstring>
+#include <memory> 
 
 
 ClienteProtocolo::ClienteProtocolo(Socket&& socket) : socket(std::move(socket)) {}
@@ -29,30 +30,34 @@ int ClienteProtocolo::recibir_id() {
     return serializador.deserializar_id(data);
 }
 
-bool ClienteProtocolo::recibir_evento(Evento &evento) {
+std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
     bool was_closed = false;
+
+    uint8_t tipo_evento[8];
+    socket.recvall(tipo_evento, sizeof(tipo_evento), &was_closed);
+    if (was_closed) {
+        return nullptr;
+    }
 
     uint8_t x[32];
     socket.recvall(x, sizeof(x), &was_closed);
     if (was_closed) {
-        return false;
+        return nullptr;
     }
 
     uint8_t y[32];
     socket.recvall(y, sizeof(y), &was_closed);
     if (was_closed) {
-        return false;
+        return nullptr;
     }
 
     uint8_t id[32];
     socket.recvall(id, sizeof(id), &was_closed);
     if (was_closed) {
-        return false;
+        return nullptr;
     }
 
-    evento = serializador.deserializar_evento(id, x, y);
-
-    return !was_closed;
+    return serializador.deserializar_evento(tipo_evento,id, x, y);
 }
 
 void ClienteProtocolo::cerrar_conexion() {

@@ -11,7 +11,7 @@ class ClienteProtocolo{
         void cerrar_conexion();
         bool enviar_accion(ComandoAccion &accion);
         int recibir_id();
-        bool recibir_evento(Evento &evento);
+        std::unique_ptr<Evento> recibir_evento();
 
     private:
         Socket socket;

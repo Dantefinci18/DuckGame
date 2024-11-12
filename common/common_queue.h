@@ -40,82 +40,81 @@ public:
     explicit Queue(const unsigned int max_size): max_size(max_size), closed(false) {}
 
 
-    bool try_push(T const& val) {
-        std::unique_lock<std::mutex> lck(mtx);
+bool try_push(T&& val) {
+    std::unique_lock<std::mutex> lck(mtx);
 
+    if (closed) {
+        throw ClosedQueue();
+    }
+
+    if (q.size() == this->max_size) {
+        return false;
+    }
+
+    if (q.empty()) {
+        is_not_empty.notify_all();
+    }
+
+    q.push(std::move(val));
+    return true;
+}
+
+
+bool try_pop(T& val) {
+    std::unique_lock<std::mutex> lck(mtx);
+
+    if (q.empty()) {
         if (closed) {
             throw ClosedQueue();
         }
-
-        if (q.size() == this->max_size) {
-            return false;
-        }
-
-        if (q.empty()) {
-            is_not_empty.notify_all();
-        }
-
-        q.push(val);
-        return true;
+        return false;
     }
 
-    bool try_pop(T& val) {
-        std::unique_lock<std::mutex> lck(mtx);
-
-        if (q.empty()) {
-            if (closed) {
-                throw ClosedQueue();
-            }
-            return false;
-        }
-
-        if (q.size() == this->max_size) {
-            is_not_full.notify_all();
-        }
-
-        val = q.front();
-        q.pop();
-        return true;
+    if (q.size() == this->max_size) {
+        is_not_full.notify_all();
     }
 
-    void push(T const& val) {
-        std::unique_lock<std::mutex> lck(mtx);
+    val = std::move(q.front());
+    q.pop();
+    return true;
+}
 
+
+ void push(T&& value) {
+    std::unique_lock<std::mutex> lck(mtx);
+    if (closed) {
+        throw ClosedQueue();
+    }
+    while (q.size() == this->max_size) {
+        is_not_full.wait(lck);
+    }
+    if (q.empty()) {
+        is_not_empty.notify_all();
+    }
+    q.push(std::move(value));
+}
+
+
+T pop() {
+    std::unique_lock<std::mutex> lck(mtx);
+
+    while (q.empty()) {
         if (closed) {
             throw ClosedQueue();
         }
-
-        while (q.size() == this->max_size) {
-            is_not_full.wait(lck);
-        }
-
-        if (q.empty()) {
-            is_not_empty.notify_all();
-        }
-
-        q.push(val);
+        is_not_empty.wait(lck);
     }
 
-
-    T pop() {
-        std::unique_lock<std::mutex> lck(mtx);
-
-        while (q.empty()) {
-            if (closed) {
-                throw ClosedQueue();
-            }
-            is_not_empty.wait(lck);
-        }
-
-        if (q.size() == this->max_size) {
-            is_not_full.notify_all();
-        }
-
-        T const val = q.front();
-        q.pop();
-
-        return val;
+    if (q.size() == this->max_size) {
+        is_not_full.notify_all();
     }
+
+    T val = std::move(q.front());
+    q.pop();
+
+    return val;
+}
+
 
     void close() {
         std::unique_lock<std::mutex> lck(mtx);

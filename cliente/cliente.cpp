@@ -21,32 +21,49 @@ void Cliente::start() {
 }
 
 void Cliente::procesar_eventos_recibidos() {
-    Evento evento_recibido;
+    std::unique_ptr<Evento> evento_recibido;
     bool tried = true;
 
     while (tried) {
         tried = queue_eventos.try_pop(evento_recibido);
-        if (tried) {
-            std::cout << evento_recibido.id << std::endl;
-            if (evento_recibido.id != id) { 
-                auto it = enemigos.find(evento_recibido.id);
-                if (it != enemigos.end()) {
-                    it->second->mover_a(evento_recibido.x, evento_recibido.y);
-                } else {
-                    enemigos[evento_recibido.id] = std::make_unique<Enemigo>(
-                        evento_recibido.id, evento_recibido.x, evento_recibido.y, window);
+        if (tried && evento_recibido) {
+            switch (evento_recibido->get_tipo()) {
+                case Evento::EventoMovimiento: {
+                    auto evento_mov = static_cast<EventoMovimiento*>(evento_recibido.get());
+                    std::cout << evento_mov->id << std::endl;
+                    manejar_enemigos(*evento_mov);  
+                    break;
                 }
-            } else {
-                duck.mover_a_una_posicion(evento_recibido.x, evento_recibido.y);
+                case Evento::EventoMapa: {
+                    auto evento_mapa = static_cast<EventoMapa*>(evento_recibido.get());
+                    break;
+                }
+                default:
+                    std::cerr << "Error: Tipo de evento desconocido" << std::endl;
+                    break;
             }
         }
+    }
+}
+void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov) {
+    if (evento_mov.id != id) {
+        auto it = enemigos.find(evento_mov.id);
+        if (it != enemigos.end()) {
+            it->second->mover_a(evento_mov.x, evento_mov.y);
+        } else {
+            enemigos[evento_mov.id] = std::make_unique<Enemigo>(
+                evento_mov.id, evento_mov.x, evento_mov.y, window);
+        }
+    } else {
+        duck.mover_a_una_posicion(evento_mov.x, evento_mov.y);
     }
 }
 
 
 void Cliente::enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion) {
     if (*tecla_anterior != accion && conectado) {
-        queue_acciones.push(accion);
+        queue_acciones.push(std::move(accion));
+
         *tecla_anterior = accion;
     }
 }

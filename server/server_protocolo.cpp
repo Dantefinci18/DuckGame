@@ -31,8 +31,7 @@ bool ProtocoloServidor::enviar_id(int id) {
 
     return !was_closed; 
 }
-
-void ProtocoloServidor::enviar_estado(Evento evento) {
+void ProtocoloServidor::enviar_estado(const Evento& evento) {
     bool was_closed = false;
 
     std::vector<uint8_t> bits = serializador.serializar_evento(evento);
