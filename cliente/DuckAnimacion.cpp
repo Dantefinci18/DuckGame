@@ -5,7 +5,7 @@
 
 #include "DuckAnimacion.h"
 #include <SDL2/SDL_render.h>
-
+#include <iostream>
 DuckAnimacion::DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial)
     : movimientos_en_x("../Imagenes/DuckMovimientos.png", window),
       movimiento_en_y("../Imagenes/DuckSalto.png", window),
@@ -20,6 +20,9 @@ DuckAnimacion::DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial
 void DuckAnimacion::render() {
     if (x_actual < x_des) {
         x_actual += DESPLAZAMIENTO;
+        if (x_actual > x_des) {
+            x_actual = x_des;
+        }
         flip = SDL_FLIP_NONE;
         if (x_img < ANCHO_IMG_DUCK_TOTAL) {
             x_img += ANCHO_IMG_DUCK;
@@ -28,6 +31,9 @@ void DuckAnimacion::render() {
         }
     } else if (x_actual > x_des) {
         x_actual -= DESPLAZAMIENTO;
+        if (x_actual < x_des) {
+            x_actual = x_des;
+        }
         flip = SDL_FLIP_HORIZONTAL;
         if (x_img < ANCHO_IMG_DUCK_TOTAL) {
             x_img += ANCHO_IMG_DUCK;
@@ -40,8 +46,14 @@ void DuckAnimacion::render() {
 
     if (y_actual < y_des) {
         y_actual += DESPLAZAMIENTO_Y;
+        if (y_actual > y_des) {
+            y_actual = y_des;
+        }
     } else if (y_actual > y_des) {
         y_actual -= DESPLAZAMIENTO_Y;
+        if (y_actual < y_des) {
+            y_actual = y_des;
+        }
     }
 
     if (x_actual == x_des && y_actual == y_des) {
@@ -50,7 +62,9 @@ void DuckAnimacion::render() {
         quieto = false;
     }
 
-    int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK;  
+    int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK;
+    std::cout << y_renderizado << std::endl;
+    std::cout << quieto << std::endl;  
     Area srcArea(x_img, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
     Area destArea(x_actual, y_renderizado, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
 
