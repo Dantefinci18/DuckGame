@@ -25,13 +25,14 @@ private:
     ClienteReceiver receiver;
     int id;
     ClienteSender sender;
-    Queue<Evento> queue_eventos;
+    Queue<std::unique_ptr<Evento>> queue_eventos;
     Queue<ComandoAccion> queue_acciones;
     std::atomic<bool> conectado {true};
     std::unordered_map<int, std::unique_ptr<Enemigo>> enemigos;
 
     void ejecutar_juego();
     void procesar_eventos_recibidos();
+    void manejar_enemigos(const EventoMovimiento& evento_mov);
     void enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion);
     void controlar_eventos_del_teclado(ComandoAccion* tecla_anterior);
     void stop();

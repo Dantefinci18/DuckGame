@@ -14,14 +14,14 @@
 class Sender: public Thread {
 private:
     ProtocoloServidor& protocolo;
-    Queue<Evento>& cola_eventos;
+    Queue<std::unique_ptr<Evento>>& cola_eventos; 
     std::mutex mtx;
     int id;
 
     void enviar_eventos();
 
 public:
-    explicit Sender(ProtocoloServidor& protocolo, Queue<Evento>& cola_eventos, int id);
+    explicit Sender(ProtocoloServidor& protocolo, Queue<std::unique_ptr<Evento>>& cola_eventos, int id);  
 
     void stop() override;
 

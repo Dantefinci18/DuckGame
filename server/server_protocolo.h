@@ -16,7 +16,7 @@ class ProtocoloServidor{
         ComandoAccion recibir_accion();
         
         bool enviar_id(int id);
-        void enviar_estado(Evento evento);
+        void enviar_estado(const Evento& evento);
 
         void cerrar_conexion();
 };

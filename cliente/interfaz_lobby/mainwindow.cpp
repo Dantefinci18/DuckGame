@@ -2,13 +2,16 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QComboBox>
 #include <QPixmap>
+#include <string>  
 
 MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     QMainWindow(parent),
     lobby(lobby),
     crear_partida_Button(new QPushButton("Crear partida", this)),
-    statusLabel(new QLabel("Esperando conexión...", this))
+    statusLabel(new QLabel("Esperando conexión...", this)),
+    mapaComboBox(new QComboBox(this))
 {
     setWindowTitle("Lobby");
     setFixedSize(800, 600);
@@ -22,16 +25,24 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     setCentralWidget(centralWidget);
 
     QVBoxLayout *layout = new QVBoxLayout(centralWidget);
+    
+    mapaComboBox->addItem("Mapa 1");
+    mapaComboBox->addItem("Mapa 2");
+    layout->addWidget(mapaComboBox);
+    
     layout->addWidget(crear_partida_Button);
     layout->addWidget(statusLabel);
 
     connect(crear_partida_Button, &QPushButton::clicked, this, &MainWindow::crear_partida_clicked);
 }
 
-MainWindow::~MainWindow() {
-}
+MainWindow::~MainWindow() {}
 
 void MainWindow::crear_partida_clicked() {
-    statusLabel->setText("Partida creada");
-    emit crear_partida();  
+    QString mapaSeleccionadoQString = mapaComboBox->currentText();
+    std::string mapaSeleccionado = mapaSeleccionadoQString.toStdString();
+    
+    statusLabel->setText("Partida creada: " + mapaSeleccionadoQString);
+    
+    emit crear_partida(mapaSeleccionado);
 }

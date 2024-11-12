@@ -5,18 +5,19 @@
 #include "cliente_protocolo.h"
 #include "../common/common_queue.h"
 #include <atomic>
+#include <memory>  
 
-class ClienteReceiver : public Thread{
-    public:
-        explicit ClienteReceiver(ClienteProtocolo &protocolo, Queue<Evento> &queue_eventos, std::atomic<bool> &cliente_conectado);
-        void run() override;
-        int get_id();
-    private:
-        ClienteProtocolo &protocolo;
-        Queue<Evento> &queue_eventos;
-        std::atomic<bool> &cliente_conectado;
-        int id;
+class ClienteReceiver : public Thread {
+public:
+    explicit ClienteReceiver(ClienteProtocolo &protocolo, Queue<std::unique_ptr<Evento>> &queue_eventos, std::atomic<bool> &cliente_conectado);
+    void run() override;
+    int get_id();
+
+private:
+    ClienteProtocolo &protocolo;
+    Queue<std::unique_ptr<Evento>> &queue_eventos;  
+    std::atomic<bool> &cliente_conectado;
+    int id;
 };
-
 
 #endif

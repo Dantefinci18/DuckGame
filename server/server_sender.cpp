@@ -1,19 +1,31 @@
 #include "server_sender.h"
-
 #include <string>
 
-Sender::Sender(ProtocoloServidor& protocolo, Queue<Evento>& cola_eventos, int id):
-        protocolo(protocolo), cola_eventos(cola_eventos), id(id) {}
+Sender::Sender(ProtocoloServidor& protocolo, Queue<std::unique_ptr<Evento>>& cola_eventos, int id)
+    : protocolo(protocolo), cola_eventos(cola_eventos), id(id) {}
 
 void Sender::enviar_eventos() {
     protocolo.enviar_id(id);
     while (_keep_running) {
-        Evento estado = cola_eventos.pop();
-        protocolo.enviar_estado(estado);
+        std::unique_ptr<Evento> estado = cola_eventos.pop();  
+
+        if (estado) {
+            switch (estado->get_tipo()) {
+                case Evento::EventoMovimiento:
+                    protocolo.enviar_estado(*static_cast<EventoMovimiento*>(estado.get()));
+                    break;
+
+                case Evento::EventoMapa:
+                    protocolo.enviar_estado(*static_cast<EventoMapa*>(estado.get()));
+                    break;
+
+                default:
+                    std::cerr << "Error: Tipo de evento desconocido" << std::endl;
+                    break;
+            }
+        }
     }
 }
-
-
 void Sender::stop() {
     _keep_running = false;
     cola_eventos.close();
@@ -28,4 +40,6 @@ void Sender::run() {
     }
 }
 
-bool Sender::se_cerro() { return !_keep_running; }
+bool Sender::se_cerro() {
+    return !_keep_running;
+}

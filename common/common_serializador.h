@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <memory>
 
 #include "../common/common_accion.h"
 #include "../common/common_evento.h"
@@ -17,7 +18,7 @@ public:
 
     std::vector<uint8_t> serializar_evento(const Evento& evento);
 
-    Evento deserializar_evento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data);
+    std::unique_ptr<Evento> deserializar_evento(const uint8_t*,const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data);
 
     std::vector<uint8_t> serializar_id(int id);
     int deserializar_id(const uint8_t* id_binary);

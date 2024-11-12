@@ -12,11 +12,12 @@ void PlayerMonitor::eliminar_jugador(int id) {
     jugadores.erase(id);
 }
 
-void PlayerMonitor::broadcast_evento(Evento evento) {
+void PlayerMonitor::broadcast_evento(const Evento& evento) {
     for (const auto& pair : jugadores) {
-        pair.second->enviar_evento(evento);
+        pair.second->enviar_evento(evento); 
     }
 }
+
 Player* PlayerMonitor::get_player(int id) {
     return jugadores[id]->get_fisicas();
 }
@@ -40,24 +41,22 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
         } else if (command == QUIETO) {
             player->set_direction({0.0f, 0.0f});
         
-        }
+        } 
+    
     }
 
-    // Update world
     for (auto& player : jugadores) {
-        Vector anterior = player.second->get_fisicas()->get_posicion();
-        int id = player.first;
-        //TODO: Cambiar para pasarle todos los colisionables cuando los haya.
-        player.second->update_fisicas(collidables);
+    Vector anterior = player.second->get_fisicas()->get_posicion();
+    int id = player.first;
+
+    player.second->update_fisicas(collidables);
+    
+    Vector pos_pato = player.second->get_fisicas()->get_posicion();
+
+    if (anterior.x != pos_pato.x || anterior.y != pos_pato.y) {
+        EventoMovimiento eventoMovimiento(id, pos_pato.x, pos_pato.y);
         
-        Vector pos_pato = player.second->get_fisicas()->get_posicion();
-        // TODO: Metodo player.deberia_actualizar() para saber si enviar un evento
-        if (anterior.x != pos_pato.x || anterior.y != pos_pato.y) {
-            Evento evento;
-            evento.id = id;
-            evento.x = pos_pato.x;
-            evento.y = pos_pato.y;
-            broadcast_evento(evento);
+        broadcast_evento(eventoMovimiento);
         }
     }
 }

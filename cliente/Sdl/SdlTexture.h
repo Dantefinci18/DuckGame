@@ -23,6 +23,8 @@ public:
      **/
     int render(const Area& src, const Area& dest, SDL_RendererFlip flip) const;
 
+    SDL_Texture* getTexture() const;
+
 private:
     SDL_Texture* loadTexture(const std::string& filename);
     SDL_Renderer* renderer;
