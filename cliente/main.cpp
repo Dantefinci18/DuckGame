@@ -24,10 +24,10 @@ int main(int argc, char* argv[]) {
     MainWindow mainWindow(&lobby);    
     mainWindow.show();               
     
-    QObject::connect(&mainWindow, &MainWindow::crear_partida, [&](){
-
+    QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
+        lobby.crear_partida(mapaSeleccionado);
         Cliente cliente(lobby.get_socket());
-        cliente.start();  
+        cliente.start();
     });
 
     return app.exec();  

@@ -29,3 +29,8 @@ int SdlTexture::render(const Area& src, const Area& dest, SDL_RendererFlip flip)
 
     return SDL_RenderCopyEx(this->renderer, this->texture, &sdlSrc, &sdlDest,0,nullptr,flip);
 }
+
+
+SDL_Texture* SdlTexture::getTexture() const {
+    return texture;
+}
