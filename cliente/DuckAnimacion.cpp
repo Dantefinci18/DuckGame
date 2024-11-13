@@ -9,7 +9,7 @@
 #include <SDL2/SDL_render.h>
 #include "../server/Platform.h"
 
-DuckAnimacion::DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial)
+DuckAnimacion::DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial, std::vector<Collidable*> collidables)
     : movimientos_en_x("../Imagenes/DuckMovimientos.png", window),
       movimiento_en_y("../Imagenes/DuckSalto.png", window),
       plataformas("../Imagenes/Tileset_Surface.png", window),
@@ -19,9 +19,29 @@ DuckAnimacion::DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial
       y_des(y_inicial),
       x_img(0),
       quieto(true),
-      flip(SDL_FLIP_NONE) {}
+      flip(SDL_FLIP_NONE),
+      collidables_plataformas(collidables) {}
+
+void DuckAnimacion::renderizar_mapa(){
+     for (auto& collidable : this->collidables_plataformas) {
+        if (collidable->getType() == CollidableType::Platform) {
+            Platform* platform = static_cast<Platform*>(collidable);
+
+            float plat_x = platform->position.x;  
+            float plat_y = ALTO_VENTANA - platform->position.y - platform->height * FACTOR_ESCALA; 
+            float plat_width = platform->width;   
+            float plat_height = platform->height; 
+
+            Area platformSrcArea(0, 0, 38,38);  
+            Area platformDestArea(plat_x, plat_y, plat_width, plat_height); 
+            plataformas.render(platformSrcArea, platformDestArea, SDL_FLIP_NONE);
+        }
+    }
+}
 
 void DuckAnimacion::render() {
+    renderizar_mapa();
+
     if (x_actual < x_des) {
         x_actual += DESPLAZAMIENTO;
         flip = SDL_FLIP_NONE;
@@ -67,22 +87,8 @@ void DuckAnimacion::render() {
     } else {
         movimientos_en_x.render(srcArea, destArea, flip);  
     }
-    std::cout << "Cantidad de collidables: " << this->collidables_plataformas.size() << std::endl;
-    for (auto& collidable : this->collidables_plataformas) {
-        if (collidable->getType() == CollidableType::Platform) {
-            Platform* platform = static_cast<Platform*>(collidable);
-
-            float plat_x = platform->position.x;  
-            float plat_y = platform->position.y;
-            float plat_width = platform->width;   
-            float plat_height = platform->height; 
-
-            Area platformSrcArea(0, 0, plat_width, plat_height);  
-            Area platformDestArea(plat_x, plat_y, plat_width, plat_height); 
-            std::cout << "Plataforma: " << plat_x << " " << plat_y << " " << plat_width << " " << plat_height << std::endl;
-            plataformas.render(platformSrcArea, platformDestArea, SDL_FLIP_NONE);
-        }
-    }
+    
+   
 
     if (x_actual == x_des && y_actual == y_des) {
         quieto = true;
@@ -90,6 +96,7 @@ void DuckAnimacion::render() {
         quieto = false;
     }
 }
+
 
 
 bool DuckAnimacion::esta_quieto() { return quieto; }

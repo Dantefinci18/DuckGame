@@ -43,7 +43,6 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
 
     switch (tipo) {
         case Evento::EventoMovimiento: {
-            std::cout << "Recibiendo evento movimiento" << std::endl;
             uint8_t x[32];
             socket.recvall(x, sizeof(x), &was_closed);
             if (was_closed) {
@@ -65,7 +64,6 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             return serializador.deserializar_evento(id, x, y);
         }
         case Evento::EventoMapa: {
-            std::cout << "Recibiendo evento mapa" << std::endl;
             uint8_t cantidad[32];
             socket.recvall(cantidad, sizeof(cantidad), &was_closed);
             if (was_closed) {
@@ -73,7 +71,6 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             }
 
             int cantidad_collidables = serializador.deserializar_cantidad(cantidad);
-            std::cout << "Cantidad de collidables: " << cantidad_collidables << std::endl;
             std::vector<Collidable*> collidables;
 
             for (int i = 0; i < cantidad_collidables; i++) {

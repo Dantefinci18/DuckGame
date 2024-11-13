@@ -8,12 +8,14 @@
 #include <memory>
 #include "../server/Platform.h"  
 
-Cliente::Cliente(Socket&& socket)
-    : window(ANCHO_VENTANA, ALTO_VENTANA),
-      duck(window, 200.0f, 300.0f),
+Cliente::Cliente(int id,Socket&& socket, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
+    : id(id),
+      window(ANCHO_VENTANA, ALTO_VENTANA),
+      duck(window, x_inicial,y_inicial,collidables),
       protocolo(std::move(socket)),
       receiver(protocolo, queue_eventos, conectado),
-      sender(protocolo, queue_acciones) {}
+      sender(protocolo, queue_acciones),
+      collidables(collidables) {}
 
 void Cliente::start() {
     receiver.start();
@@ -30,23 +32,14 @@ void Cliente::procesar_eventos_recibidos() {
     while (tried) {
         tried = queue_eventos.try_pop(evento_recibido);
         if (tried && evento_recibido) {
-            std::cout << "Evento recibido" << std::endl;
             switch (evento_recibido->get_tipo()) {
                 case Evento::EventoMovimiento: {
                     auto evento_mov = static_cast<EventoMovimiento*>(evento_recibido.get());
-                    manejar_enemigos(*evento_mov);  
+                    manejar_enemigos(*evento_mov, collidables);  
                     break;
                 }
                 case Evento::EventoMapa: {
-                    auto evento_mapa = static_cast<EventoMapa*>(evento_recibido.get());
-                    std::vector<Collidable*> collidables = evento_mapa->collidables;
-                    for (auto& collidable : collidables) {
-                        if (collidable->getType() == CollidableType::Platform) {
-                            Platform* platform = static_cast<Platform*>(collidable);
-                            std::cout << "Plataforma: " << platform->position.x << " " << platform->position.y << " " << platform->width << " " << platform->height << std::endl;
-                        }
-                    }
-                    duck.set_collidables(collidables);
+
                     break;
                 }
                 default:
@@ -56,14 +49,14 @@ void Cliente::procesar_eventos_recibidos() {
         }
     }
 }
-void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov) {
+void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov, std::vector<Collidable*> collidables) {
     if (evento_mov.id != id) {
         auto it = enemigos.find(evento_mov.id);
         if (it != enemigos.end()) {
             it->second->mover_a(evento_mov.x, evento_mov.y);
         } else {
             enemigos[evento_mov.id] = std::make_unique<Enemigo>(
-                evento_mov.id, evento_mov.x, evento_mov.y, window);
+                evento_mov.id, evento_mov.x, evento_mov.y, window, collidables);
         }
     } else {
         duck.mover_a_una_posicion(evento_mov.x, evento_mov.y);
@@ -128,9 +121,7 @@ void Cliente::ejecutar_juego() {
 
             fondo.render(srcArea, destArea, SDL_FLIP_NONE);
 
-            if (!duck.esta_quieto()) {
-                duck.render();
-            }
+            duck.render();
 
             for (auto& pair : enemigos) {
                 pair.second->renderizar();  
@@ -158,3 +149,5 @@ void Cliente::join() {
     receiver.join();
     sender.join();
 }
+
+Cliente::~Cliente() {}

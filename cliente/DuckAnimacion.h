@@ -23,10 +23,11 @@ private:
     float x_des = x_actual;       
     int y_des = y_actual;         
     SDL_RendererFlip flip = SDL_FLIP_NONE;  
-    std::vector<Collidable*> collidables_plataformas;  
+    std::vector<Collidable*> collidables_plataformas;
+    void renderizar_mapa();
 
 public:
-    explicit DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial);
+    explicit DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial, std::vector<Collidable*> collidables);
 
     void render();
 
