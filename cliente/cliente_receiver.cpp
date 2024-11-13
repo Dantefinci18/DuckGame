@@ -4,8 +4,6 @@ ClienteReceiver::ClienteReceiver(ClienteProtocolo &protocolo, Queue<std::unique_
     : protocolo(protocolo), queue_eventos(queue_eventos), cliente_conectado(cliente_conectado), id(-1) {}
 
 void ClienteReceiver::run() {
-    id = protocolo.recibir_id();
-    std::cout << "id for client: " << id << std::endl;
     
     while (_keep_running) {
         try {

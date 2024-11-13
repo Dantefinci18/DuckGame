@@ -32,6 +32,7 @@ void Jugador::enviar_evento(const Evento& evento) {
             break;
         }
         case Evento::EventoMapa: {
+            
             const EventoMapa& evento_mapa = static_cast<const EventoMapa&>(evento);
             evento_ptr = std::make_unique<EventoMapa>(evento_mapa.collidables);
             break;

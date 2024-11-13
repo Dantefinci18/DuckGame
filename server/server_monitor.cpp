@@ -41,11 +41,16 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
         } else if (command == QUIETO) {
             player->set_direction({0.0f, 0.0f});
         
-        } 
+        } else if (command == NUEVA_PARTIDA){
+           EventoMapa eventoMapa(collidables);
+              broadcast_evento(eventoMapa);
+              return;
+        }
     
     }
 
     for (auto& player : jugadores) {
+        
     Vector anterior = player.second->get_fisicas()->get_posicion();
     int id = player.first;
 

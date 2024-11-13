@@ -4,10 +4,11 @@
 #include <string>
 #include "DuckAnimacion.h"  
 #include "Sdl/SdlWindow.h"
+#include "../server/Collidable.h"
 
 class Enemigo {
 public:
-    Enemigo(int id, float x, float y, SdlWindow& window);
+    Enemigo(int id, float x, float y, SdlWindow& window, std::vector<Collidable*> collidables);
 
     int get_id() const;
 

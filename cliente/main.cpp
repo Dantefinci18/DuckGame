@@ -7,6 +7,8 @@
 #include "lobby.h"
 #include <QApplication>
 #include "interfaz_lobby/mainwindow.h"
+#include "../server/Collidable.h"
+#include "../server/Platform.h"  
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -24,9 +26,29 @@ int main(int argc, char* argv[]) {
     MainWindow mainWindow(&lobby);    
     mainWindow.show();               
     
+    std::vector<Collidable*> collidables; 
+    float x_inicial = 0;
+    float y_inicial = 0;
+
     QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
         lobby.crear_partida(mapaSeleccionado);
-        Cliente cliente(lobby.get_socket());
+        int id = lobby.recibir_id();
+        while (collidables.empty()) {
+            std::unique_ptr<Evento> evento = lobby.recibir_evento();
+            if (evento->get_tipo() == Evento::EventoMapa) {
+                auto evento_mapa = static_cast<EventoMapa*>(evento.get());
+                collidables = evento_mapa->collidables;
+            }
+            if (evento->get_tipo() == Evento::EventoMovimiento) {
+                auto evento_mov = static_cast<EventoMovimiento*>(evento.get());
+                x_inicial = evento_mov->x;
+                y_inicial = evento_mov->y;
+
+
+            }
+        }
+
+        Cliente cliente(id,lobby.get_socket(), collidables,x_inicial,y_inicial);
         cliente.start();
     });
 

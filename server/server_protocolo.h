@@ -4,6 +4,8 @@
 #include "common/common_socket.h"
 #include "common/common_accion.h"
 #include "common/common_serializador.h"
+#include "common/common_evento.h"
+#include "Collidable.h"
 #include "Vector.h"
 
 class ProtocoloServidor{
@@ -16,8 +18,7 @@ class ProtocoloServidor{
         ComandoAccion recibir_accion();
         
         bool enviar_id(int id);
-        void enviar_estado(const Evento& evento);
-
+        void enviar_estado(const Evento& evento);   
         void cerrar_conexion();
 };
 

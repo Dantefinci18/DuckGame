@@ -39,27 +39,82 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
         return nullptr;
     }
 
-    uint8_t x[32];
-    socket.recvall(x, sizeof(x), &was_closed);
-    if (was_closed) {
-        return nullptr;
+    Evento::TipoEvento tipo = serializador.deserializar_tipo_evento(tipo_evento);
+
+    switch (tipo) {
+        case Evento::EventoMovimiento: {
+            uint8_t x[32];
+            socket.recvall(x, sizeof(x), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t y[32];
+            socket.recvall(y, sizeof(y), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t id[32];
+            socket.recvall(id, sizeof(id), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            return serializador.deserializar_evento(id, x, y);
+        }
+        case Evento::EventoMapa: {
+            uint8_t cantidad[32];
+            socket.recvall(cantidad, sizeof(cantidad), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            int cantidad_collidables = serializador.deserializar_cantidad(cantidad);
+            std::vector<Collidable*> collidables;
+
+            for (int i = 0; i < cantidad_collidables; i++) {
+                uint8_t collidable_data[160];
+                socket.recvall(collidable_data, sizeof(collidable_data), &was_closed);
+                if (was_closed) {
+                    return nullptr;
+                }
+
+                Collidable* collidable = serializador.deserializar_collidable(collidable_data);
+                collidables.push_back(collidable);
+            }
+            return std::make_unique<EventoMapa>(collidables);
+        }
     }
 
-    uint8_t y[32];
-    socket.recvall(y, sizeof(y), &was_closed);
-    if (was_closed) {
-        return nullptr;
-    }
-
-    uint8_t id[32];
-    socket.recvall(id, sizeof(id), &was_closed);
-    if (was_closed) {
-        return nullptr;
-    }
-
-    return serializador.deserializar_evento(tipo_evento,id, x, y);
+   
 }
 
+std::vector<Collidable*> ClienteProtocolo::recibir_mapa() {
+    bool was_closed = false;
+
+    uint8_t cantidad_data[32];
+    socket.recvall(cantidad_data, sizeof(cantidad_data), &was_closed);
+    if (was_closed) {
+        throw std::runtime_error("Conexión cerrada al recibir cantidad de collidables");
+    }
+
+    int cantidad = serializador.deserializar_id(cantidad_data);
+    std::vector<Collidable*> collidables;
+
+    for (int i = 0; i < cantidad; i++) {
+        uint8_t collidable_data[160];
+        socket.recvall(collidable_data, sizeof(collidable_data), &was_closed); 
+        if (was_closed) {
+            throw std::runtime_error("Conexión cerrada al recibir collidable");
+        }
+
+        Collidable* collidable = serializador.deserializar_collidable(collidable_data);
+        collidables.push_back(collidable);
+    }
+
+    return collidables;
+}
 void ClienteProtocolo::cerrar_conexion() {
     socket.shutdown(2);
     socket.close();

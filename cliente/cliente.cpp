@@ -3,14 +3,19 @@
 #include "cliente.h"
 #include "../common/common_evento.h"
 #include "../common/common_queue.h"
-#include "enemigo.h"  
+#include "enemigo.h"
+#include <iostream>
+#include <memory>
+#include "../server/Platform.h"  
 
-Cliente::Cliente(Socket&& socket)
-    : window(ANCHO_VENTANA, ALTO_VENTANA),
-      duck(window, 200.0f, 300.0f),
+Cliente::Cliente(int id,Socket&& socket, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
+    : id(id),
+      window(ANCHO_VENTANA, ALTO_VENTANA),
+      duck(window, x_inicial,y_inicial,collidables),
       protocolo(std::move(socket)),
       receiver(protocolo, queue_eventos, conectado),
-      sender(protocolo, queue_acciones) {}
+      sender(protocolo, queue_acciones),
+      collidables(collidables) {}
 
 void Cliente::start() {
     receiver.start();
@@ -30,12 +35,11 @@ void Cliente::procesar_eventos_recibidos() {
             switch (evento_recibido->get_tipo()) {
                 case Evento::EventoMovimiento: {
                     auto evento_mov = static_cast<EventoMovimiento*>(evento_recibido.get());
-                    std::cout << evento_mov->id << std::endl;
-                    manejar_enemigos(*evento_mov);  
+                    manejar_enemigos(*evento_mov, collidables);  
                     break;
                 }
                 case Evento::EventoMapa: {
-                    auto evento_mapa = static_cast<EventoMapa*>(evento_recibido.get());
+
                     break;
                 }
                 default:
@@ -45,14 +49,14 @@ void Cliente::procesar_eventos_recibidos() {
         }
     }
 }
-void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov) {
+void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov, std::vector<Collidable*> collidables) {
     if (evento_mov.id != id) {
         auto it = enemigos.find(evento_mov.id);
         if (it != enemigos.end()) {
             it->second->mover_a(evento_mov.x, evento_mov.y);
         } else {
             enemigos[evento_mov.id] = std::make_unique<Enemigo>(
-                evento_mov.id, evento_mov.x, evento_mov.y, window);
+                evento_mov.id, evento_mov.x, evento_mov.y, window, collidables);
         }
     } else {
         duck.mover_a_una_posicion(evento_mov.x, evento_mov.y);
@@ -100,7 +104,7 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
 
 void Cliente::ejecutar_juego() {
     window.set_title("DuckGame");
-    SdlTexture fondo("../Imagenes/Fondo.png", window);
+    SdlTexture fondo("../Imagenes/forest.png", window);
     Area srcArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
@@ -117,9 +121,7 @@ void Cliente::ejecutar_juego() {
 
             fondo.render(srcArea, destArea, SDL_FLIP_NONE);
 
-            if (!duck.esta_quieto()) {
-                duck.render();
-            }
+            duck.render();
 
             for (auto& pair : enemigos) {
                 pair.second->renderizar();  
@@ -147,3 +149,5 @@ void Cliente::join() {
     receiver.join();
     sender.join();
 }
+
+Cliente::~Cliente() {}
