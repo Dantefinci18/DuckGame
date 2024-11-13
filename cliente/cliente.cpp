@@ -3,7 +3,10 @@
 #include "cliente.h"
 #include "../common/common_evento.h"
 #include "../common/common_queue.h"
-#include "enemigo.h"  
+#include "enemigo.h"
+#include <iostream>
+#include <memory>
+#include "../server/Platform.h"  
 
 Cliente::Cliente(Socket&& socket)
     : window(ANCHO_VENTANA, ALTO_VENTANA),
@@ -31,12 +34,19 @@ void Cliente::procesar_eventos_recibidos() {
             switch (evento_recibido->get_tipo()) {
                 case Evento::EventoMovimiento: {
                     auto evento_mov = static_cast<EventoMovimiento*>(evento_recibido.get());
-                    std::cout << evento_mov->id << std::endl;
                     manejar_enemigos(*evento_mov);  
                     break;
                 }
                 case Evento::EventoMapa: {
                     auto evento_mapa = static_cast<EventoMapa*>(evento_recibido.get());
+                    std::vector<Collidable*> collidables = evento_mapa->collidables;
+                    for (auto& collidable : collidables) {
+                        if (collidable->getType() == CollidableType::Platform) {
+                            Platform* platform = static_cast<Platform*>(collidable);
+                            std::cout << "Plataforma: " << platform->position.x << " " << platform->position.y << " " << platform->width << " " << platform->height << std::endl;
+                        }
+                    }
+                    duck.set_collidables(collidables);
                     break;
                 }
                 default:
@@ -101,7 +111,7 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
 
 void Cliente::ejecutar_juego() {
     window.set_title("DuckGame");
-    SdlTexture fondo("../Imagenes/Fondo.png", window);
+    SdlTexture fondo("../Imagenes/forest.png", window);
     Area srcArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
