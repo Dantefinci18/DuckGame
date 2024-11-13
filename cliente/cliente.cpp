@@ -27,6 +27,7 @@ void Cliente::procesar_eventos_recibidos() {
     while (tried) {
         tried = queue_eventos.try_pop(evento_recibido);
         if (tried && evento_recibido) {
+            std::cout << "Evento recibido" << std::endl;
             switch (evento_recibido->get_tipo()) {
                 case Evento::EventoMovimiento: {
                     auto evento_mov = static_cast<EventoMovimiento*>(evento_recibido.get());
