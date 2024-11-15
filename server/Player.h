@@ -37,7 +37,7 @@ class Player : public Collidable {
         }
     }
 
-    void update(std::vector<Collidable*> others) {
+    virtual void update(std::vector<Collidable*> others) override {
         move();
         bool collide = false;
         for (auto collidable : others) {
@@ -85,6 +85,11 @@ class Player : public Collidable {
             }
             return false;
         }
+
+        if (other.getType() == CollidableType::SpawnPlace) {
+            std::cout << "collided with spawnplace" << std::endl;
+        }
+
         return false;
     }
 

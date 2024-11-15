@@ -1,6 +1,7 @@
 #include <vector>
 #include <memory>
 #include "Platform.h"
+#include "SpawnPlace.h"
 #include <string>
 #include <yaml-cpp/yaml.h>
 #include <unordered_map>

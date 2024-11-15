@@ -6,7 +6,8 @@
 enum class CollidableType {
     Platform,
     Player,
-    Box // Future types can be added here
+    Box,
+    SpawnPlace // Future types can be added here
 };
 
 enum class CollidableSide {
@@ -81,6 +82,7 @@ class Collidable {
         virtual CollidableType getType() const = 0;
 
         virtual bool onCollision(Collidable& other) = 0;
+        virtual void update(std::vector<Collidable*> others) = 0;
 
         virtual ~Collidable() {}
         Collidable(const Vector& initialPosition, float width, float height) : position(initialPosition), width(width), height(height) {}
