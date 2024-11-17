@@ -29,17 +29,17 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
         ComandoAccion command = accion.get_command();
         Player* player = get_player(id);
         if (command == DERECHA) {
-            player->set_direction({1.0f, 0.0f});
+            player->set_x_direction(1.0f);
         
         } else if (command == IZQUIERDA) {
-            player->set_direction({-1.0f, 0.0f});
+            player->set_x_direction(-1.0f);
         
         } else if (command == SALTAR) {
             std::cout << "jumps" << std::endl;
             player->jump();
         
         } else if (command == QUIETO) {
-            player->set_direction({0.0f, 0.0f});
+            player->set_x_direction(0.0f);
         
         } else if (command == NUEVA_PARTIDA){
             EventoMapa eventoMapa(collidables);

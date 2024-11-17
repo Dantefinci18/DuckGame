@@ -32,15 +32,15 @@ class Player : public Collidable {
         
     }
 
-    void set_direction(const Vector& dir) {
-        velocity = dir;
+    void set_x_direction(float x) {
+        velocity.x = x;
     }
 
     void jump() {
         if (is_able_to_jump()) {
             std::cout << "is_able" << std::endl;
             is_on_ground = false;
-            velocity.y = 10.0f;
+            velocity.y = 20.0f;
         }
     }
 
