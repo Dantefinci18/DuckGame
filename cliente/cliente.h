@@ -35,6 +35,7 @@ private:
     void ejecutar_juego();
     void procesar_eventos_recibidos();
     void manejar_enemigos(const EventoMovimiento& evento_mov, std::vector<Collidable*> collidables);
+    void manejar_arma(const EventoPickup& evento_pickup, std::vector<Collidable*> collidables);
     void enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion);
     void controlar_eventos_del_teclado(ComandoAccion* tecla_anterior);
     void stop();

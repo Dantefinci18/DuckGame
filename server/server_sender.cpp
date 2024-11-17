@@ -10,6 +10,8 @@ void Sender::enviar_eventos() {
         std::unique_ptr<Evento> estado = cola_eventos.pop();  
 
         if (estado) {
+            protocolo.enviar_estado(*estado);
+            /*
             switch (estado->get_tipo()) {
                 case Evento::EventoMovimiento:
                     protocolo.enviar_estado(*static_cast<EventoMovimiento*>(estado.get()));
@@ -23,6 +25,7 @@ void Sender::enviar_eventos() {
                     std::cerr << "Error: Tipo de evento desconocido" << std::endl;
                     break;
             }
+            */
         }
     }
 }

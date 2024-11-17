@@ -42,15 +42,24 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
             player->set_direction({0.0f, 0.0f});
         
         } else if (command == NUEVA_PARTIDA){
-           EventoMapa eventoMapa(collidables);
-              broadcast_evento(eventoMapa);
-              return;
+            EventoMapa eventoMapa(collidables);
+            broadcast_evento(eventoMapa);
+            return;
         }
     
     }
 
     for (auto& collidable : collidables) {
         collidable->update(collidables);
+        
+        if (collidable->getType() == CollidableType::SpawnPlace) {
+            SpawnPlace& sPlace = static_cast<SpawnPlace&>(*collidable);
+            for (auto& evento : sPlace.eventos) {
+                broadcast_evento(*evento);
+            }
+            sPlace.eventos.clear();
+        }
+        
     }
 
     for (auto& player : jugadores) {
@@ -61,11 +70,17 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
         player.second->update_fisicas(collidables);
         
         Vector pos_pato = player.second->get_fisicas()->get_posicion();
-
+        
+        for (auto& evento : player.second->get_fisicas()->eventos) {
+            
+            broadcast_evento(*evento);
+        }
+        player.second->get_fisicas()->eventos.clear();
+        /*
         if (anterior.x != pos_pato.x || anterior.y != pos_pato.y) {
             EventoMovimiento eventoMovimiento(id, pos_pato.x, pos_pato.y);
             
             broadcast_evento(eventoMovimiento);
-        }
+        }*/
     }
 }

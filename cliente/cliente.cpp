@@ -42,8 +42,14 @@ void Cliente::procesar_eventos_recibidos() {
 
                     break;
                 }
+
+                case Evento::EventoPickup: {
+                    auto evento_pickup = static_cast<EventoPickup*>(evento_recibido.get());
+                    manejar_arma(*evento_pickup, collidables);
+                    break;
+                }                
                 default:
-                    std::cerr << "Error: Tipo de evento desconocido" << std::endl;
+                    std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
             }
         }
@@ -63,6 +69,16 @@ void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov, std::vector<C
     }
 }
 
+void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collidable*> collidables) {
+    for (auto& collidable : collidables) {
+        if (collidable->getType() == CollidableType::SpawnPlace 
+            && collidable->position.x == evento_pickup.x
+            && collidable->position.y == evento_pickup.y) {
+            SpawnPlace& sPlace = static_cast<SpawnPlace&>(*collidable);
+            sPlace.clear_weapon();
+        }
+    }
+}
 
 void Cliente::enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion) {
     if (*tecla_anterior != accion && conectado) {

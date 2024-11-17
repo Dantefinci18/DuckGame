@@ -40,15 +40,16 @@ void DuckAnimacion::renderizar_mapa(){
 
         if (collidable->getType() == CollidableType::SpawnPlace) {
             SpawnPlace* spawnPlace = static_cast<SpawnPlace*>(collidable);
+            if (spawnPlace->has_weapon()) {
+                float plat_x = spawnPlace->position.x;  
+                float plat_y = ALTO_VENTANA - spawnPlace->position.y - spawnPlace->height * FACTOR_ESCALA; 
+                float plat_width = spawnPlace->width;   
+                float plat_height = spawnPlace->height; 
 
-            float plat_x = spawnPlace->position.x;  
-            float plat_y = ALTO_VENTANA - spawnPlace->position.y - spawnPlace->height * FACTOR_ESCALA; 
-            float plat_width = spawnPlace->width;   
-            float plat_height = spawnPlace->height; 
-
-            Area platformSrcArea(0, 0, 38,38);  
-            Area platformDestArea(plat_x, plat_y, plat_width, plat_height); 
-            plataformas.render(platformSrcArea, platformDestArea, SDL_FLIP_NONE);
+                Area platformSrcArea(0, 0, 38,38);  
+                Area platformDestArea(plat_x, plat_y, plat_width, plat_height); 
+                plataformas.render(platformSrcArea, platformDestArea, SDL_FLIP_NONE);
+            }
         }
     }
 }

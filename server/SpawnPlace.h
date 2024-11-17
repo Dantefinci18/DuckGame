@@ -2,13 +2,16 @@
 #define SPAWN_PLACE_H
 #include "Collidable.h"
 #include "../common/common_pistola_cowboy.h"
+#include "../common/common_evento.h"
 #include <optional>
 #include <random>
 #include <memory>
 #include <iostream>
+#include <memory>
 class SpawnPlace : public Collidable {
     
     public:
+    std::vector<std::shared_ptr<Evento>> eventos;
     enum class State {Spawned, Respawning};
     SpawnPlace(Vector position, float width, float height) : Collidable(position, width, height), 
         min_server_ticks(100), countdown(100), state(State::Spawned), weapon(std::make_unique<PistolaCowboy>()) {}
@@ -35,7 +38,6 @@ class SpawnPlace : public Collidable {
     }
 
     virtual void update([[maybe_unused]] std::vector<Collidable*> others) override {
-        print_bounding_box();
         if (state == State::Respawning) {
             if (countdown > 0) {
                 --countdown;
@@ -46,6 +48,7 @@ class SpawnPlace : public Collidable {
                 state = State::Spawned;
                 countdown = min_server_ticks + get_random_number();
                 weapon = std::make_unique<PistolaCowboy>();
+                //eventos.push_back(std::make_shared<EventoSpawnArma>(position.x, position.y, weapon.get()->get_type()));
             }
         }
     }
@@ -69,6 +72,13 @@ class SpawnPlace : public Collidable {
 
     virtual WeaponType get_weapon_type() {
         return weapon.get()->get_type();
+    }
+
+    virtual bool has_weapon() {
+        if (weapon) {
+            return true;
+        }
+        return false;
     }
 
     int get_random_number() {

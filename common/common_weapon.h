@@ -1,7 +1,6 @@
 #ifndef COMMON_WEAPON_H
 #define COMMON_WEAPON_H
 #include "../server/Vector.h"
-#include "common_pistola_cowboy.h"
 #include <vector>
 #include <cmath>
 enum class WeaponType {

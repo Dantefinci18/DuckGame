@@ -3,9 +3,7 @@
 #include <iostream>
 #include <cstring>
 #include <memory>
-#include "../server/Platform.h"
-#include "../server/Player.h"
-#include "../server/SpawnPlace.h"      
+      
 
 std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
     std::bitset<8> bits(accion);  
@@ -33,16 +31,20 @@ ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
 std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     
     if (evento.get_tipo() == Evento::TipoEvento::EventoPickup) {
+        std::cout << "here" << std::endl;
         return serializar_pickup(evento);
     }
     
     if (evento.get_tipo() == Evento::TipoEvento::EventoMovimiento) {
+        std::cout << "here1" << std::endl;
         return serializar_movimiento(evento);
     }
     
     if (evento.get_tipo() == Evento::TipoEvento::EventoMapa) {
+        std::cout << "here2" << std::endl;
         return serializar_mapa(evento);
     }
+    std::cout << "here3" << std::endl;
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
@@ -106,6 +108,7 @@ std::vector<uint8_t> Serializador::serializar_pickup(const Evento& evento) {
     for (int i = 0; i < 32; ++i) {
         bits[104 + i] = (tipo_bits >> (31 - i)) & 1;
     }
+    imprimir_uint8_t_array(bits.data(), 136);
     return bits;
 }
 
@@ -143,6 +146,37 @@ std::unique_ptr<Evento> Serializador::deserializar_movimiento(const uint8_t* id_
 
     return std::make_unique<EventoMovimiento>(id, x, y);
 }
+
+std::unique_ptr<Evento> Serializador::deserializar_pickup(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data) {
+    int id;
+    float x, y;
+
+    uint32_t id_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        id_bits |= (id_data[i] << (31 - i));
+    }
+    id = static_cast<int>(id_bits);
+
+    uint32_t x_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        x_bits |= (x_data[i] << (31 - i));
+    }
+    memcpy(&x, &x_bits, sizeof(float));
+ 
+    uint32_t y_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        y_bits |= (y_data[i] << (31 - i));
+    }
+    memcpy(&y, &y_bits, sizeof(float));
+
+    uint32_t tipo_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        tipo_bits |= (weapon_type_data[i] << (31 - i));
+    }
+    WeaponType tipo = static_cast<WeaponType>(tipo_bits);
+    return std::make_unique<EventoPickup>(id, x, y, tipo);
+}
+
 
 
 
@@ -277,7 +311,7 @@ Collidable* Serializador::deserializar_collidable(const uint8_t* collidable_data
     case CollidableType::Platform:
         return new Platform(Vector(x, y), width, height);
     case CollidableType::Player:
-        return new Player(Vector(x, y));
+        return new Player(Vector(x, y), 0);
     case CollidableType::SpawnPlace:
         return new SpawnPlace(Vector(x, y), width, height); 
     default:
