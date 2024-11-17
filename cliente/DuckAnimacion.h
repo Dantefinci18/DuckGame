@@ -9,7 +9,9 @@
 #include "Sdl/SdlTexture.h"
 #include "Sdl/SdlWindow.h"
 #include "../server/Collidable.h"
+#include "../common/common_weapon.h"
 #include <vector>
+#include <optional>
 
 class DuckAnimacion {
 private:
@@ -17,7 +19,8 @@ private:
     SdlTexture movimiento_en_y;   
     SdlTexture plataformas; 
     SdlTexture armas;       
-    bool quieto = false;           
+    bool quieto = false;
+    std::optional<WeaponType> weapon;           
     int x_img = 0;                
     float x_actual;                
     float y_actual;                
@@ -37,6 +40,8 @@ public:
     void mover_a_una_posicion(float x, float y);
 
     void set_collidables(const std::vector<Collidable*>& collidables);
+
+    void set_weapon(WeaponType weapon);
 };
 
 #endif

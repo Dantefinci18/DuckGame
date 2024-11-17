@@ -21,6 +21,7 @@ DuckAnimacion::DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial
       y_des(y_inicial),
       x_img(0),
       quieto(true),
+      weapon(std::nullopt),
       flip(SDL_FLIP_NONE),
       collidables_plataformas(collidables) {}
 
@@ -44,8 +45,8 @@ void DuckAnimacion::renderizar_mapa(){
             if (spawnPlace->has_weapon()) {
                 float plat_x = spawnPlace->position.x;  
                 float plat_y = ALTO_VENTANA - spawnPlace->position.y - spawnPlace->height * FACTOR_ESCALA; 
-                float plat_width = spawnPlace->width;   
-                float plat_height = spawnPlace->height; 
+                float plat_width = spawnPlace->width * FACTOR_ESCALA;   
+                float plat_height = spawnPlace->height * FACTOR_ESCALA; 
 
                 Area armaSrcArea(0, 0, 38,38);  
                 Area armaDestArea(plat_x, plat_y, plat_width, plat_height); 
@@ -111,6 +112,13 @@ void DuckAnimacion::render() {
     } else {
         quieto = false;
     }
+
+    if (weapon) {
+        Area armaSrcArea(0, 0, 38,38);  
+        //TODO: Fix this
+        Area armaDestArea(x_actual + 20, y_renderizado + 25, 38, 38); 
+        armas.render(armaSrcArea, armaDestArea, flip);
+    }
 }
 
 
@@ -128,5 +136,9 @@ void DuckAnimacion::mover_a_una_posicion(float x, float y) {
 void DuckAnimacion::set_collidables(const std::vector<Collidable*>& collidables) {
     std::cout << "Agregando collidables " << collidables.size() << std::endl;
     this->collidables_plataformas = collidables;  
+}
+
+void DuckAnimacion::set_weapon(WeaponType new_weapon) {
+    weapon = new_weapon;
 }
 

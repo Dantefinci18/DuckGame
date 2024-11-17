@@ -85,6 +85,14 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
             sPlace->clear_weapon();
         }
     }
+    if (evento_pickup.id != id) {
+        auto it = enemigos.find(evento_pickup.id);
+        if (it != enemigos.end()) {
+            it->second->set_weapon(evento_pickup.weapon_type);
+            return;
+        }
+    }
+    duck.set_weapon(evento_pickup.weapon_type);
 }
 
 void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables) {

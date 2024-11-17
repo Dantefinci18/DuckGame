@@ -18,4 +18,8 @@ void Enemigo::renderizar() {
     duckAnimacion.render();
 }
  
+void Enemigo::set_weapon(WeaponType new_weapon) {
+    duckAnimacion.set_weapon(new_weapon);
+}
+
 Enemigo::~Enemigo() {}

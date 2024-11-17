@@ -40,7 +40,7 @@ class Player : public Collidable {
         if (is_able_to_jump()) {
             std::cout << "is_able" << std::endl;
             is_on_ground = false;
-            velocity.y = 20.0f;
+            velocity.y = 10.0f;
         }
     }
 

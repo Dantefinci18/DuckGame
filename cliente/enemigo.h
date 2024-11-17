@@ -5,6 +5,7 @@
 #include "DuckAnimacion.h"  
 #include "Sdl/SdlWindow.h"
 #include "../server/Collidable.h"
+#include "../common/common_weapon.h"
 
 class Enemigo {
 public:
@@ -15,6 +16,8 @@ public:
     void mover_a(float nueva_x, float nueva_y);
 
     void renderizar();
+
+    void set_weapon(WeaponType weapon);
 
     ~Enemigo();
 

@@ -64,24 +64,11 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
     }
 
     for (auto& player : jugadores) {
-        
-        Vector anterior = player.second->get_fisicas()->get_posicion();
-        int id = player.first;
-
         player.second->update_fisicas(collidables);
-        
-        Vector pos_pato = player.second->get_fisicas()->get_posicion();
-        
+    
         for (auto& evento : player.second->get_fisicas()->eventos) {
-
             broadcast_evento(*evento);
         }
         player.second->get_fisicas()->eventos.clear();
-        /*
-        if (anterior.x != pos_pato.x || anterior.y != pos_pato.y) {
-            EventoMovimiento eventoMovimiento(id, pos_pato.x, pos_pato.y);
-            
-            broadcast_evento(eventoMovimiento);
-        }*/
     }
 }
