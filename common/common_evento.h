@@ -4,12 +4,14 @@
 #include <vector>
 #include <cstdint>
 #include "../server/Collidable.h"
-
+#include "common_weapon.h"
 class Evento {
 public:
     enum TipoEvento {
         EventoMovimiento,
         EventoMapa,
+        EventoPickup,
+        EventoSpawnArma
         
     };
 
@@ -36,6 +38,23 @@ public:
         : collidables(collidables) {}
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoMapa; }  
+};
+
+class EventoSpawnArma : public Evento {
+public:
+    float x;
+    float y;
+    WeaponType weapon_type;
+    TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnArma; } 
+};
+
+class EventoPickup : public Evento {
+public:
+    int id;
+    float x;
+    float y;
+    WeaponType weapon_type;
+    TipoEvento get_tipo() const override { return TipoEvento::EventoPickup; } 
 };
 
 #endif

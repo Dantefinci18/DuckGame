@@ -8,6 +8,7 @@
 #include "DuckAnimacion.h"
 #include <SDL2/SDL_render.h>
 #include "../server/Platform.h"
+#include "../server/SpawnPlace.h"
 
 DuckAnimacion::DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial, std::vector<Collidable*> collidables)
     : movimientos_en_x("../Imagenes/DuckMovimientos.png", window),
@@ -31,6 +32,19 @@ void DuckAnimacion::renderizar_mapa(){
             float plat_y = ALTO_VENTANA - platform->position.y - platform->height * FACTOR_ESCALA; 
             float plat_width = platform->width;   
             float plat_height = platform->height; 
+
+            Area platformSrcArea(0, 0, 38,38);  
+            Area platformDestArea(plat_x, plat_y, plat_width, plat_height); 
+            plataformas.render(platformSrcArea, platformDestArea, SDL_FLIP_NONE);
+        }
+
+        if (collidable->getType() == CollidableType::SpawnPlace) {
+            SpawnPlace* spawnPlace = static_cast<SpawnPlace*>(collidable);
+
+            float plat_x = spawnPlace->position.x;  
+            float plat_y = ALTO_VENTANA - spawnPlace->position.y - spawnPlace->height * FACTOR_ESCALA; 
+            float plat_width = spawnPlace->width;   
+            float plat_height = spawnPlace->height; 
 
             Area platformSrcArea(0, 0, 38,38);  
             Area platformDestArea(plat_x, plat_y, plat_width, plat_height); 

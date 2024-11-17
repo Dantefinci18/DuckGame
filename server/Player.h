@@ -3,7 +3,10 @@
 #include "Vector.h"
 #include "Collidable.h"
 #include "Platform.h"
+#include "SpawnPlace.h"
 #include <iostream>
+#include <optional>
+#include "../common/common_weapon.h"
 class Player : public Collidable {
     private:
         Vector velocity;
@@ -50,7 +53,6 @@ class Player : public Collidable {
         if (!collide) {
             is_standing_on_something = false;
         } 
-
         //std::cout << velocity.to_string() << ", isOnGround" << std::to_string(is_on_ground) << std::endl;
         //std::cout << velocity.to_string() << std::endl;
     }
@@ -87,8 +89,16 @@ class Player : public Collidable {
         }
 
         if (other.getType() == CollidableType::SpawnPlace) {
-            std::cout << "collided with spawnplace" << std::endl;
-        }
+            SpawnPlace& spawnPlace = static_cast<SpawnPlace&>(other);
+            CollidableSide side = getCollisionSide(spawnPlace);
+            if (side == CollidableSide::None) {
+                return false;
+            }
+            std::optional<std::unique_ptr<Weapon>> weapon = spawnPlace.get_weapon();
+            if (weapon) {
+                std::cout << "picked up weapon!" << std::endl;
+            }
+        }   
 
         return false;
     }

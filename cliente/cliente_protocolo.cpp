@@ -61,7 +61,7 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
                 return nullptr;
             }
 
-            return serializador.deserializar_evento(id, x, y);
+            return serializador.deserializar_movimiento(id, x, y);
         }
         case Evento::EventoMapa: {
             uint8_t cantidad[32];
@@ -84,6 +84,9 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
                 collidables.push_back(collidable);
             }
             return std::make_unique<EventoMapa>(collidables);
+        }
+        case Evento::EventoPickup: {
+
         }
     }
 

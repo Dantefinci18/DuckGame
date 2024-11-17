@@ -3,6 +3,8 @@
 #include "Vector.h"
 #include <iostream>
 #include <algorithm>
+#include <vector>
+#include "../common/common_evento.h"
 enum class CollidableType {
     Platform,
     Player,
@@ -22,6 +24,7 @@ class Collidable {
     
     public:
         Vector position;
+        std::vector<Evento> eventos;
         float width;
         float height;
         float left() const {
@@ -59,19 +62,19 @@ class Collidable {
             float bottomDistance = abs(other.bottom() - top());
 
             float minDistance = std::min({leftDistance, rightDistance, bottomDistance, topDistance});
-            std::cout << std::to_string(leftDistance) << ", " << std::to_string(rightDistance) << ", " << std::to_string(bottomDistance) << ", " << std::to_string(topDistance) << ")" << std::endl;
+            //std::cout << std::to_string(leftDistance) << ", " << std::to_string(rightDistance) << ", " << std::to_string(bottomDistance) << ", " << std::to_string(topDistance) << ")" << std::endl;
             //std::cout << "--------------------------------------------";
             if (minDistance == topDistance) {
-                std::cout << "top\n";
+                //std::cout << "top\n";
                 return CollidableSide::Top;
             } else if (minDistance == bottomDistance) {
-                std::cout << "bottom\n";
+                //std::cout << "bottom\n";
                 return CollidableSide::Bottom;
             } else if (minDistance == leftDistance) {
-                std::cout << "left\n";
+                //std::cout << "left\n";
                 return CollidableSide::Left;
             } else {
-                std::cout << "right" << std::endl;
+                //std::cout << "right" << std::endl;
                 return CollidableSide::Right;
             }
         }

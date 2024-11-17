@@ -19,8 +19,10 @@ public:
     ComandoAccion deserializar_accion(const uint8_t* data);
 
     std::vector<uint8_t> serializar_evento(const Evento& evento);
+    std::vector<uint8_t> serializar_pickup(const Evento& evento);
+    std::vector<uint8_t> serializar_movimiento(const Evento& evento);
 
-    std::unique_ptr<Evento> deserializar_evento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data);
+    std::unique_ptr<Evento> deserializar_movimiento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data);
 
     Evento::TipoEvento deserializar_tipo_evento(const uint8_t* tipo_evento_data);
 

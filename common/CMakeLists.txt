@@ -15,4 +15,6 @@ target_sources(taller_common
   common_thread.h
   common_queue.h
   common_serializador.h
+  common_pistola_cowboy.h
+  common_weapon.h
 )
