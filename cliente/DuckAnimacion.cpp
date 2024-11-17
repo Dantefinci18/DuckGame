@@ -14,6 +14,7 @@ DuckAnimacion::DuckAnimacion(SdlWindow& window, float x_inicial, float y_inicial
     : movimientos_en_x("../Imagenes/DuckMovimientos.png", window),
       movimiento_en_y("../Imagenes/DuckSalto.png", window),
       plataformas("../Imagenes/Tileset_Surface.png", window),
+      armas("../Imagenes/guns.png", window),
       x_actual(x_inicial),
       y_actual(y_inicial),
       x_des(x_inicial),
@@ -46,9 +47,9 @@ void DuckAnimacion::renderizar_mapa(){
                 float plat_width = spawnPlace->width;   
                 float plat_height = spawnPlace->height; 
 
-                Area platformSrcArea(0, 0, 38,38);  
-                Area platformDestArea(plat_x, plat_y, plat_width, plat_height); 
-                plataformas.render(platformSrcArea, platformDestArea, SDL_FLIP_NONE);
+                Area armaSrcArea(0, 0, 38,38);  
+                Area armaDestArea(plat_x, plat_y, plat_width, plat_height); 
+                armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
             }
         }
     }

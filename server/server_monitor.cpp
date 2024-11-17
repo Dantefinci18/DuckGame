@@ -55,6 +55,7 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
         if (collidable->getType() == CollidableType::SpawnPlace) {
             SpawnPlace& sPlace = static_cast<SpawnPlace&>(*collidable);
             for (auto& evento : sPlace.eventos) {
+                std::cout << "hereeee" << std::endl;
                 broadcast_evento(*evento);
             }
             sPlace.eventos.clear();
@@ -72,7 +73,7 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
         Vector pos_pato = player.second->get_fisicas()->get_posicion();
         
         for (auto& evento : player.second->get_fisicas()->eventos) {
-            
+
             broadcast_evento(*evento);
         }
         player.second->get_fisicas()->eventos.clear();

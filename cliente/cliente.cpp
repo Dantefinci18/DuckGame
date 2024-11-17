@@ -3,6 +3,7 @@
 #include "cliente.h"
 #include "../common/common_evento.h"
 #include "../common/common_queue.h"
+#include "../common/common_weapon_utils.h"
 #include "enemigo.h"
 #include <iostream>
 #include <memory>
@@ -47,6 +48,12 @@ void Cliente::procesar_eventos_recibidos() {
                     auto evento_pickup = static_cast<EventoPickup*>(evento_recibido.get());
                     manejar_arma(*evento_pickup, collidables);
                     break;
+                }
+
+                case Evento::EventoSpawnArma: {
+                    auto evento_spawn_arma = static_cast<EventoSpawnArma*>(evento_recibido.get());
+                    spawn_arma(*evento_spawn_arma, collidables);
+                    break;
                 }                
                 default:
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
@@ -74,8 +81,20 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
         if (collidable->getType() == CollidableType::SpawnPlace 
             && collidable->position.x == evento_pickup.x
             && collidable->position.y == evento_pickup.y) {
-            SpawnPlace& sPlace = static_cast<SpawnPlace&>(*collidable);
-            sPlace.clear_weapon();
+            SpawnPlace* sPlace = static_cast<SpawnPlace*>(collidable);
+            sPlace->clear_weapon();
+        }
+    }
+}
+
+void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables) {
+    std::cout << "handling spawn" << std::endl;
+    for (auto& collidable : collidables) {
+        if (collidable->getType() == CollidableType::SpawnPlace 
+            && collidable->position.x == evento_spawn.x
+            && collidable->position.y == evento_spawn.y) {
+            SpawnPlace* sPlace = static_cast<SpawnPlace*>(collidable);
+            sPlace->set_weapon(WeaponUtils::create_weapon(evento_spawn.weapon_type));
         }
     }
 }

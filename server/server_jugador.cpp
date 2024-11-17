@@ -44,6 +44,13 @@ void Jugador::enviar_evento(const Evento& evento) {
             evento_ptr = std::make_unique<EventoPickup>(evento_pickup.id, evento_pickup.x, evento_pickup.y, evento_pickup.weapon_type);
             break;
         }
+
+        case Evento::EventoSpawnArma: {
+            
+            const EventoSpawnArma& evento_spawn = static_cast<const EventoSpawnArma&>(evento);
+            evento_ptr = std::make_unique<EventoSpawnArma>(evento_spawn.x, evento_spawn.y, evento_spawn.weapon_type);
+            break;
+        }
         default:
             return; 
     }

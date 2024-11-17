@@ -14,7 +14,7 @@ class SpawnPlace : public Collidable {
     std::vector<std::shared_ptr<Evento>> eventos;
     enum class State {Spawned, Respawning};
     SpawnPlace(Vector position, float width, float height) : Collidable(position, width, height), 
-        min_server_ticks(100), countdown(100), state(State::Spawned), weapon(std::make_unique<PistolaCowboy>()) {}
+        min_server_ticks(50), countdown(50), state(State::Spawned), weapon(std::make_unique<PistolaCowboy>()) {}
 
     virtual CollidableType getType() const override {
         return CollidableType::SpawnPlace;
@@ -48,7 +48,7 @@ class SpawnPlace : public Collidable {
                 state = State::Spawned;
                 countdown = min_server_ticks + get_random_number();
                 weapon = std::make_unique<PistolaCowboy>();
-                //eventos.push_back(std::make_shared<EventoSpawnArma>(position.x, position.y, weapon.get()->get_type()));
+                eventos.push_back(std::make_shared<EventoSpawnArma>(position.x, position.y, weapon.get()->get_type()));
             }
         }
     }
@@ -88,7 +88,7 @@ class SpawnPlace : public Collidable {
         std::mt19937 generator(rd()); 
 
         // Define a uniform integer distribution for the range [0, 100]
-        std::uniform_int_distribution<int> distribution(0, 100); 
+        std::uniform_int_distribution<int> distribution(0, 40); 
 
         // Generate a random number in the range
         return distribution(generator);

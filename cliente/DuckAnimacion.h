@@ -15,7 +15,8 @@ class DuckAnimacion {
 private:
     SdlTexture movimientos_en_x;  
     SdlTexture movimiento_en_y;   
-    SdlTexture plataformas;        
+    SdlTexture plataformas; 
+    SdlTexture armas;       
     bool quieto = false;           
     int x_img = 0;                
     float x_actual;                
