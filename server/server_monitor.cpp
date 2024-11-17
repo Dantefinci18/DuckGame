@@ -29,39 +29,46 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
         ComandoAccion command = accion.get_command();
         Player* player = get_player(id);
         if (command == DERECHA) {
-            player->set_direction({1.0f, 0.0f});
+            player->set_x_direction(1.0f);
         
         } else if (command == IZQUIERDA) {
-            player->set_direction({-1.0f, 0.0f});
+            player->set_x_direction(-1.0f);
         
         } else if (command == SALTAR) {
             std::cout << "jumps" << std::endl;
             player->jump();
         
         } else if (command == QUIETO) {
-            player->set_direction({0.0f, 0.0f});
+            player->set_x_direction(0.0f);
         
         } else if (command == NUEVA_PARTIDA){
-           EventoMapa eventoMapa(collidables);
-              broadcast_evento(eventoMapa);
-              return;
+            EventoMapa eventoMapa(collidables);
+            broadcast_evento(eventoMapa);
+            return;
         }
     
     }
 
-    for (auto& player : jugadores) {
+    for (auto& collidable : collidables) {
+        collidable->update(collidables);
         
-    Vector anterior = player.second->get_fisicas()->get_posicion();
-    int id = player.first;
-
-    player.second->update_fisicas(collidables);
-    
-    Vector pos_pato = player.second->get_fisicas()->get_posicion();
-
-    if (anterior.x != pos_pato.x || anterior.y != pos_pato.y) {
-        EventoMovimiento eventoMovimiento(id, pos_pato.x, pos_pato.y);
-        
-        broadcast_evento(eventoMovimiento);
+        if (collidable->getType() == CollidableType::SpawnPlace) {
+            SpawnPlace& sPlace = static_cast<SpawnPlace&>(*collidable);
+            for (auto& evento : sPlace.eventos) {
+                std::cout << "hereeee" << std::endl;
+                broadcast_evento(*evento);
+            }
+            sPlace.eventos.clear();
         }
+        
+    }
+
+    for (auto& player : jugadores) {
+        player.second->update_fisicas(collidables);
+    
+        for (auto& evento : player.second->get_fisicas()->eventos) {
+            broadcast_evento(*evento);
+        }
+        player.second->get_fisicas()->eventos.clear();
     }
 }

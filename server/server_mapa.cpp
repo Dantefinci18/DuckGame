@@ -16,6 +16,10 @@ Mapa::Mapa(int id_mapa) {
             //TODO: Make this not a pointer
             collidables.push_back(new Platform(posicion, width, height));
         }
+
+        if (tipo == "SpawnPlace") {
+            collidables.push_back(new SpawnPlace(posicion, width, height));
+        }
         // Otros tipos de collidables. Cajas spawnplaces, etc.
     }
 }

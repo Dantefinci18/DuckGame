@@ -3,6 +3,7 @@
 #include "cliente.h"
 #include "../common/common_evento.h"
 #include "../common/common_queue.h"
+#include "../common/common_weapon_utils.h"
 #include "enemigo.h"
 #include <iostream>
 #include <memory>
@@ -42,8 +43,20 @@ void Cliente::procesar_eventos_recibidos() {
 
                     break;
                 }
+
+                case Evento::EventoPickup: {
+                    auto evento_pickup = static_cast<EventoPickup*>(evento_recibido.get());
+                    manejar_arma(*evento_pickup, collidables);
+                    break;
+                }
+
+                case Evento::EventoSpawnArma: {
+                    auto evento_spawn_arma = static_cast<EventoSpawnArma*>(evento_recibido.get());
+                    spawn_arma(*evento_spawn_arma, collidables);
+                    break;
+                }                
                 default:
-                    std::cerr << "Error: Tipo de evento desconocido" << std::endl;
+                    std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
             }
         }
@@ -63,6 +76,36 @@ void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov, std::vector<C
     }
 }
 
+void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collidable*> collidables) {
+    for (auto& collidable : collidables) {
+        if (collidable->getType() == CollidableType::SpawnPlace 
+            && collidable->position.x == evento_pickup.x
+            && collidable->position.y == evento_pickup.y) {
+            SpawnPlace* sPlace = static_cast<SpawnPlace*>(collidable);
+            sPlace->clear_weapon();
+        }
+    }
+    if (evento_pickup.id != id) {
+        auto it = enemigos.find(evento_pickup.id);
+        if (it != enemigos.end()) {
+            it->second->set_weapon(evento_pickup.weapon_type);
+            return;
+        }
+    }
+    duck.set_weapon(evento_pickup.weapon_type);
+}
+
+void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables) {
+    std::cout << "handling spawn" << std::endl;
+    for (auto& collidable : collidables) {
+        if (collidable->getType() == CollidableType::SpawnPlace 
+            && collidable->position.x == evento_spawn.x
+            && collidable->position.y == evento_spawn.y) {
+            SpawnPlace* sPlace = static_cast<SpawnPlace*>(collidable);
+            sPlace->set_weapon(WeaponUtils::create_weapon(evento_spawn.weapon_type));
+        }
+    }
+}
 
 void Cliente::enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion) {
     if (*tecla_anterior != accion && conectado) {

@@ -3,14 +3,21 @@
 #include "Vector.h"
 #include "Collidable.h"
 #include "Platform.h"
+#include "SpawnPlace.h"
 #include <iostream>
+#include <optional>
+#include <memory>
+#include "../common/common_weapon.h"
+#include "../common/common_evento.h"
 class Player : public Collidable {
     private:
         Vector velocity;
         float speed;
         bool is_on_ground;
         bool is_standing_on_something;
+        int id;
     public:
+        std::vector<std::shared_ptr<Evento>> eventos;
     void move() {
         if (velocity.y > -5) {
             velocity.y -= 1;
@@ -25,8 +32,8 @@ class Player : public Collidable {
         
     }
 
-    void set_direction(const Vector& dir) {
-        velocity = dir;
+    void set_x_direction(float x) {
+        velocity.x = x;
     }
 
     void jump() {
@@ -37,7 +44,9 @@ class Player : public Collidable {
         }
     }
 
-    void update(std::vector<Collidable*> others) {
+    virtual void update(std::vector<Collidable*> others) override {
+        int x_before = position.x;
+        int y_before = position.y;
         move();
         bool collide = false;
         for (auto collidable : others) {
@@ -50,6 +59,10 @@ class Player : public Collidable {
         if (!collide) {
             is_standing_on_something = false;
         } 
+
+        if (x_before != position.x || y_before != position.y) {
+            eventos.push_back(std::make_shared<EventoMovimiento>(id, position.x, position.y));
+        }
 
         //std::cout << velocity.to_string() << ", isOnGround" << std::to_string(is_on_ground) << std::endl;
         //std::cout << velocity.to_string() << std::endl;
@@ -85,6 +98,20 @@ class Player : public Collidable {
             }
             return false;
         }
+
+        if (other.getType() == CollidableType::SpawnPlace) {
+            SpawnPlace& spawnPlace = static_cast<SpawnPlace&>(other);
+            CollidableSide side = getCollisionSide(spawnPlace);
+            if (side == CollidableSide::None) {
+                return false;
+            }
+            std::optional<std::unique_ptr<Weapon>> weapon = spawnPlace.get_weapon();
+            if (weapon) {
+                std::cout << "picked up weapon!" << std::endl;
+                eventos.push_back(std::make_shared<EventoPickup>(id, spawnPlace.position.x, spawnPlace.position.y, weapon.value().get()->get_type()));
+            }
+        }   
+
         return false;
     }
 
@@ -109,6 +136,6 @@ class Player : public Collidable {
         return is_on_ground || is_standing_on_something;
     }
     virtual ~Player() {}
-    Player(Vector initialPosition) : Collidable(initialPosition, 10.0f, 20.0f), velocity(Vector(0,0)), speed(3.0f), is_on_ground(false), is_standing_on_something(false) {}
+    Player(Vector initialPosition, int id) : Collidable(initialPosition, 10.0f, 20.0f), velocity(Vector(0,0)), speed(3.0f), is_on_ground(false), is_standing_on_something(false), id(id) {}
 };
 #endif

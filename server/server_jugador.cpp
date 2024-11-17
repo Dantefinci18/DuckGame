@@ -13,7 +13,7 @@ Jugador::Jugador(Queue<Accion>& comandos, Socket&& conexion):
         id(generar_id()),
         sender(protocolo, cola_eventos, id), 
         receiver(protocolo, comandos, id),
-        playerPhysics({200.0f,300.0f}) {}
+        playerPhysics({200.0f,300.0f}, id) {}
 
 void Jugador::run() {
     sender.start();
@@ -35,6 +35,20 @@ void Jugador::enviar_evento(const Evento& evento) {
             
             const EventoMapa& evento_mapa = static_cast<const EventoMapa&>(evento);
             evento_ptr = std::make_unique<EventoMapa>(evento_mapa.collidables);
+            break;
+        }
+
+        case Evento::EventoPickup: {
+            
+            const EventoPickup& evento_pickup = static_cast<const EventoPickup&>(evento);
+            evento_ptr = std::make_unique<EventoPickup>(evento_pickup.id, evento_pickup.x, evento_pickup.y, evento_pickup.weapon_type);
+            break;
+        }
+
+        case Evento::EventoSpawnArma: {
+            
+            const EventoSpawnArma& evento_spawn = static_cast<const EventoSpawnArma&>(evento);
+            evento_ptr = std::make_unique<EventoSpawnArma>(evento_spawn.x, evento_spawn.y, evento_spawn.weapon_type);
             break;
         }
         default:

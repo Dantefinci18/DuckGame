@@ -57,7 +57,7 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
                 throw std::runtime_error("Error al recibir ID en evento de movimiento: conexión cerrada");
             }
 
-            return serializador.deserializar_evento(id, x, y);
+            return serializador.deserializar_movimiento(id, x, y);
         }
         case Evento::EventoMapa: {
             uint8_t cantidad[32];
