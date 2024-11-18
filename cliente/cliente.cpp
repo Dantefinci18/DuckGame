@@ -151,7 +151,7 @@ void Cliente::ejecutar_juego() {
     Area srcArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
-    const int frameDelay = 100;  
+    const int frameDelay = 50;  
     Uint32 lastRenderTime = SDL_GetTicks();
 
     ComandoAccion tecla_anterior = QUIETO;

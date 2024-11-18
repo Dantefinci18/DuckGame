@@ -3,7 +3,7 @@
 #define DESPLAZAMIENTO 3
 #define DESPLAZAMIENTO_Y 4
 #define FACTOR_ESCALA 2
-#define VELOCIDAD_SALTO 5
+#define VELOCIDAD_SALTO 15
 
 #include "DuckAnimacion.h"
 #include <SDL2/SDL_render.h>
@@ -78,7 +78,6 @@ void DuckAnimacion::render() {
     } else {
         x_img = 0;
     }
-
     if (y_actual != y_des) {
         float distancia_vertical = y_des - y_actual;
         float velocidad_vertical = VELOCIDAD_SALTO * (distancia_vertical > 0 ? 1 : -1);

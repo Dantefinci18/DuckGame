@@ -47,7 +47,6 @@ class Player : public Collidable {
 
     void jump() {
         if (is_able_to_jump()) {
-            std::cout << "is_able" << std::endl;
             is_on_ground = false;
             jump_force = 15;
         }
@@ -98,7 +97,6 @@ class Player : public Collidable {
 
             else if (side == CollidableSide::Bottom) {
                 position.y = platform.bottom() - height;
-                std::cout << "hit bottom of sth (?) " << std::endl;
                 velocity.y = -velocity.y;
                 return true;
             }
@@ -143,7 +141,6 @@ class Player : public Collidable {
     }
 
     bool is_able_to_jump() {
-        std::cout << is_on_ground << is_standing_on_something << std::endl;
         return is_on_ground || is_standing_on_something;
     }
     virtual ~Player() {}
