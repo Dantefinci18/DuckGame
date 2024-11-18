@@ -7,11 +7,10 @@
 #include "../common/common_queue.h"
 #include "server_protocolo.h"
 
-Jugador::Jugador(Queue<Accion>& comandos, Socket&& conexion):
+Jugador::Jugador(Queue<Accion>& comandos, PlayerMonitor& monitor, Socket&& conexion):
         protocolo(std::move(conexion)), 
-        cola_eventos(), 
         id(generar_id()),
-        sender(protocolo, cola_eventos, id), 
+        sender(protocolo, monitor, id), 
         receiver(protocolo, comandos, id),
         playerPhysics({200.0f,300.0f}, id) {}
 

@@ -8,12 +8,12 @@
 #include "../common/common_socket.h"
 #include "server_receiver.h"
 #include "server_sender.h"
+#include "server_monitor.h"
 #include "Player.h"
 
 class Jugador {
 private:
     ProtocoloServidor protocolo;
-    Queue<std::unique_ptr<Evento>> cola_eventos;
     int id;
     Sender sender;
     Receiver receiver;
@@ -21,7 +21,7 @@ private:
     int generar_id();
 
 public:
-    explicit Jugador(Queue<Accion> &comandos, Socket&& conexion);
+    explicit Jugador(Queue<Accion> &comandos,PlayerMonitor& monitor ,Socket&& conexion);
 
     void run();
 

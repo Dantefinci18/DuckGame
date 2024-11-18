@@ -16,6 +16,7 @@ class ProtocoloServidor{
     public:
         explicit ProtocoloServidor(Socket&& conexion);
         ComandoAccion recibir_accion();
+        ComandoPartida recibir_partida();
         
         bool enviar_id(int id);
         void enviar_estado(const Evento& evento);   

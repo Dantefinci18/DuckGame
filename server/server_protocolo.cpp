@@ -18,11 +18,26 @@ ComandoAccion ProtocoloServidor::recibir_accion() {
     conexion.recvall(data, sizeof(data), &was_closed);
 
     if (was_closed) {
-        return NONE;
+        return ComandoAccion::NONE;
     }
 
     return serializador.deserializar_accion(data);
 }
+
+
+ComandoPartida ProtocoloServidor::recibir_partida() {
+    bool was_closed = false;
+
+    uint8_t data[8];
+    conexion.recvall(data, sizeof(data), &was_closed);
+
+    if (was_closed) {
+        return ComandoPartida::NONE;
+    }
+
+    return serializador.deserializar_partida(data);
+}
+
 
 bool ProtocoloServidor::enviar_id(int id) {
     bool was_closed = false;

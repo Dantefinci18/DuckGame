@@ -5,7 +5,6 @@
 #include <cstdint>
 
 enum ComandoAccion : uint8_t{
-    NUEVA_PARTIDA,
     DERECHA,
     IZQUIERDA,
     QUIETO,
