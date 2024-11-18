@@ -1,4 +1,5 @@
 #include "server_monitor.h"
+#include "DisparoManager.h"
 
 #include <iostream>
 #include <string>
@@ -45,6 +46,19 @@ void PlayerMonitor::procesar_acciones(std::vector<Accion> acciones, std::vector<
             EventoMapa eventoMapa(collidables);
             broadcast_evento(eventoMapa);
             return;
+        } else if (command == DISPARAR){
+            std::vector<std::shared_ptr<Evento>> eventos;
+            if(player->has_weapon()){
+                DisparoManager::procesar_disparo(*player, collidables, jugadores, eventos);
+            }
+            /*for (const auto& evento : eventos) {
+                broadcast_evento(evento);
+            } ACA ACTIVO CUANDO SUME LOS EVENTOS*/ 
+        } else if (command == DEJAR_DISPARAR){
+            std::cout << "Dejo de disparar" << std::endl;
+            player->dejar_disparar();
+        } else if (command == RECARGAR){
+            player->reload();
         }
     
     }

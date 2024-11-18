@@ -130,20 +130,26 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
                     enviar_accion(tecla_anterior, DERECHA);
                 } else if (evento.key.keysym.sym == SDLK_SPACE) {
                     enviar_accion(tecla_anterior, SALTAR);
+                } else if (evento.key.keysym.sym == SDLK_v) {
+                    enviar_accion(tecla_anterior, DISPARAR);
+                } else if (evento.key.keysym.sym == SDLK_r) {
+                    enviar_accion(tecla_anterior, RECARGAR);
                 }
                 break;
 
             case SDL_KEYUP:
                 if (evento.key.keysym.sym == SDLK_LEFT || evento.key.keysym.sym == SDLK_RIGHT) {
                     enviar_accion(tecla_anterior, QUIETO);
-                }
-                if (evento.key.keysym.sym == SDLK_SPACE) {
+                } else if (evento.key.keysym.sym == SDLK_SPACE) {
                     *tecla_anterior = ComandoAccion::QUIETO;
+                } else if (evento.key.keysym.sym == SDLK_v) {
+                    enviar_accion(tecla_anterior, DEJAR_DISPARAR);
                 }
                 break;
         }
     }
 }
+
 
 void Cliente::ejecutar_juego() {
     window.set_title("DuckGame");

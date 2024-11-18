@@ -10,7 +10,10 @@ enum ComandoAccion : uint8_t{
     IZQUIERDA,
     QUIETO,
     SALTAR,
-    NONE
+    NONE,
+    DISPARAR,
+    DEJAR_DISPARAR,
+    RECARGAR
 };
 
 class Accion {
