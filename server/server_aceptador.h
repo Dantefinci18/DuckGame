@@ -9,28 +9,18 @@
 #include "../common/common_socket.h"
 #include "../common/common_thread.h"
 #include "../common/common_accion.h"
-#include "server_jugador.h"
+#include "server_gameloop.h"
 #include "server_monitor.h"
 
 class Aceptador: public Thread {
 private:
     Socket& skt;
-    std::list<Jugador*> jugadores;
-    Queue<Accion>& comandos;
-    PlayerMonitor& monitor;
-
-    void eliminar_desconectados();
-    void cerrar_conexiones();
+    Gameloop gameloop;
 
 public:
-    explicit Aceptador(Queue<Accion> &comandos, PlayerMonitor& monitor,
-                       Socket& skt);
+    explicit Aceptador(Socket& skt);
 
     void run() override;
-
-    std::list<Jugador*> obtener_conectados();
-
-    void eliminar_jugador(Jugador* jugador);
 };
 
 #endif

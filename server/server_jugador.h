@@ -29,8 +29,6 @@ public:
 
     bool esta_conectado();
 
-    void enviar_evento(const Evento& evento);
-
     void cerrar_conexion();
 
     int get_id();

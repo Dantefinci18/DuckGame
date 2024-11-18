@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdint>
 #include <memory>
+#include <bitset>
 
 #include "../common/common_accion.h"
 #include "../common/common_evento.h"

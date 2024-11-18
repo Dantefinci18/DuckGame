@@ -18,7 +18,7 @@ ComandoAccion ProtocoloServidor::recibir_accion() {
     conexion.recvall(data, sizeof(data), &was_closed);
 
     if (was_closed) {
-        return ComandoAccion::NONE;
+        return NONE_ACCION;
     }
 
     return serializador.deserializar_accion(data);
@@ -32,7 +32,7 @@ ComandoPartida ProtocoloServidor::recibir_partida() {
     conexion.recvall(data, sizeof(data), &was_closed);
 
     if (was_closed) {
-        return ComandoPartida::NONE;
+        return NONE_PARTIDA;
     }
 
     return serializador.deserializar_partida(data);

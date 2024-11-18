@@ -6,7 +6,7 @@
 enum ComandoPartida : uint8_t{
     NUEVA_PARTIDA,
     CARGAR_PARTIDA,
-    NONE
+    NONE_PARTIDA
 };
 
 #endif

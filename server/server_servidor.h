@@ -17,7 +17,6 @@ private:
     Queue<Accion> comandos_acciones;
     PlayerMonitor monitor;
     Aceptador aceptador;
-    Gameloop gameloop;
 
 public:
     explicit Servidor(const char* nombre_servidor);

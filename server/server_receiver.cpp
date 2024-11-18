@@ -12,7 +12,7 @@ void Receiver::run() {
         while (_keep_running) {
             ComandoAccion command = protocolo.recibir_accion();
 
-            if(command == NONE){
+            if(command == NONE_ACCION){
                 _keep_running = false;
                 break;
             }
