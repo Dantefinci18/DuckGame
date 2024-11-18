@@ -8,6 +8,7 @@
 #include "../common/common_socket.h"
 #include "../common/common_thread.h"
 #include "../common/common_evento.h"
+#include "../common/common_color.h"
 #include "server_protocolo.h"
 #include "Vector.h"
 
@@ -17,11 +18,12 @@ private:
     Queue<std::unique_ptr<Evento>>& cola_eventos; 
     std::mutex mtx;
     int id;
+    ColorDuck color;
 
     void enviar_eventos();
 
 public:
-    explicit Sender(ProtocoloServidor& protocolo, Queue<std::unique_ptr<Evento>>& cola_eventos, int id);  
+    explicit Sender(ProtocoloServidor& protocolo, Queue<std::unique_ptr<Evento>>& cola_eventos, int id,ColorDuck color);  
 
     void stop() override;
 

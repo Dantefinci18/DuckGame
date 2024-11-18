@@ -14,6 +14,7 @@ public:
      * Crea un SDL_Texture, lanza una excepción si el filename es inválido
      **/
     SdlTexture(const std::string& filename, const SdlWindow& window);
+
     /**
      * Libera la memoria reservada por la textura
      **/

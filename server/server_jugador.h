@@ -6,6 +6,7 @@
 #include <random>
 #include <cstdint>
 #include "../common/common_socket.h"
+#include "../common/common_color.h"
 #include "server_receiver.h"
 #include "server_sender.h"
 #include "Player.h"
@@ -21,7 +22,7 @@ private:
     int generar_id();
 
 public:
-    explicit Jugador(Queue<Accion> &comandos, Socket&& conexion);
+    explicit Jugador(Queue<Accion> &comandos, Socket&& conexion,ColorDuck color);
 
     void run();
 

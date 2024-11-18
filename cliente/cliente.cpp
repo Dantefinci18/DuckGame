@@ -9,10 +9,11 @@
 #include <memory>
 #include "../server/Platform.h"  
 
-Cliente::Cliente(int id,Socket&& socket, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
+Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
     : id(id),
       window(ANCHO_VENTANA, ALTO_VENTANA),
-      duck(window, x_inicial,y_inicial,collidables),
+      duck(window, x_inicial, y_inicial,procesar_color(color)),
+      mapa(window,"../Imagenes/forest.png",collidables),
       protocolo(std::move(socket)),
       receiver(protocolo, queue_eventos, conectado),
       sender(protocolo, queue_acciones),
@@ -69,7 +70,7 @@ void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov, std::vector<C
             it->second->mover_a(evento_mov.x, evento_mov.y);
         } else {
             enemigos[evento_mov.id] = std::make_unique<Enemigo>(
-                evento_mov.id, evento_mov.x, evento_mov.y, window, collidables);
+                evento_mov.id, evento_mov.x, evento_mov.y, window);
         }
     } else {
         duck.mover_a_una_posicion(evento_mov.x, evento_mov.y);
@@ -145,12 +146,32 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
     }
 }
 
+std::string Cliente::procesar_color(ColorDuck color) {
+    switch (color) {
+        case BLANCO:
+            return "_blanco";
+        case ROJO:
+            return "_rojo";
+        case ROSA:
+            return "_rosa";
+        case VERDE:
+            return "_verde";
+        case NEGRO:
+            return "_negro";
+        case AZUL:
+            return "_azul";
+        case CELESTE:
+            return "_celeste";
+        case AMARILLO:
+            return "_amarillo";
+        case NARANJA:
+            return "_naranja";
+        default:
+            return "ninguno";
+    }
+}
 void Cliente::ejecutar_juego() {
-    window.set_title("DuckGame");
-    SdlTexture fondo("../Imagenes/forest.png", window);
-    Area srcArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
-    Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
-    fondo.render(srcArea, destArea, SDL_FLIP_NONE);
+
     const int frameDelay = 100;  
     Uint32 lastRenderTime = SDL_GetTicks();
 
@@ -161,9 +182,7 @@ void Cliente::ejecutar_juego() {
 
         if (currentTime - lastRenderTime >= frameDelay) {
             lastRenderTime = currentTime;
-
-            fondo.render(srcArea, destArea, SDL_FLIP_NONE);
-
+            mapa.render();
             duck.render();
 
             for (auto& pair : enemigos) {

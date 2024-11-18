@@ -32,6 +32,16 @@ bool ProtocoloServidor::enviar_id(int id) {
 
     return !was_closed; 
 }
+
+bool ProtocoloServidor::enviar_color(ColorDuck color) {
+    bool was_closed = false;
+    std::vector<uint8_t> buffer= serializador.serializar_color(color);
+
+    conexion.sendall(buffer.data(), buffer.size(), &was_closed);
+
+    return !was_closed;
+
+}
 void ProtocoloServidor::enviar_estado(const Evento& evento) {
     bool was_closed = false;
     std::vector<uint8_t> bits = serializador.serializar_evento(evento);

@@ -9,6 +9,7 @@
 #include "../common/common_socket.h"
 #include "../common/common_thread.h"
 #include "../common/common_accion.h"
+#include "../common/common_color.h" 
 #include "server_jugador.h"
 #include "server_monitor.h"
 
@@ -18,6 +19,7 @@ private:
     std::list<Jugador*> jugadores;
     Queue<Accion>& comandos;
     PlayerMonitor& monitor;
+    int colorIndex;
 
     void eliminar_desconectados();
     void cerrar_conexiones();

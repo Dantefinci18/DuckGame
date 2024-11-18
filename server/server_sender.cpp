@@ -1,11 +1,12 @@
 #include "server_sender.h"
 #include <string>
 
-Sender::Sender(ProtocoloServidor& protocolo, Queue<std::unique_ptr<Evento>>& cola_eventos, int id)
-    : protocolo(protocolo), cola_eventos(cola_eventos), id(id) {}
+Sender::Sender(ProtocoloServidor& protocolo, Queue<std::unique_ptr<Evento>>& cola_eventos, int id, ColorDuck color)
+    : protocolo(protocolo), cola_eventos(cola_eventos), id(id),color(color) {}
 
 void Sender::enviar_eventos() {
     protocolo.enviar_id(id);
+    protocolo.enviar_color(color);
     while (_keep_running) {
         std::unique_ptr<Evento> estado = cola_eventos.pop();  
 

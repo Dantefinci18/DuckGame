@@ -8,6 +8,7 @@
 #include "../server/Collidable.h"
 #include <memory>
 #include "../common/common_evento.h"
+#include "../common/common_color.h"
 
 
 class Lobby {
@@ -15,6 +16,7 @@ public:
     Lobby(const char* hostname, const char* servname);
     void crear_partida(const std::string& mapa_seleccionado);
     int recibir_id();
+    ColorDuck recibir_color();
     std::unique_ptr<Evento> recibir_evento();
 
     ~Lobby();

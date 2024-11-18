@@ -7,24 +7,25 @@
 
 #include "../common/common_liberror.h"
 
-Aceptador::Aceptador(Queue<Accion>& comandos, PlayerMonitor& monitor,
-                     Socket& skt):
-        skt(skt), comandos(comandos), monitor(monitor) {}
+Aceptador::Aceptador(Queue<Accion>& comandos, PlayerMonitor& monitor, Socket& skt)
+    : skt(skt), comandos(comandos), monitor(monitor), colorIndex(0) {}
 
 void Aceptador::run() {
     while (_keep_running) {
-        int cantJugadores = 0;
         try {
-
             Socket conexion = skt.accept();
-            eliminar_desconectados();
-            auto jugador = new Jugador(comandos, std::move(conexion));
+
+            ColorDuck color = static_cast<ColorDuck>(colorIndex);
+            colorIndex = (colorIndex + 1) % 9; 
+
+            auto jugador = new Jugador(comandos, std::move(conexion), color);
             jugador->run();
+
             jugadores.push_back(jugador);
             monitor.agregar_jugador(jugador);
-            cantJugadores++;
 
-        } catch (const LibError& e) {}
+        } catch (const LibError& e) {
+        }
     }
 
     cerrar_conexiones();

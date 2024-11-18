@@ -9,6 +9,7 @@
 #include "interfaz_lobby/mainwindow.h"
 #include "../server/Collidable.h"
 #include "../server/Platform.h"  
+#include "../common/common_color.h"
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -33,6 +34,8 @@ int main(int argc, char* argv[]) {
     QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
         lobby.crear_partida(mapaSeleccionado);
         int id = lobby.recibir_id();
+        ColorDuck color = lobby.recibir_color();
+        std::cout << color << std::endl;
         while (collidables.empty()) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
             if (evento->get_tipo() == Evento::EventoMapa) {
@@ -48,7 +51,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        Cliente cliente(id,lobby.get_socket(), collidables,x_inicial,y_inicial);
+        Cliente cliente(id,color,lobby.get_socket(), collidables,x_inicial,y_inicial);
         cliente.start();
     });
 

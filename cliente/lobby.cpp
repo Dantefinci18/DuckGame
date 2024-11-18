@@ -26,6 +26,17 @@ int Lobby::recibir_id() {
     return serializador.deserializar_id(data);
 }
 
+ColorDuck Lobby::recibir_color() {
+    bool was_closed = false;
+    uint8_t data[8];
+    socket.recvall(data, sizeof(data), &was_closed);
+
+    if (was_closed) {
+        throw std::runtime_error("Error al recibir color: conexión cerrada");
+    }
+    return serializador.deserializar_color(data);
+}
+
 std::unique_ptr<Evento> Lobby::recibir_evento() {
     bool was_closed = false;
 

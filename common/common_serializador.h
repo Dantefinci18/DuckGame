@@ -8,6 +8,7 @@
 
 #include "../common/common_accion.h"
 #include "../common/common_evento.h"
+#include "../common/common_color.h"
 #include "../server/Collidable.h"
 #include "../server/Platform.h"
 #include "../server/Player.h"
@@ -32,6 +33,10 @@ public:
     Evento::TipoEvento deserializar_tipo_evento(const uint8_t* tipo_evento_data);
 
     std::vector<uint8_t> serializar_id(int id);
+
+    std::vector<uint8_t> serializar_color(ColorDuck color);
+
+    ColorDuck deserializar_color(const uint8_t* id_binary);
     
     int deserializar_id(const uint8_t* id_binary);
 

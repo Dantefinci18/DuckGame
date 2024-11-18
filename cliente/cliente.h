@@ -4,14 +4,16 @@
 #include "cliente_sender.h"
 #include "cliente_receiver.h"
 #include "cliente_protocolo.h"
+#include "cliente_mapa.h"
+#include "duck.h"
 #include "enemigo.h" 
-#include "DuckAnimacion.h"
 #include "Sdl/SdlWindow.h"
 #include <atomic>
 #include "../common/common_queue.h"
 #include "../common/common_evento.h"
 #include "../common/common_accion.h"
 #include "../common/common_socket.h"
+#include "../common/common_color.h"
 #include "../server/Collidable.h"
 #include <SDL2/SDL.h>
 #include <unordered_map>
@@ -22,7 +24,8 @@ class Cliente {
 private:
     int id;
     SdlWindow window;
-    DuckAnimacion duck; 
+    Duck duck;
+    Mapa mapa;
     ClienteProtocolo protocolo;
     ClienteReceiver receiver;
     ClienteSender sender;
@@ -39,11 +42,12 @@ private:
     void spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables);
     void enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion);
     void controlar_eventos_del_teclado(ComandoAccion* tecla_anterior);
+    std::string procesar_color(ColorDuck color);
     void stop();
     void join();
 
 public:
-    explicit Cliente(int id,Socket&& socket,std::vector<Collidable*> collidables, float x_inicial, float y_inicial);
+    explicit Cliente(int id,ColorDuck color,Socket&& socket,std::vector<Collidable*> collidables, float x_inicial, float y_inicial);
     void start();
     ~Cliente();};
 

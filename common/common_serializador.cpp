@@ -244,6 +244,27 @@ std::vector<uint8_t> Serializador::serializar_id(int id) {
     return binary_bits;
 }
 
+std::vector<uint8_t> Serializador::serializar_color(ColorDuck color) {
+    std::bitset<8> bits(color);  
+
+    std::vector<uint8_t> buffer(8); 
+    for (int i = 0; i < 8; ++i) {
+        buffer[7 - i] = bits[i] ? 1 : 0;  
+    }
+
+    return buffer;
+}
+ColorDuck Serializador::deserializar_color(const uint8_t* color_binary) {
+    uint8_t color_valor = 0;
+    for (int i = 0; i < 8; ++i) {
+        color_valor |= (color_binary[7 - i] << i);
+    }
+
+
+    ColorDuck color = static_cast<ColorDuck>(color_valor);
+    return color;
+}
+
 int Serializador::deserializar_id(const uint8_t* id_binary) {
     int result = 0;
     for (size_t i = 0; i < 32; ++i) {
