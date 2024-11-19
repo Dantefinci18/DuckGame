@@ -18,6 +18,7 @@ public:
     void renderizar();
 
     void set_weapon(WeaponType weapon);
+    void kill();
 
     ~Enemigo();
 

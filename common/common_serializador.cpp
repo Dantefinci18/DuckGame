@@ -61,7 +61,13 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
         return serializar_spawn_arma(evento);
     }
 
-    return std::vector<uint8_t>();
+    if (evento.get_tipo() == Evento::TipoEvento::EventoDisparo){
+        return serializar_disparo(evento);
+    }
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoMuerte){
+        return serializar_muerte(evento);
+    }
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
@@ -165,6 +171,38 @@ std::vector<uint8_t> Serializador::serializar_spawn_arma(const Evento& evento) {
     return bits;
 }
 
+std::vector<uint8_t> Serializador::serializar_disparo(const Evento& evento) {
+    std::vector<uint8_t> bits(40);
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        bits[i] = (tipo_evento >> (7 - i)) & 1;
+    }
+
+    uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoDisparo&>(evento).id);
+    for (int i = 0; i < 32; ++i) {
+        bits[8 + i] = (id_bits >> (31 - i)) & 1;
+    }
+
+    return bits;
+}
+
+std::vector<uint8_t> Serializador::serializar_muerte(const Evento& evento) {
+    std::vector<uint8_t> bits(40);
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        bits[i] = (tipo_evento >> (7 - i)) & 1;
+    }
+
+    uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoMuerte&>(evento).id);
+    for (int i = 0; i < 32; ++i) {
+        bits[8 + i] = (id_bits >> (31 - i)) & 1;
+    }
+
+    return bits;
+}
+
 
 Evento::TipoEvento Serializador::deserializar_tipo_evento(const uint8_t* tipo_evento_data) {
     uint8_t tipo_evento_bits = 0;
@@ -261,8 +299,27 @@ std::unique_ptr<Evento> Serializador::deserializar_spawn_arma(const uint8_t* x_d
     return std::make_unique<EventoSpawnArma>(x, y, tipo);
 }
 
+std::unique_ptr<Evento> Serializador::deserializar_disparo(const uint8_t* id_data) {
+    uint32_t id_bits = 0;
 
+    for (int i = 0; i < 32; ++i) {
+        id_bits |= (id_data[i] << (31 - i));
+    }
+    int id = static_cast<int>(id_bits);
 
+    return std::make_unique<EventoDisparo>(id);
+}
+
+std::unique_ptr<Evento> Serializador::deserializar_muerte(const uint8_t* id_data) {
+    uint32_t id_bits = 0;
+
+    for (int i = 0; i < 32; ++i) {
+        id_bits |= (id_data[i] << (31 - i));
+    }
+    int id = static_cast<int>(id_bits);
+
+    return std::make_unique<EventoMuerte>(id);
+}
 
 std::vector<uint8_t> Serializador::serializar_id(int id) {
     std::vector<uint8_t> binary_bits;

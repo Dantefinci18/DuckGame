@@ -17,7 +17,7 @@ public:
     bool esta_quieto();
     void mover_a(float nueva_x, float nueva_y);
     void set_weapon(WeaponType weapon);
-
+    void kill();
     ~Duck();
 
 private:
@@ -30,10 +30,12 @@ private:
     SdlTexture movimientos_en_x;
     SdlTexture movimiento_en_y;
     SdlTexture armas;
-    bool quieto;
+    SdlTexture death;
+    bool quieto = false;
+    bool is_dead = false;
     std::optional<WeaponType> weapon;
-    int x_img;
-    int y_img;
+    int x_img = 0;
+    int y_img = 0;
     float x_actual;
     float y_actual;
     float x_des;

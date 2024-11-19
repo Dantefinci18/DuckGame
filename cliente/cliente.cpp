@@ -44,6 +44,17 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
 
+                case Evento::EventoDisparo: {
+                    auto evento_disparo = static_cast<EventoDisparo*>(evento_recibido.get());
+                    break;
+                }
+
+                case Evento::EventoMuerte: {
+                    auto evento_muerte = static_cast<EventoMuerte*>(evento_recibido.get());
+                    manejar_muerte(*evento_muerte);
+                    break;
+                }
+
                 case Evento::EventoPickup: {
                     auto evento_pickup = static_cast<EventoPickup*>(evento_recibido.get());
                     manejar_arma(*evento_pickup, collidables);
@@ -95,8 +106,18 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
     duck.set_weapon(evento_pickup.weapon_type);
 }
 
+void Cliente::manejar_muerte(const EventoMuerte& evento_muerte) {
+    if (evento_muerte.id != id) {
+        auto it = enemigos.find(evento_muerte.id);
+        if (it != enemigos.end()) {
+            it->second->kill();
+            return;
+        }
+    }
+    duck.kill();
+}
+
 void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables) {
-    std::cout << "handling spawn" << std::endl;
     for (auto& collidable : collidables) {
         if (collidable->getType() == CollidableType::SpawnPlace 
             && collidable->position.x == evento_spawn.x
@@ -130,20 +151,26 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
                     enviar_accion(tecla_anterior, DERECHA);
                 } else if (evento.key.keysym.sym == SDLK_SPACE) {
                     enviar_accion(tecla_anterior, SALTAR);
+                } else if (evento.key.keysym.sym == SDLK_v) {
+                    enviar_accion(tecla_anterior, DISPARAR);
+                } else if (evento.key.keysym.sym == SDLK_r) {
+                    enviar_accion(tecla_anterior, RECARGAR);
                 }
                 break;
 
             case SDL_KEYUP:
                 if (evento.key.keysym.sym == SDLK_LEFT || evento.key.keysym.sym == SDLK_RIGHT) {
                     enviar_accion(tecla_anterior, QUIETO);
-                }
-                if (evento.key.keysym.sym == SDLK_SPACE) {
+                } else if (evento.key.keysym.sym == SDLK_SPACE) {
                     *tecla_anterior = ComandoAccion::QUIETO;
+                } else if (evento.key.keysym.sym == SDLK_v) {
+                    enviar_accion(tecla_anterior, DEJAR_DISPARAR);
                 }
                 break;
         }
     }
 }
+
 
 void Cliente::ejecutar_juego() {
     

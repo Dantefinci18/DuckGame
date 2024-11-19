@@ -13,21 +13,29 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string colo
     : movimientos_en_x("../Imagenes/duck_x" + color + ".png", window),
       movimiento_en_y("../Imagenes/movimiento_y" + color + ".png", window),
       armas("../Imagenes/guns.png", window),
-      quieto(false), 
+      death("../Imagenes/DeadDuck.png", window),
+      quieto(false),
       weapon(std::nullopt),
       x_img(0),
       y_img(0),
       x_actual(x_inicial),
       y_actual(y_inicial),
       x_des(x_inicial),
-      y_des(static_cast<int>(y_inicial)), 
+      y_des(static_cast<int>(y_inicial)),
+      is_dead(false),
       flip(SDL_FLIP_NONE) {}
-
 
 void Duck::render() {
     bool en_movimiento_x = (x_actual != x_des);
     bool en_movimiento_y = (y_actual != y_des);
 
+    if (is_dead) {
+        Area srcArea(0, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
+        int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA;
+        Area destArea(x_actual, y_renderizado, ANCHO_IMG_DUCK * FACTOR_ESCALA, ALTO_IMG_DUCK * FACTOR_ESCALA);
+        death.render(srcArea, destArea, flip);
+        return;
+    }
     if (en_movimiento_x) {
         render_movimiento_horizontal();
     }
@@ -54,6 +62,10 @@ void Duck::render() {
 }
 
 bool Duck::esta_quieto() { return quieto; }
+
+void Duck::kill() {
+    is_dead = true;
+}
 
 void Duck::mover_a(float x, float y) {
     if (x != x_des || y != y_des) {
@@ -117,7 +129,6 @@ void Duck::render_idle() {
 void Duck::render_movimiento_salto(Area& srcArea, Area& destArea) {
     movimiento_en_y.render(srcArea, destArea, flip);
 }
-
 
 void Duck::render_arma(int y_renderizado) {
     Area armaSrcArea(0, 0, 38, 38);

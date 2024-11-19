@@ -9,6 +9,10 @@ enum ComandoAccion : uint8_t{
     IZQUIERDA,
     QUIETO,
     SALTAR,
+    NONE,
+    DISPARAR,
+    DEJAR_DISPARAR,
+    RECARGAR,
     NUEVA_PARTIDA_ACCION,
     NONE_ACCION
 };

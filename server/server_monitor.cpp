@@ -1,4 +1,5 @@
 #include "server_monitor.h"
+#include "DisparoManager.h"
 
 #include <iostream>
 #include <string>
@@ -40,9 +41,19 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             break;
         }
 
-        default:
-            std::cerr << "Error: Tipo de evento desconocido" << std::endl;
+        case Evento::EventoDisparo: {
+            
+            const EventoDisparo& evento_disparo = static_cast<const EventoDisparo&>(evento);
+            evento_ptr = std::make_unique<EventoDisparo>(evento_disparo.id);
             break;
+        }
+
+        case Evento::EventoMuerte: {
+            
+            const EventoMuerte& evento_muerte = static_cast<const EventoMuerte&>(evento);
+            evento_ptr = std::make_unique<EventoMuerte>(evento_muerte.id);
+            break;
+        }
      
     }
 
