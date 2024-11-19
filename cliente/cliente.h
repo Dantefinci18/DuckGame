@@ -35,21 +35,83 @@ private:
     std::unordered_map<int, std::unique_ptr<Enemigo>> enemigos;
     std::vector<Collidable*> collidables;
 
+    /*
+     * Funcion que ejecuta el juego
+     */
     void ejecutar_juego();
+
+    /*
+     * Funcion que procesa los eventos recibidos
+     */
     void procesar_eventos_recibidos();
+
+    /*
+     * Funcion que maneja los enemigos
+     * Recibe un evento de movimiento
+     */
     void manejar_enemigos(const EventoMovimiento& evento_mov);
+
+    /*
+     * Funcion que maneja el arma
+     * Recibe un evento de pickup y un vector de collidables
+     */
     void manejar_arma(const EventoPickup& evento_pickup, std::vector<Collidable*> collidables);
+
+    /*
+     * Funcion que maneja la muerte
+     * Recibe un evento de muerte
+     */
     void manejar_muerte(const EventoMuerte& evento_muerte);
+
+    /*
+     * Funcion que maneja el spawn de un arma
+     * Recibe un evento de spawn de arma y un vector de collidables
+     */
     void spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables);
+
+    /*
+     * Funcion que envia una accion
+     * Recibe un puntero a una accion anterior y una accion
+     */
     void enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion);
+
+    /*
+     * Funcion que controla los eventos del teclado
+     * Recibe un puntero a una accion anterior
+     */
     void controlar_eventos_del_teclado(ComandoAccion* tecla_anterior);
+
+    /*
+     * Funcion que procesa un color
+     * Recibe un color
+     */
     std::string procesar_color(ColorDuck color);
+
+    /*
+     * Funcion que para el cliente
+     */
     void stop();
+
+    /*
+     * Funcion que joinea al hilo
+     */
     void join();
 
 public:
+
+    /*
+     * Constructor de la clase Cliente, recibe un id, un color, un socket, un vector de collidables, un float con la posicion x inicial y un float con la posicion y inicial
+     */
     explicit Cliente(int id,ColorDuck color,Socket&& socket,std::vector<Collidable*> collidables, float x_inicial, float y_inicial);
+    
+    /*
+     * Funcion que inicia el cliente
+     */
     void start();
+
+    /*
+     * Destructor de la clase Cliente
+     */
     ~Cliente();};
 
 #endif // CLIENTE_H

@@ -11,13 +11,29 @@
 #include "../server/Platform.h"
 #include "../server/SpawnPlace.h"
 
+
+/* 
+ * Clase que se encarga de renderizar el mapa del juego
+ */
 class Mapa {
 public:
-    Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collidable*> collidables);
 
-    void renderizar_mapa();
-    void render();
+    /*
+     * Constructor de la clase Mapa, recibe una ventanam, la ruta del fondo y un vector de collidables
+     */
+    Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collidable*> collidables);
     
+    /* Renderiza el mapa
+     */
+    void renderizar_mapa();
+
+    /* Renderiza el fondo
+     */
+    void render();
+    /*
+     * Funcion que setea los collidables del mapa
+     * Recibe un vector de collidables
+     */ 
     void set_collidables(const std::vector<Collidable*>& collidables);
 
 private:

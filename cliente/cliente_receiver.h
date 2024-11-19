@@ -9,8 +9,20 @@
 
 class ClienteReceiver : public Thread {
 public:
+
+    /*
+     * Constructor de la clase ClienteReceiver, recibe un protocolo, una cola de eventos y un atomic bool
+     */
     explicit ClienteReceiver(ClienteProtocolo &protocolo, Queue<std::unique_ptr<Evento>> &queue_eventos, std::atomic<bool> &cliente_conectado);
+    
+    /*
+     * Funcion que corre el hilo
+     */
     void run() override;
+
+    /*
+     * Funcion que detiene el hilo
+     */
     int get_id();
 
 private:

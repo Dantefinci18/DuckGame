@@ -13,7 +13,7 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string colo
     : movimientos_en_x("../Imagenes/duck_x" + color + ".png", window),
       movimiento_en_y("../Imagenes/movimiento_y" + color + ".png", window),
       armas("../Imagenes/guns.png", window),
-      death("../Imagenes/DeadDuck.png", window),
+      death("../Imagenes/duckDead" + color + ".png", window),
       quieto(false),
       weapon(std::nullopt),
       x_img(0),
