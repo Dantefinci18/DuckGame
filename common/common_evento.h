@@ -11,7 +11,8 @@ public:
         EventoMovimiento,
         EventoMapa,
         EventoPickup,
-        EventoSpawnArma
+        EventoSpawnArma,
+        EventoEspera
     };
 
     virtual ~Evento() = default;
@@ -62,6 +63,11 @@ public:
         : id(id), x(x), y(y), weapon_type(weapon_type) {}
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoPickup; } 
+};
+
+class EventoEspera : public Evento {
+    public:
+        TipoEvento get_tipo() const override { return TipoEvento::EventoEspera; }
 };
 
 #endif

@@ -6,7 +6,7 @@ Lobby::Lobby(const char* hostname, const char* servname) : socket(hostname, serv
 
 void Lobby::crear_partida(const std::string& mapa_seleccionado) {
     bool was_closed = false;
-    ComandoAccion comando = ComandoAccion::NUEVA_PARTIDA;
+    ComandoAccion comando = ComandoAccion::NUEVA_PARTIDA_ACCION;
     std::vector<uint8_t> accion_serializada = serializador.serializar_accion(comando);
     socket.sendall(accion_serializada.data(), accion_serializada.size(), &was_closed);
     if (was_closed) {

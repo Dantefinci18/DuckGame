@@ -5,12 +5,12 @@
 #include <cstdint>
 
 enum ComandoAccion : uint8_t{
-    NUEVA_PARTIDA,
     DERECHA,
     IZQUIERDA,
     QUIETO,
     SALTAR,
-    NONE
+    NUEVA_PARTIDA_ACCION,
+    NONE_ACCION
 };
 
 class Accion {
@@ -26,6 +26,6 @@ class Accion {
             return player_id;
         }
         explicit Accion(int player_id, ComandoAccion command) : player_id(player_id), command(command) {}
-        explicit Accion() : player_id(-1), command(ComandoAccion::NONE) {}
+        explicit Accion() : player_id(-1), command(ComandoAccion::NONE_ACCION) {}
 };
 #endif // COMMON_ACCION_H

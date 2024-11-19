@@ -7,11 +7,10 @@
 #include "../common/common_queue.h"
 #include "server_protocolo.h"
 
-Jugador::Jugador(Queue<Accion>& comandos, Socket&& conexion):
+Jugador::Jugador(Queue<Accion>& comandos, PlayerMonitor& monitor, Socket&& conexion):
         protocolo(std::move(conexion)), 
-        cola_eventos(), 
         id(generar_id()),
-        sender(protocolo, cola_eventos, id), 
+        sender(protocolo, monitor, id), 
         receiver(protocolo, comandos, id),
         playerPhysics({200.0f,300.0f}, id) {}
 
@@ -21,42 +20,6 @@ void Jugador::run() {
 }
 
 bool Jugador::esta_conectado() { return !receiver.se_cerro() && !sender.se_cerro(); }
-
-void Jugador::enviar_evento(const Evento& evento) {
-    std::unique_ptr<Evento> evento_ptr;
-
-    switch (evento.get_tipo()) {
-        case Evento::EventoMovimiento: {
-            const EventoMovimiento& evento_movimiento = static_cast<const EventoMovimiento&>(evento);
-            evento_ptr = std::make_unique<EventoMovimiento>(evento_movimiento.id, evento_movimiento.x, evento_movimiento.y);
-            break;
-        }
-        case Evento::EventoMapa: {
-            
-            const EventoMapa& evento_mapa = static_cast<const EventoMapa&>(evento);
-            evento_ptr = std::make_unique<EventoMapa>(evento_mapa.collidables);
-            break;
-        }
-
-        case Evento::EventoPickup: {
-            
-            const EventoPickup& evento_pickup = static_cast<const EventoPickup&>(evento);
-            evento_ptr = std::make_unique<EventoPickup>(evento_pickup.id, evento_pickup.x, evento_pickup.y, evento_pickup.weapon_type);
-            break;
-        }
-
-        case Evento::EventoSpawnArma: {
-            
-            const EventoSpawnArma& evento_spawn = static_cast<const EventoSpawnArma&>(evento);
-            evento_ptr = std::make_unique<EventoSpawnArma>(evento_spawn.x, evento_spawn.y, evento_spawn.weapon_type);
-            break;
-        }
-        default:
-            return; 
-    }
-
-    cola_eventos.try_push(std::move(evento_ptr));
-}
 
 void Jugador::stop() {
     receiver.stop();
