@@ -4,7 +4,9 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QLabel>
-#include <QComboBox> 
+#include <QComboBox>
+#include <QDialog>
+#include <QVBoxLayout> 
 #include "../lobby.h"
 #include <string>  
 
@@ -13,7 +15,7 @@ class MainWindow : public QMainWindow {
 
 public:
     explicit MainWindow(Lobby* lobby, QWidget *parent = nullptr);
-    ~MainWindow();
+    void mostrar_ventana_espera(bool mostrar);
 
 signals:
     void crear_partida(const std::string& mapaSeleccionado);
@@ -28,7 +30,8 @@ private:
     QPushButton *crear_partida_Button;
     QPushButton *cargar_partida_Button;
     QLabel *statusLabel;
-    QComboBox *mapaComboBox;  
+    QComboBox *mapaComboBox;
+    QDialog *ventanaEspera;  
 };
 
 #endif // MAINWINDOW_H

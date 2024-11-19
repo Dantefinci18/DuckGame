@@ -33,6 +33,13 @@ int main(int argc, char* argv[]) {
 
     QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
         lobby.crear_partida(mapaSeleccionado);
+        
+        while (collidables.empty()) {
+            std::unique_ptr<Evento> evento = lobby.recibir_evento();
+            if(evento->get_tipo() == Evento::EventoMapa){
+                mainWindow.mostrar_ventana_espera(true);
+            }
+        }
         /*int id = lobby.recibir_id();
         while (collidables.empty()) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();

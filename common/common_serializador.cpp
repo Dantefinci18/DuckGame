@@ -33,6 +33,7 @@ uint8_t Serializador::deserializar_enum(const uint8_t* data){
     return valor;
 }
 
+
 ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
     ComandoAccion accion = static_cast<ComandoAccion>(deserializar_enum(data));
     return accion;

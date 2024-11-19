@@ -54,6 +54,12 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             evento_ptr = std::make_unique<EventoMuerte>(evento_muerte.id);
             break;
         }
+
+        case Evento::EventoEspera: {
+            const EventoEspera& evento_muerte = static_cast<const EventoEspera&>(evento);
+            evento_ptr = std::make_unique<EventoEspera>();
+            break;
+        }
      
     }
 

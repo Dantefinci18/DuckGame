@@ -18,4 +18,5 @@ target_sources(taller_common
   common_pistola_cowboy.h
   common_weapon.h
   common_color.h
+  common_partida.h
 )

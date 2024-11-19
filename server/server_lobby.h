@@ -10,7 +10,6 @@
 
 class ServerLobby : public Thread {
     private:
-        Socket& skt;
         std::list<Gameloop*> partidas;
         Queue<std::tuple<int,ComandoPartida>> cola_comando_partidas;
         std::unordered_map<int, JugadorEsperando*> jugadores_esperando;
@@ -22,7 +21,6 @@ class ServerLobby : public Thread {
         void eliminar_partidas();
 
     public:
-        explicit ServerLobby();
         void agregar_jugador(Socket& skt);
         void finalizar();
         void run() override;

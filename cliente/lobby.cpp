@@ -50,6 +50,13 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
 
     Evento::TipoEvento tipo = serializador.deserializar_tipo_evento(tipo_evento);
 
+    if(tipo == Evento::TipoEvento::EventoEspera){
+        std::cout << "se recibio espera\n";
+    
+    }else{
+        std::cout << "evento x\n";
+    }
+
     switch (tipo) {
         case Evento::EventoMovimiento: {
             uint8_t x[32];
@@ -99,9 +106,11 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
             }
             return std::make_unique<EventoMapa>(collidables);
         } 
+        
         case Evento::EventoEspera: {
             return std::make_unique<EventoEspera>();
         }
+
         default:
             throw std::runtime_error("Error: Tipo de evento desconocido");
             
