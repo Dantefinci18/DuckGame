@@ -3,7 +3,7 @@
 #include "common_weapon.h"
 class PistolaCowboy : public Weapon {
     public:
-    PistolaCowboy() : Weapon(6, WeaponType::PistolaCowboy, 60) {}
+    PistolaCowboy() : Weapon(6, WeaponType::PistolaCowboy, 200) {}
 
     void reload() override {
         ammo = 6;

@@ -51,8 +51,8 @@ void Cliente::procesar_eventos_recibidos() {
                 }
 
                 case Evento::EventoMuerte: {
-                    auto evento_muerte = static_cast<EventoDisparo*>(evento_recibido.get());
-                    std::cout << "Murió el pato id "<< evento_muerte->id << std::endl;
+                    auto evento_muerte = static_cast<EventoMuerte*>(evento_recibido.get());
+                    manejar_muerte(*evento_muerte);
                     break;
                 }
 
@@ -105,6 +105,17 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
         }
     }
     duck.set_weapon(evento_pickup.weapon_type);
+}
+
+void Cliente::manejar_muerte(const EventoMuerte& evento_muerte) {
+    if (evento_muerte.id != id) {
+        auto it = enemigos.find(evento_muerte.id);
+        if (it != enemigos.end()) {
+            it->second->kill();
+            return;
+        }
+    }
+    duck.kill();
 }
 
 void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables) {

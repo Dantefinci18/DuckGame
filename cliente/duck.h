@@ -17,7 +17,7 @@ public:
     bool esta_quieto();
     void mover_a(float nueva_x, float nueva_y);
     void set_weapon(WeaponType weapon);
-
+    void kill();
     ~Duck();
 
 private:

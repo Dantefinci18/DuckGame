@@ -46,7 +46,7 @@ public:
             }
 
             for (auto& jugador : jugadores) {
-                if (jugador.second->get_fisicas() != &player && jugador.second->get_fisicas()->is_duck_dead()) { 
+                if (jugador.second->get_fisicas() != &player && !jugador.second->get_fisicas()->is_duck_dead()) { 
                     auto interseccion = jugador.second->get_fisicas()->intersection_point(origen, destino);
                     if (interseccion) {
                         float distancia = (*interseccion - origen).magnitude();

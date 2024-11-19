@@ -22,4 +22,7 @@ void Enemigo::set_weapon(WeaponType new_weapon) {
     duck.set_weapon(new_weapon);
 }
 
+void Enemigo::kill() {
+    duck.kill();
+}
 Enemigo::~Enemigo() {}
