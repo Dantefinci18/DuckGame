@@ -46,8 +46,8 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
 }
 
 void PlayerMonitor::enviar_evento(const Evento& evento) {
-    std::unique_ptr<Evento> evento_ptr = broadcast_evento(evento);
     for (auto cola : colas_de_eventos) {
+        std::unique_ptr<Evento> evento_ptr = broadcast_evento(evento);
         cola->push(std::move(evento_ptr));
     }
 }

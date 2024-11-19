@@ -8,20 +8,20 @@ Gameloop::Gameloop(): mapa(1) {}
 void Gameloop::agregar_jugador(Socket& skt){
     Jugador *jugador = new Jugador(comandos_acciones,monitor,std::move(skt));
     jugador->run();
-    jugadores[jugador->get_id()] = jugador;;
+    jugadores[jugador->get_id()] = jugador;
 }
 
 void Gameloop::eliminar_jugador(std::unordered_map<int, Jugador*>::iterator& it){
    it->second->stop();
    delete it->second;
-   jugadores.erase(it->first);
-
 }
 
 void Gameloop::eliminar_desconectados(){
     for (auto it = jugadores.begin(); it != jugadores.end();) {        
         if (!it->second->esta_conectado()) {
-            eliminar_jugador(it);
+            it->second->stop();
+            delete it->second;
+            it = jugadores.erase(it);
         
         } else {
             ++it;
