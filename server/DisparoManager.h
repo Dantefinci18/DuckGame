@@ -3,6 +3,7 @@
 
 #include "Player.h"
 #include "Collidable.h"
+#include "server_jugador.h"
 #include "../common/common_evento.h"
 #include <vector>
 #include <memory>

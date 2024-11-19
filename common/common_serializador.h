@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdint>
 #include <memory>
+#include <bitset>
 
 #include "../common/common_accion.h"
 #include "../common/common_evento.h"
@@ -12,13 +13,20 @@
 #include "../server/Platform.h"
 #include "../server/Player.h"
 #include "../server/SpawnPlace.h"
+#include "common_partida.h"
 
 class Serializador {
+private:
+    std::vector<uint8_t> serializar_enum(std::bitset<8> bits);
+    uint8_t deserializar_enum(const uint8_t* data);
+
 public:
 
     std::vector<uint8_t> serializar_accion(ComandoAccion &accion);
+    std::vector<uint8_t> serializar_partida(ComandoPartida &partida);
 
     ComandoAccion deserializar_accion(const uint8_t* data);
+    ComandoPartida deserializar_partida(const uint8_t* data);
 
     std::vector<uint8_t> serializar_evento(const Evento& evento);
     std::vector<uint8_t> serializar_pickup(const Evento& evento);
@@ -48,7 +56,6 @@ public:
 
     
     Collidable* deserializar_collidable(const uint8_t* collidable_data);
-
 
 };
 #endif //COMMON_SERIALIZADOR_H

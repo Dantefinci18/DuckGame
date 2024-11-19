@@ -1,8 +1,8 @@
 #include "server_sender.h"
 #include <string>
 
-Sender::Sender(ProtocoloServidor& protocolo, Queue<std::unique_ptr<Evento>>& cola_eventos, int id)
-    : protocolo(protocolo), cola_eventos(cola_eventos), id(id) {}
+Sender::Sender(ProtocoloServidor& protocolo, PlayerMonitor& monitor, int id)
+    : protocolo(protocolo), monitor(monitor), id(id) {}
 
 void Sender::enviar_eventos() {
     protocolo.enviar_id(id);
@@ -20,12 +20,14 @@ void Sender::stop() {
 }
 
 void Sender::run() {
+    monitor.agregar_cola_evento(cola_eventos);
     try {
         enviar_eventos();
     } catch (std::exception& e) {
         if (_keep_running)
             std::cerr << "Error de escritura: " << e.what() << "\n";
     }
+    monitor.eliminar_cola_evento(cola_eventos);
 }
 
 bool Sender::se_cerro() {

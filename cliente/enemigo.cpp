@@ -1,8 +1,8 @@
 #include "enemigo.h"
 
 
-Enemigo::Enemigo(int id, float x, float y, SdlWindow& window, std::vector<Collidable*> collidables) 
-    : id(id), duckAnimacion(window, x, y, collidables) {
+Enemigo::Enemigo(int id, float x, float y, SdlWindow& window) 
+    : id(id), duck(window,x,y) {
 }
 
 
@@ -11,15 +11,15 @@ int Enemigo::get_id() const {
 }
 
 void Enemigo::mover_a(float nueva_x, float nueva_y) {
-    duckAnimacion.mover_a_una_posicion(nueva_x, nueva_y);
+    duck.mover_a(nueva_x, nueva_y);
 }
 
 void Enemigo::renderizar() {
-    duckAnimacion.render();
+    duck.render();
 }
  
 void Enemigo::set_weapon(WeaponType new_weapon) {
-    duckAnimacion.set_weapon(new_weapon);
+    duck.set_weapon(new_weapon);
 }
 
 Enemigo::~Enemigo() {}

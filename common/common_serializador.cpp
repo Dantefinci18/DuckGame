@@ -4,10 +4,7 @@
 #include <cstring>
 #include <memory>
       
-
-std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
-    std::bitset<8> bits(accion);  
-
+std::vector<uint8_t> Serializador::serializar_enum(std::bitset<8> bits){
     std::vector<uint8_t> buffer(8); 
     for (int i = 0; i < 8; ++i) {
         buffer[7 - i] = bits[i] ? 1 : 0;  
@@ -16,16 +13,34 @@ std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
     return buffer;
 }
 
+std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
+    std::bitset<8> bits(accion);  
+    return serializar_enum(bits);
+}
 
-ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
-    uint8_t accion_valor = 0;
+std::vector<uint8_t> Serializador::serializar_partida(ComandoPartida &partida){
+    std::bitset<8> bits(partida);  
+    return serializar_enum(bits);
+}
+
+uint8_t Serializador::deserializar_enum(const uint8_t* data){
+    uint8_t valor = 0;
+    
     for (int i = 0; i < 8; ++i) {
-        accion_valor |= (data[7 - i] << i);
+        valor |= (data[7 - i] << i);
     }
 
+    return valor;
+}
 
-    ComandoAccion accion = static_cast<ComandoAccion>(accion_valor);
+ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
+    ComandoAccion accion = static_cast<ComandoAccion>(deserializar_enum(data));
     return accion;
+}
+
+ComandoPartida Serializador::deserializar_partida(const uint8_t* data){
+    ComandoPartida partida = static_cast<ComandoPartida>(deserializar_enum(data));
+    return partida;
 }
 
 std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
