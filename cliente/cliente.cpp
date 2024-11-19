@@ -46,7 +46,6 @@ void Cliente::procesar_eventos_recibidos() {
 
                 case Evento::EventoDisparo: {
                     auto evento_disparo = static_cast<EventoDisparo*>(evento_recibido.get());
-                    std::cout << "Disparó el pato id "<< evento_disparo->id << std::endl;
                     break;
                 }
 
@@ -119,7 +118,6 @@ void Cliente::manejar_muerte(const EventoMuerte& evento_muerte) {
 }
 
 void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables) {
-    std::cout << "handling spawn" << std::endl;
     for (auto& collidable : collidables) {
         if (collidable->getType() == CollidableType::SpawnPlace 
             && collidable->position.x == evento_spawn.x
