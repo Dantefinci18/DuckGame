@@ -46,7 +46,7 @@ public:
             }
 
             for (auto& jugador : jugadores) {
-                if (jugador.second->get_fisicas() != &player) { 
+                if (jugador.second->get_fisicas() != &player && jugador.second->get_fisicas()->is_duck_dead()) { 
                     auto interseccion = jugador.second->get_fisicas()->intersection_point(origen, destino);
                     if (interseccion) {
                         float distancia = (*interseccion - origen).magnitude();
@@ -65,9 +65,8 @@ public:
                 switch (primer_impacto->getType()) {
                     case CollidableType::Player: {
                         Player* jugador_disparado = dynamic_cast<Player*>(primer_impacto);
-                            std::cout << "Le pegaste a otro jugador en (" << punto_impacto->x << ", " << punto_impacto->y << ")" << std::endl;
-                            eventos.push_back(std::make_shared<EventoMuerte>(jugador_disparado->get_id()));
-                            break;
+                        jugador_disparado->morir();
+                        break;
                     }
 
                     case CollidableType::Platform:

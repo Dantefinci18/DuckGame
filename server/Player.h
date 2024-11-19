@@ -33,10 +33,6 @@ class Player : public Collidable {
     public:
         std::vector<std::shared_ptr<Evento>> eventos;
     void move() {
-        std::cout << "Velocity y: " << velocity.y << std::endl;
-        std::cout << "Jump force: " << jump_force << std::endl;
-        std::cout << "Position y: " << position.y << std::endl;
-        std::cout << "--------------------------" << std::endl;
         if (velocity.y > -8 && jump_force == 0) {
             velocity.y -= 1;
         }
@@ -70,7 +66,7 @@ class Player : public Collidable {
 
     void morir(){
         eventos.push_back(std::make_shared<EventoMuerte>(id));
-
+        is_dead = true;
     }
 
     void dejar_disparar(){
