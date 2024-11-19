@@ -5,7 +5,7 @@
 #include <mutex>
 #include <string>
 #include <tuple>
-
+#include "DisparoManager.h"
 #include "../common/common_queue.h"
 #include "../common/common_thread.h"
 #include "../common/common_accion.h"

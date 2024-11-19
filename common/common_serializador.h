@@ -32,11 +32,16 @@ public:
     std::vector<uint8_t> serializar_pickup(const Evento& evento);
     std::vector<uint8_t> serializar_spawn_arma(const Evento& evento);
     std::vector<uint8_t> serializar_movimiento(const Evento& evento);
+    std::vector<uint8_t> serializar_disparo(const Evento& evento);
+    std::vector<uint8_t> serializar_muerte(const Evento& evento);
+
+
 
     std::unique_ptr<Evento> deserializar_movimiento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data);
     std::unique_ptr<Evento> deserializar_pickup(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
     std::unique_ptr<Evento> deserializar_spawn_arma(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
-
+    std::unique_ptr<Evento> deserializar_disparo(const uint8_t* id_data);
+    std::unique_ptr<Evento> deserializar_muerte(const uint8_t* id_data);
     Evento::TipoEvento deserializar_tipo_evento(const uint8_t* tipo_evento_data);
 
     std::vector<uint8_t> serializar_id(int id);

@@ -42,6 +42,10 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         int id = accion.get_player_id();
         ComandoAccion command = accion.get_command();
         Player* player = jugadores[id]->get_fisicas();
+        if (player->is_duck_dead()) {
+            continue;
+        }
+
         if (command == DERECHA) {
             player->set_x_direction(1.0f);
         
@@ -59,8 +63,22 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             EventoMapa eventoMapa(collidables);
             monitor.enviar_evento(eventoMapa);
             return;
+        } else if (command == DISPARAR){
+            std::vector<std::shared_ptr<Evento>> eventos;
+            if(player->has_weapon()){
+                DisparoManager::procesar_disparo(*player, collidables, jugadores, eventos);
+            }
+            /*
+            for (const auto& evento : eventos) {
+                std::cout << "manda un evento" <<std::endl;
+                broadcast_evento(*evento);
+            }*/
+        } else if (command == DEJAR_DISPARAR){
+            std::cout << "Dejo de disparar" << std::endl;
+            player->dejar_disparar();
+        } else if (command == RECARGAR){
+            player->reload();
         }
-    
     }
 
     for (auto& collidable : collidables) {

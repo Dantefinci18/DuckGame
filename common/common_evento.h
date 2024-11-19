@@ -12,6 +12,8 @@ public:
         EventoMapa,
         EventoPickup,
         EventoSpawnArma,
+        EventoMuerte,
+        EventoDisparo,
         EventoEspera
     };
 
@@ -63,6 +65,22 @@ public:
         : id(id), x(x), y(y), weapon_type(weapon_type) {}
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoPickup; } 
+};
+
+class EventoMuerte : public Evento {
+public:
+    int id;
+
+    EventoMuerte(int id) : id(id) {}
+    TipoEvento get_tipo() const override { return TipoEvento::EventoMuerte; } 
+};
+
+class EventoDisparo : public Evento {
+public:
+    int id;
+
+    EventoDisparo(int id) : id(id){}
+    TipoEvento get_tipo() const override { return TipoEvento::EventoDisparo; } 
 };
 
 class EventoEspera : public Evento {
