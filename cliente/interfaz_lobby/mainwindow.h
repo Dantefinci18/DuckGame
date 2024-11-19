@@ -16,14 +16,17 @@ public:
     ~MainWindow();
 
 signals:
-    void crear_partida(const std::string& mapaSeleccionado); 
+    void crear_partida(const std::string& mapaSeleccionado);
+    void cargar_partida(); 
 
 private slots:
     void crear_partida_clicked();
+    void cargar_partida_clicked();
 
 private:
     Lobby* lobby;
     QPushButton *crear_partida_Button;
+    QPushButton *cargar_partida_Button;
     QLabel *statusLabel;
     QComboBox *mapaComboBox;  
 };

@@ -9,13 +9,13 @@
 #include "../common/common_socket.h"
 #include "../common/common_thread.h"
 #include "../common/common_accion.h"
-#include "server_gameloop.h"
+#include "server_lobby.h"
 #include "server_monitor.h"
 
 class Aceptador: public Thread {
 private:
     Socket& skt;
-    Gameloop gameloop;
+    ServerLobby lobby;
 
 public:
     explicit Aceptador(Socket& skt);

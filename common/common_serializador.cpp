@@ -68,6 +68,11 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoMuerte){
         return serializar_muerte(evento);
     }
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoEspera){
+        std::bitset<8> bits(Evento::TipoEvento::EventoEspera);
+        return serializar_enum(bits);
+    }
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {

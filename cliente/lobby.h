@@ -14,6 +14,7 @@ class Lobby {
 public:
     Lobby(const char* hostname, const char* servname);
     void crear_partida(const std::string& mapa_seleccionado);
+    void cargar_partida();
     int recibir_id();
     std::unique_ptr<Evento> recibir_evento();
 

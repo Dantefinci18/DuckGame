@@ -76,6 +76,9 @@ void ProtocoloServidor::enviar_estado(const Evento& evento) {
     }*/
 }
 
+Socket ProtocoloServidor::get_socket(){
+    return std::move(conexion);
+}
 
 void ProtocoloServidor::cerrar_conexion() {
     conexion.shutdown(2);

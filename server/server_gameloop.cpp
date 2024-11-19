@@ -4,20 +4,33 @@
 #include "../common/common_color.h"
 
 
-Gameloop::Gameloop(): mapa(1),color(0) {}
+Gameloop::Gameloop(Socket& skt,unsigned int capacidad_minima): 
+    capacidad_minima(capacidad_minima), mapa(1), color(0){
+        agregar_jugador(skt);
+        this->start();
+    }
 
 void Gameloop::agregar_jugador(Socket& skt) {
+    std::lock_guard<std::mutex> lock(mtx);
 
     ColorDuck color_asignado = static_cast<ColorDuck>(color % static_cast<int>(ColorDuck::MAX_COLOR));
-
-
     Jugador* jugador = new Jugador(comandos_acciones, monitor, std::move(skt), color_asignado);
-
 
     jugador->run();
     jugadores[jugador->get_id()] = jugador;
 
+    cantidad_de_jugadores++;
     color++;
+    
+    if(cantidad_de_jugadores == capacidad_minima){
+        estado = COMENZADA;
+        EventoMapa eventoMapa(mapa.getCollidables());
+        monitor.enviar_evento(eventoMapa);
+    
+    }else{
+        monitor.enviar_evento(EventoEspera());
+    }
+
     }
 
 
@@ -25,13 +38,15 @@ void Gameloop::agregar_jugador(Socket& skt) {
 void Gameloop::eliminar_jugador(std::unordered_map<int, Jugador*>::iterator& it){
    it->second->stop();
    delete it->second;
+   cantidad_de_jugadores--;
 }
 
 void Gameloop::eliminar_desconectados(){
+    std::lock_guard<std::mutex> lock(mtx);
+
     for (auto it = jugadores.begin(); it != jugadores.end();) {        
         if (!it->second->esta_conectado()) {
-            it->second->stop();
-            delete it->second;
+            eliminar_jugador(it);
             it = jugadores.erase(it);
         
         } else {
@@ -40,16 +55,35 @@ void Gameloop::eliminar_desconectados(){
     }
 }
 
+EstadoGameloop Gameloop::get_estado(){
+    return estado;
+}
+
 void Gameloop::run() {
     while (_keep_running) {
-        cargar_acciones();
-        sleep();
+        eliminar_desconectados();
+
+        if(estado == COMENZADA){
+            if(cantidad_de_jugadores < capacidad_minima){
+                _keep_running = false;
+            
+            } else {
+                cargar_acciones();
+                sleep();
+            }
+        
+        }else if(estado == EN_ESPERA && cantidad_de_jugadores == 0){
+            _keep_running = false;
+        }
     }
+
+    estado = TERMINADA;
 }
 
 void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables){
     for (auto& accion : acciones) {
-        
+        std::lock_guard<std::mutex> lock(mtx);
+
         int id = accion.get_player_id();
         ComandoAccion command = accion.get_command();
         Player* player = jugadores[id]->get_fisicas();
@@ -70,10 +104,6 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         } else if (command == QUIETO) {
             player->set_x_direction(0.0f);
         
-        } else if (command == NUEVA_PARTIDA_ACCION){
-            EventoMapa eventoMapa(collidables);
-            monitor.enviar_evento(eventoMapa);
-            return;
         } else if (command == DISPARAR){
             std::vector<std::shared_ptr<Evento>> eventos;
             if(player->has_weapon()){
@@ -105,6 +135,8 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         }
         
     }
+
+    std::lock_guard<std::mutex> lock(mtx);
 
     for (auto& player : jugadores) {
         player.second->update_fisicas(collidables);

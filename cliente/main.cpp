@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 
     QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
         lobby.crear_partida(mapaSeleccionado);
-        int id = lobby.recibir_id();
+        /*int id = lobby.recibir_id();
         while (collidables.empty()) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
             if (evento->get_tipo() == Evento::EventoMapa) {
@@ -51,8 +51,15 @@ int main(int argc, char* argv[]) {
             }
         }
 
+
         Cliente cliente(id,color,lobby.get_socket(), collidables,x_inicial,y_inicial);
         cliente.start();
+        Cliente cliente(id,lobby.get_socket(), collidables,x_inicial,y_inicial);
+        cliente.start();*/
+    });
+
+    QObject::connect(&mainWindow, &MainWindow::cargar_partida, [&]() {
+        lobby.cargar_partida();
     });
 
     return app.exec();  
