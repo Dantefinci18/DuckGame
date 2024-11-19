@@ -22,6 +22,10 @@ public:
         Vector origen = player.get_posicion() + Vector(0,1); // ARREGLO PARA LEVANTAR LA LINEA DE TIRO
 
         for (const auto& destino : destinos) {
+
+            // no se si tiene mucha logica aca
+            //eventos.push_back(std::make_shared<EventoDisparo>(player.get_id()));
+
             Collidable* primer_impacto = nullptr;
             std::optional<Vector> punto_impacto = std::nullopt;
             float menor_distancia = std::numeric_limits<float>::max();
@@ -53,23 +57,25 @@ public:
                     }
                 }
             }
+
             player.print_position();
+
             if (primer_impacto && punto_impacto) {
                 switch (primer_impacto->getType()) {
-                    case CollidableType::Player:
-                        std::cout << "Le pegaste a otro jugador en (" 
-                                  << punto_impacto->x << ", " 
-                                  << punto_impacto->y << ")" << std::endl;
-
-                        // Lógica para aplicar daño o matar segun sea el caso
-                        break;
+                    case CollidableType::Player: {
+                        Player* jugador_disparado = dynamic_cast<Player*>(primer_impacto);
+                            std::cout << "Le pegaste a otro jugador en (" << punto_impacto->x << ", " << punto_impacto->y << ")" << std::endl;
+                            jugador_disparado->morir(); // por ahora asi
+                            //eventos.push_back(std::make_shared<EventoMuerte>(jugador_disparado->get_id()));
+                            break;
+                    }
 
                     case CollidableType::Platform:
                         std::cout <<"Le pegaste a una plataforma en (" 
                                   << punto_impacto->x << ", " 
                                   << punto_impacto->y << ")" << std::endl;
 
-                        // Que hace aca
+                        // ACA REBOTAR O ALGO ASI
                         break;
 
                     case CollidableType::Box:
@@ -77,7 +83,7 @@ public:
                                   << punto_impacto->x << ", " 
                                   << punto_impacto->y << ")" << std::endl;
 
-                        // Que hace aca
+                        // no se si va box
                         break;
 
                     default:

@@ -53,7 +53,15 @@ class Player : public Collidable {
             return {};
         }
         shooting = true;
+        std::cout << "Disaparó el pato id "<< id << std::endl;
+        eventos.push_back(std::make_shared<EventoDisparo>(id));
         return weapon->shoot(position, direccion_mirada, shooting);
+    }
+
+    void morir(){
+        // falta logica acá o que se hace cuando se muere y donde
+        std::cout << "Murió el pato id "<< id << std::endl;
+        eventos.push_back(std::make_shared<EventoMuerte>(id));
     }
 
     void dejar_disparar(){
@@ -181,6 +189,8 @@ class Player : public Collidable {
             weapon->reload();
         }
     }
+
+    int get_id(){return id;} // para ver noamas
 
     virtual ~Player() {}
     Player(Vector initialPosition, int id) : Collidable(initialPosition, 10.0f, 20.0f), velocity(Vector(0,0)), speed(3.0f), is_on_ground(false), is_standing_on_something(false), shooting(false), id(id), direccion_mirada(Vector(0, 0)), weapon(nullptr) {}

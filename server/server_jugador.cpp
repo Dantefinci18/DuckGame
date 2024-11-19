@@ -51,6 +51,21 @@ void Jugador::enviar_evento(const Evento& evento) {
             evento_ptr = std::make_unique<EventoSpawnArma>(evento_spawn.x, evento_spawn.y, evento_spawn.weapon_type);
             break;
         }
+
+        case Evento::EventoDisparo: {
+            
+            const EventoDisparo& evento_disparo = static_cast<const EventoDisparo&>(evento);
+            evento_ptr = std::make_unique<EventoDisparo>(evento_disparo.id);
+            break;
+        }
+
+        case Evento::EventoMuerte: {
+            
+            const EventoMuerte& evento_muerte = static_cast<const EventoMuerte&>(evento);
+            evento_ptr = std::make_unique<EventoMuerte>(evento_muerte.id);
+            break;
+        }
+
         default:
             return; 
     }

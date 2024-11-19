@@ -44,6 +44,18 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
 
+                case Evento::EventoDisparo: {
+                    auto evento_disparo = static_cast<EventoDisparo*>(evento_recibido.get());
+                    std::cout << "Disparó el pato id "<< evento_disparo->id << std::endl;
+                    break;
+                }
+
+                case Evento::EventoMuerte: {
+                    auto evento_muerte = static_cast<EventoDisparo*>(evento_recibido.get());
+                    std::cout << "Murió el pato id "<< evento_muerte->id << std::endl;
+                    break;
+                }
+
                 case Evento::EventoPickup: {
                     auto evento_pickup = static_cast<EventoPickup*>(evento_recibido.get());
                     manejar_arma(*evento_pickup, collidables);
