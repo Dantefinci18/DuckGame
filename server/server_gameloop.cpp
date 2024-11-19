@@ -42,6 +42,10 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         int id = accion.get_player_id();
         ComandoAccion command = accion.get_command();
         Player* player = jugadores[id]->get_fisicas();
+        if (player->is_duck_dead()) {
+            continue;
+        }
+
         if (command == DERECHA) {
             player->set_x_direction(1.0f);
         

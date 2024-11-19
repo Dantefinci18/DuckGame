@@ -66,8 +66,7 @@ public:
                     case CollidableType::Player: {
                         Player* jugador_disparado = dynamic_cast<Player*>(primer_impacto);
                             std::cout << "Le pegaste a otro jugador en (" << punto_impacto->x << ", " << punto_impacto->y << ")" << std::endl;
-                            jugador_disparado->morir(); // por ahora asi
-                            //eventos.push_back(std::make_shared<EventoMuerte>(jugador_disparado->get_id()));
+                            eventos.push_back(std::make_shared<EventoMuerte>(jugador_disparado->get_id()));
                             break;
                     }
 

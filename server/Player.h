@@ -18,6 +18,7 @@ class Player : public Collidable {
         bool shooting;
         int jump_force;
         int id;
+        bool is_dead;
         Vector direccion_mirada;
         std::unique_ptr<Weapon> weapon;
         
@@ -68,9 +69,8 @@ class Player : public Collidable {
     }
 
     void morir(){
-        // falta logica acá o que se hace cuando se muere y donde
-        std::cout << "Murió el pato id "<< id << std::endl;
         eventos.push_back(std::make_shared<EventoMuerte>(id));
+
     }
 
     void dejar_disparar(){
@@ -95,8 +95,11 @@ class Player : public Collidable {
         }
     }
 
+    bool is_duck_dead() {
+        return is_dead;
+    }
+
     virtual void update(std::vector<Collidable*> others) override {
-        
         int x_before = position.x;
         int y_before = position.y;
         move();
@@ -201,6 +204,10 @@ class Player : public Collidable {
     int get_id(){return id;} // para ver noamas
 
     virtual ~Player() {}
-    Player(Vector initialPosition, int id) : Collidable(initialPosition, 10.0f, 20.0f), velocity(Vector(0,0)), speed(3.0f), is_on_ground(false), is_standing_on_something(false), shooting(false), jump_force(0), id(id), direccion_mirada(Vector(0, 0)), weapon(nullptr) {}
+    Player(Vector initialPosition, int id) : Collidable(initialPosition, 10.0f, 20.0f), 
+        velocity(Vector(0,0)), 
+        speed(3.0f), 
+        is_on_ground(false), 
+        is_standing_on_something(false), shooting(false), jump_force(0), id(id), is_dead(false), direccion_mirada(Vector(0, 0)), weapon(nullptr) {}
 };
 #endif

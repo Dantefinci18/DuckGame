@@ -14,6 +14,7 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial)
     movimientos_en_x("../Imagenes/DuckMovimientos.png", window),
     movimiento_en_y("../Imagenes/DuckSalto.png", window),
     armas("../Imagenes/guns.png", window),
+    death("../Imagenes/DeadDuck.png", window),
     x_actual(x_inicial),
     y_actual(y_inicial),
     x_des(x_inicial),
@@ -22,6 +23,7 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial)
     y_img(0),
     quieto(true),
     weapon(std::nullopt),
+    is_dead(false),
     flip(SDL_FLIP_NONE) {}
 
 void Duck::render() {

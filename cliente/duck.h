@@ -30,7 +30,9 @@ private:
     SdlTexture movimientos_en_x;
     SdlTexture movimiento_en_y;
     SdlTexture armas;
+    SdlTexture death;
     bool quieto = false;
+    bool is_dead;
     std::optional<WeaponType> weapon;
     int x_img = 0;
     int y_img = 0;
