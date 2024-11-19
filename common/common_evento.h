@@ -3,8 +3,9 @@
 
 #include <vector>
 #include <cstdint>
-#include "common_weapon.h" // Assuming WeaponType is defined here
+#include "common_weapon.h" 
 #include "../server/Collidable.h"
+#include "../common/common_color.h"
 class Evento {
 public:
     enum TipoEvento {
@@ -22,10 +23,11 @@ public:
 class EventoMovimiento : public Evento {
 public:
     int id;
+    ColorDuck color;
     float x;
     float y;
 
-    EventoMovimiento(int id, float x, float y) : id(id), x(x), y(y) {}
+    EventoMovimiento(int id,ColorDuck color,float x, float y) : id(id),color(color), x(x), y(y) {}
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoMovimiento; }  
 };

@@ -20,6 +20,7 @@ private:
     std::unordered_map<int, Jugador*> jugadores;
     std::mutex mtx;
     Mapa mapa;
+    int color;
 
     void sleep();
     void cargar_acciones();
@@ -29,7 +30,7 @@ private:
 public:
     explicit Gameloop();
 
-    void agregar_jugador(Socket& jugador);
+    void agregar_jugador(Socket& skt);
     void eliminar_desconectados();
     void run() override;
     void cerrar_conexiones();

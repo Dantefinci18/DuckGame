@@ -1,16 +1,27 @@
 #include "server_gameloop.h"
 
 #include "../common/common_evento.h"
+#include "../common/common_color.h"
 
 
-Gameloop::Gameloop(): mapa(1) {}
+Gameloop::Gameloop(): mapa(1),color(0) {}
 
-void Gameloop::agregar_jugador(Socket& skt){
-    Jugador *jugador = new Jugador(comandos_acciones,monitor,std::move(skt));
+void Gameloop::agregar_jugador(Socket& skt) {
+
+    ColorDuck color_asignado = static_cast<ColorDuck>(color % static_cast<int>(ColorDuck::MAX_COLOR));
+
+
+    Jugador* jugador = new Jugador(comandos_acciones, monitor, std::move(skt), color_asignado);
+
+
     jugador->run();
     jugadores[jugador->get_id()] = jugador;
-}
 
+    color++;
+    }
+
+
+    
 void Gameloop::eliminar_jugador(std::unordered_map<int, Jugador*>::iterator& it){
    it->second->stop();
    delete it->second;

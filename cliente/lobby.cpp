@@ -5,6 +5,7 @@
 Lobby::Lobby(const char* hostname, const char* servname) : socket(hostname, servname) {}
 
 void Lobby::crear_partida(const std::string& mapa_seleccionado) {
+    (void)mapa_seleccionado;
     bool was_closed = false;
     ComandoAccion comando = ComandoAccion::NUEVA_PARTIDA_ACCION;
     std::vector<uint8_t> accion_serializada = serializador.serializar_accion(comando);
@@ -57,7 +58,12 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
                 throw std::runtime_error("Error al recibir ID en evento de movimiento: conexión cerrada");
             }
 
-            return serializador.deserializar_movimiento(id, x, y);
+            uint8_t color[8];
+            socket.recvall(color, sizeof(color), &was_closed);
+            if (was_closed) {
+                throw std::runtime_error("Error al recibir color en evento de movimiento: conexión cerrada");
+            }
+            return serializador.deserializar_movimiento(id,color ,x, y);
         }
         case Evento::EventoMapa: {
             uint8_t cantidad[32];

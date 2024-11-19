@@ -9,6 +9,8 @@
 #include <memory>
 #include "../common/common_weapon.h"
 #include "../common/common_evento.h"
+#include "../common/common_color.h"
+
 class Player : public Collidable {
     private:
         Vector velocity;
@@ -17,6 +19,7 @@ class Player : public Collidable {
         bool is_standing_on_something;
         int jump_force;
         int id;
+        ColorDuck color;
     public:
         std::vector<std::shared_ptr<Evento>> eventos;
     void move() {
@@ -70,7 +73,7 @@ class Player : public Collidable {
         } 
 
         if (x_before != position.x || y_before != position.y) {
-            eventos.push_back(std::make_shared<EventoMovimiento>(id, position.x, position.y));
+            eventos.push_back(std::make_shared<EventoMovimiento>(id,color,position.x, position.y));
         }
 
         //std::cout << velocity.to_string() << ", isOnGround" << std::to_string(is_on_ground) << std::endl;
@@ -144,6 +147,6 @@ class Player : public Collidable {
         return is_on_ground || is_standing_on_something;
     }
     virtual ~Player() {}
-    Player(Vector initialPosition, int id) : Collidable(initialPosition, 32.0f, 64.0f), velocity(Vector(0,0)), speed(3.0f), is_on_ground(false), is_standing_on_something(false), jump_force(0), id(id) {}
+    Player(Vector initialPosition, int id,ColorDuck color) : Collidable(initialPosition, 32.0f, 64.0f), velocity(Vector(0,0)), speed(3.0f), is_on_ground(false), is_standing_on_something(false), jump_force(0), id(id),color(color) {}
 };
 #endif

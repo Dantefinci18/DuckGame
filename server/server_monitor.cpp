@@ -16,7 +16,7 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
     switch (evento.get_tipo()) {
         case Evento::EventoMovimiento: {
             const EventoMovimiento& evento_movimiento = static_cast<const EventoMovimiento&>(evento);
-            evento_ptr = std::make_unique<EventoMovimiento>(evento_movimiento.id, evento_movimiento.x, evento_movimiento.y);
+            evento_ptr = std::make_unique<EventoMovimiento>(evento_movimiento.id,evento_movimiento.color ,evento_movimiento.x, evento_movimiento.y);
             break;
         }
         case Evento::EventoMapa: {
@@ -39,6 +39,10 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             evento_ptr = std::make_unique<EventoSpawnArma>(evento_spawn.x, evento_spawn.y, evento_spawn.weapon_type);
             break;
         }
+
+        default:
+            std::cerr << "Error: Tipo de evento desconocido" << std::endl;
+            break;
      
     }
 

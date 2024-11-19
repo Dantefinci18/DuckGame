@@ -8,6 +8,7 @@
 #include "interfaz_lobby/mainwindow.h"
 #include "../server/Collidable.h"
 #include "../server/Platform.h"  
+#include "../common/common_color.h"
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -28,6 +29,7 @@ int main(int argc, char* argv[]) {
     std::vector<Collidable*> collidables; 
     float x_inicial = 0;
     float y_inicial = 0;
+    ColorDuck color = ColorDuck::MAX_COLOR;
 
     QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
         lobby.crear_partida(mapaSeleccionado);
@@ -42,12 +44,14 @@ int main(int argc, char* argv[]) {
                 auto evento_mov = static_cast<EventoMovimiento*>(evento.get());
                 x_inicial = evento_mov->x;
                 y_inicial = evento_mov->y;
+                color = evento_mov->color;
+
 
 
             }
         }
 
-        Cliente cliente(id,lobby.get_socket(), collidables,x_inicial,y_inicial);
+        Cliente cliente(id,color,lobby.get_socket(), collidables,x_inicial,y_inicial);
         cliente.start();
     });
 

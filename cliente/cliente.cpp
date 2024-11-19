@@ -8,10 +8,10 @@
 #include <memory>
 #include "../server/Platform.h"  
 
-Cliente::Cliente(int id,Socket&& socket, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
+Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
     : id(id),
       window(800,600),
-      duck(window, x_inicial,y_inicial),
+      duck(window, x_inicial,y_inicial, procesar_color(color)),
       mapa(window, "../Imagenes/forest.png", collidables),
       protocolo(std::move(socket)),
       receiver(protocolo, queue_eventos, conectado),
@@ -36,7 +36,7 @@ void Cliente::procesar_eventos_recibidos() {
             switch (evento_recibido->get_tipo()) {
                 case Evento::EventoMovimiento: {
                     auto evento_mov = static_cast<EventoMovimiento*>(evento_recibido.get());
-                    manejar_enemigos(*evento_mov, collidables);  
+                    manejar_enemigos(*evento_mov);  
                     break;
                 }
                 case Evento::EventoMapa: {
@@ -62,14 +62,14 @@ void Cliente::procesar_eventos_recibidos() {
         }
     }
 }
-void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov, std::vector<Collidable*> collidables) {
+void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov) {
     if (evento_mov.id != id) {
         auto it = enemigos.find(evento_mov.id);
         if (it != enemigos.end()) {
             it->second->mover_a(evento_mov.x, evento_mov.y);
         } else {
             enemigos[evento_mov.id] = std::make_unique<Enemigo>(
-                evento_mov.id, evento_mov.x, evento_mov.y, window);
+                evento_mov.id,procesar_color(evento_mov.color) ,evento_mov.x, evento_mov.y, window);
         }
     } else {
         duck.mover_a(evento_mov.x, evento_mov.y);
@@ -173,6 +173,33 @@ void Cliente::ejecutar_juego() {
         controlar_eventos_del_teclado(&tecla_anterior);
 
         SDL_Delay(1);
+    }
+}
+
+std::string Cliente::procesar_color(ColorDuck color){
+    switch (color){
+        case ColorDuck::AZUL:
+            return "_azul";
+        case ColorDuck::ROJO:
+            return "_rojo";
+        case ColorDuck::VERDE:
+            return "_verde";
+        case ColorDuck::AMARILLO:
+            return "_amarillo";
+        case ColorDuck::ROSA:
+            return "_rosa";
+        case ColorDuck::NARANJA:
+            return "_naranja";
+        case ColorDuck::CELESTE:
+            return "_celeste";
+        case ColorDuck::NEGRO:
+            return "_negro";
+        case ColorDuck::BLANCO:
+            return "_blanco";
+        case ColorDuck::MAX_COLOR:
+            return "Max";
+        default:
+            return "";
     }
 }
 
