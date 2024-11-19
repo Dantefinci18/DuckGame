@@ -21,18 +21,24 @@ void ServerLobby::run(){
                 skt.shutdown(2);
                 skt.close();
                 jugadores_esperando.erase(id_jugador);
+                jugador->stop();
+                jugador->join();
                 delete jugador;
 
             }else if(partida == NUEVA_PARTIDA){
                 Gameloop *gameloop = new Gameloop(skt,2);
                 partidas.push_back(gameloop);
                 jugadores_esperando.erase(id_jugador);
+                jugador->stop();
+                jugador->join();
                 delete jugador;
             
             }else if(partida == CARGAR_PARTIDA){
                 Gameloop *gameloop = obtener_partida_en_espera();
                 gameloop->agregar_jugador(skt);
                 jugadores_esperando.erase(id_jugador);
+                jugador->stop();
+                jugador->join();
                 delete jugador;
 
             }

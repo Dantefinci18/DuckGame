@@ -33,41 +33,42 @@ int main(int argc, char* argv[]) {
 
     QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
         lobby.crear_partida(mapaSeleccionado);
-        
+        int id = lobby.recibir_id();
         while (collidables.empty()) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
-            if(evento->get_tipo() == Evento::EventoMapa){
+            
+            if(evento->get_tipo() == Evento::EventoEspera){
                 mainWindow.mostrar_ventana_espera(true);
-            }
-        }
-        /*int id = lobby.recibir_id();
-        while (collidables.empty()) {
-            std::unique_ptr<Evento> evento = lobby.recibir_evento();
-            if (evento->get_tipo() == Evento::EventoMapa) {
+            
+            }else if(evento->get_tipo() == Evento::EventoMapa){
                 auto evento_mapa = static_cast<EventoMapa*>(evento.get());
                 collidables = evento_mapa->collidables;
             }
-            if (evento->get_tipo() == Evento::EventoMovimiento) {
-                auto evento_mov = static_cast<EventoMovimiento*>(evento.get());
-                x_inicial = evento_mov->x;
-                y_inicial = evento_mov->y;
-                color = evento_mov->color;
-
-
-
-            }
         }
-
 
         Cliente cliente(id,color,lobby.get_socket(), collidables,x_inicial,y_inicial);
         cliente.start();
-        Cliente cliente(id,lobby.get_socket(), collidables,x_inicial,y_inicial);
-        cliente.start();*/
-    });
+    })
+ 
 
     QObject::connect(&mainWindow, &MainWindow::cargar_partida, [&]() {
         lobby.cargar_partida();
-    });
+        int id = lobby.recibir_id();
+        
+        while (collidables.empty()) {
+            std::unique_ptr<Evento> evento = lobby.recibir_evento();
+            if(evento->get_tipo() == Evento::EventoEspera){
+                mainWindow.mostrar_ventana_espera(true);
+            
+            }else if(evento->get_tipo() == Evento::EventoMapa){
+                auto evento_mapa = static_cast<EventoMapa*>(evento.get());
+                collidables = evento_mapa->collidables;
+            }
+        }
 
-    return app.exec();  
+        Cliente cliente(id,color,lobby.get_socket(), collidables,x_inicial,y_inicial);
+        cliente.start();
+    })
+
+   return app.exec();  
 }

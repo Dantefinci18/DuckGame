@@ -34,8 +34,7 @@ public:
     std::vector<uint8_t> serializar_movimiento(const Evento& evento);
     std::vector<uint8_t> serializar_disparo(const Evento& evento);
     std::vector<uint8_t> serializar_muerte(const Evento& evento);
-
-
+    std::vector<uint8_t> serializar_espera(const Evento::TipoEvento& evento);
 
     std::unique_ptr<Evento> deserializar_movimiento(const uint8_t* id_data,const uint8_t* ,const uint8_t* x_data, const uint8_t* y_data);
     std::unique_ptr<Evento> deserializar_pickup(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);

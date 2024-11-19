@@ -48,6 +48,7 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
         throw std::runtime_error("Error al recibir el tipo de evento: conexión cerrada");
     }
 
+    serializador.imprimir_uint8_t_array(tipo_evento,sizeof(tipo_evento));
     Evento::TipoEvento tipo = serializador.deserializar_tipo_evento(tipo_evento);
 
     if(tipo == Evento::TipoEvento::EventoEspera){
