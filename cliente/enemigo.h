@@ -9,17 +9,42 @@
 
 class Enemigo {
 public:
+
+    /* 
+     * Constructor de la clase Enemigo, recibe un id, un string con el color, un float con la posicion x, un float con la posicion y y una ventana
+     */
     Enemigo(int id,std::string,float x, float y, SdlWindow& window);
 
+    /* 
+     * Funcion que retorna el id del enemigo
+     */
     int get_id() const;
 
+    /* 
+     * Funcion que mueve al enemigo a una posicion x y y
+     * Recibe un float con la nueva posicion x y un float con la nueva posicion y
+     */
     void mover_a(float nueva_x, float nueva_y);
-
+    
+    /* 
+     * Funcion que renderiza al enemigo
+     */
     void renderizar();
 
+    /* 
+     * Funcion que setea el arma del enemigo
+     * Recibe un WeaponType
+     */
     void set_weapon(WeaponType weapon);
-    void kill();
 
+    /* 
+     * Funcion que mata al enemigo
+     */
+    void kill();
+    
+    /* 
+     * Destructor de la clase Enemigo
+     */
     ~Enemigo();
 
 private:
