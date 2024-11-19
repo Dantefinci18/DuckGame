@@ -8,6 +8,8 @@ target_sources(taller_client
     cliente_receiver.cpp
     lobby.cpp
     enemigo.cpp
+    mapa.cpp
+    duck.cpp
     interfaz_lobby/mainwindow.cpp
     interfaz_lobby/resources.qrc
 
@@ -18,11 +20,12 @@ target_sources(taller_client
     cliente_receiver.h
     lobby.h
     enemigo.h
+    mapa.h
+    duck.h
     interfaz_lobby/mainwindow.h
 )
 
 add_library(sdldemo
-  DuckAnimacion.cpp
   Sdl/Area.cpp
   Sdl/SdlTexture.cpp
   Sdl/SdlException.cpp

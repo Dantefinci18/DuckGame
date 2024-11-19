@@ -2,14 +2,14 @@
 #define ENEMIGO_H
 
 #include <string>
-#include "DuckAnimacion.h"  
+#include "duck.h"  
 #include "Sdl/SdlWindow.h"
 #include "../server/Collidable.h"
 #include "../common/common_weapon.h"
 
 class Enemigo {
 public:
-    Enemigo(int id, float x, float y, SdlWindow& window, std::vector<Collidable*> collidables);
+    Enemigo(int id, float x, float y, SdlWindow& window);
 
     int get_id() const;
 
@@ -23,7 +23,7 @@ public:
 
 private:
     int id;  
-    DuckAnimacion duckAnimacion;  
+    Duck duck; 
 };
 
 #endif // ENEMIGO_H

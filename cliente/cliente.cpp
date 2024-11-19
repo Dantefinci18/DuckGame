@@ -1,5 +1,4 @@
-#define ANCHO_VENTANA 800
-#define ALTO_VENTANA 600
+
 #include "cliente.h"
 #include "../common/common_evento.h"
 #include "../common/common_queue.h"
@@ -11,8 +10,9 @@
 
 Cliente::Cliente(int id,Socket&& socket, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
     : id(id),
-      window(ANCHO_VENTANA, ALTO_VENTANA),
-      duck(window, x_inicial,y_inicial,collidables),
+      window(800,600),
+      duck(window, x_inicial,y_inicial),
+      mapa(window, "../Imagenes/forest.png", collidables),
       protocolo(std::move(socket)),
       receiver(protocolo, queue_eventos, conectado),
       sender(protocolo, queue_acciones),
@@ -69,10 +69,10 @@ void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov, std::vector<C
             it->second->mover_a(evento_mov.x, evento_mov.y);
         } else {
             enemigos[evento_mov.id] = std::make_unique<Enemigo>(
-                evento_mov.id, evento_mov.x, evento_mov.y, window, collidables);
+                evento_mov.id, evento_mov.x, evento_mov.y, window);
         }
     } else {
-        duck.mover_a_una_posicion(evento_mov.x, evento_mov.y);
+        duck.mover_a(evento_mov.x, evento_mov.y);
     }
 }
 
@@ -146,11 +146,7 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
 }
 
 void Cliente::ejecutar_juego() {
-    window.set_title("DuckGame");
-    SdlTexture fondo("../Imagenes/forest.png", window);
-    Area srcArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
-    Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
-    fondo.render(srcArea, destArea, SDL_FLIP_NONE);
+    
     const int frameDelay = 50;  
     Uint32 lastRenderTime = SDL_GetTicks();
 
@@ -162,7 +158,7 @@ void Cliente::ejecutar_juego() {
         if (currentTime - lastRenderTime >= frameDelay) {
             lastRenderTime = currentTime;
 
-            fondo.render(srcArea, destArea, SDL_FLIP_NONE);
+            mapa.render();
 
             duck.render();
 

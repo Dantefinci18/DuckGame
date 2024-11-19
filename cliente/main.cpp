@@ -2,7 +2,6 @@
 #include <iostream>
 #include "Sdl/SdlWindow.h"
 #include "Sdl/SdlTexture.h"
-#include "DuckAnimacion.h"
 #include "cliente.h"
 #include "lobby.h"
 #include <QApplication>
