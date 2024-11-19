@@ -1,5 +1,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
+
 #include "Vector.h"
 #include "Collidable.h"
 #include "Platform.h"
@@ -9,29 +10,33 @@
 #include <memory>
 #include "../common/common_weapon.h"
 #include "../common/common_evento.h"
+#include "../common/common_color.h"
+
 class Player : public Collidable {
-    private:
-        Vector velocity;
-        float speed;
-        bool is_on_ground;
-        bool is_standing_on_something;
-        bool shooting;
-        int jump_force;
-        int id;
-        bool is_dead;
-        Vector direccion_mirada;
-        std::unique_ptr<Weapon> weapon;
-        
-        void mirar_a_derecha() {
-            direccion_mirada = Vector(1, 0);
-        }
+private:
+    Vector velocity;
+    float speed;
+    bool is_on_ground;
+    bool is_standing_on_something;
+    bool shooting;
+    int jump_force;
+    int id;
+    ColorDuck color;
+    bool is_dead;
+    Vector direccion_mirada;
+    std::unique_ptr<Weapon> weapon;
 
-        void mirar_a_izquierda() {
-            direccion_mirada = Vector(-1, 0);
-        }
+    void mirar_a_derecha() {
+        direccion_mirada = Vector(1, 0);
+    }
 
-    public:
-        std::vector<std::shared_ptr<Evento>> eventos;
+    void mirar_a_izquierda() {
+        direccion_mirada = Vector(-1, 0);
+    }
+
+public:
+    std::vector<std::shared_ptr<Evento>> eventos;
+
     void move() {
         if (velocity.y > -8 && jump_force == 0) {
             velocity.y -= 1;
@@ -47,7 +52,6 @@ class Player : public Collidable {
             velocity.y = 0;
             is_on_ground = true;
         }
-        
     }
 
     Vector get_direccion_mirada() const {
@@ -59,18 +63,18 @@ class Player : public Collidable {
             return {};
         }
         shooting = true;
-        std::cout << "Disaparó el pato id "<< id << std::endl;
+        std::cout << "Disparó el pato id " << id << std::endl;
         eventos.push_back(std::make_shared<EventoDisparo>(id));
         return weapon->shoot(position, direccion_mirada, shooting);
     }
 
-    void morir(){
+    void morir() {
         eventos.push_back(std::make_shared<EventoMuerte>(id));
         is_dead = true;
     }
 
-    void dejar_disparar(){
-        if(shooting){
+    void dejar_disparar() {
+        if (shooting) {
             shooting = false;
         }
     }
@@ -109,17 +113,12 @@ class Player : public Collidable {
 
         if (!collide) {
             is_standing_on_something = false;
-        } 
-
-        if (x_before != position.x || y_before != position.y) {
-            eventos.push_back(std::make_shared<EventoMovimiento>(id, position.x, position.y));
         }
 
-        //std::cout << velocity.to_string() << ", isOnGround" << std::to_string(is_on_ground) << std::endl;
-        //std::cout << velocity.to_string() << std::endl;
+        if (x_before != position.x || y_before != position.y) {
+            eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y));
+        }
     }
-
-    
 
     virtual CollidableType getType() const override {
         return CollidableType::Player;
@@ -128,22 +127,18 @@ class Player : public Collidable {
     virtual bool onCollision(Collidable& other) override {
         if (other.getType() == CollidableType::Platform) {
             Platform& platform = static_cast<Platform&>(other);
-            
+
             CollidableSide side = getCollisionSide(platform);
             if (side == CollidableSide::Top) {
                 position.y = platform.top();
                 velocity.y = 0;
                 is_standing_on_something = true;
-                return true;  
-            }
-
-            else if (side == CollidableSide::Bottom) {
+                return true;
+            } else if (side == CollidableSide::Bottom) {
                 position.y = platform.bottom() - height;
                 velocity.y = -velocity.y;
                 return true;
-            }
-
-            else if (side == CollidableSide::Left || side == CollidableSide::Right) {
+            } else if (side == CollidableSide::Left || side == CollidableSide::Right) {
                 velocity.x = 0;
                 return true;
             }
@@ -162,24 +157,24 @@ class Player : public Collidable {
                 std::cout << "picked up weapon!" << std::endl;
                 eventos.push_back(std::make_shared<EventoPickup>(id, spawnPlace.position.x, spawnPlace.position.y, weapon->get_type()));
             }
-        }   
+        }
 
         return false;
     }
 
     void print_bounding_box() const override {
         std::cout << "Player box: ("
-            << "left: " <<  std::to_string(left()) << ", "
-            << "right: " <<  std::to_string(right()) << ", "
-            << "top: " <<  std::to_string(top()) << ", "
-            << "bottom: " <<  std::to_string(bottom()) << std::endl;;
+                  << "left: " << std::to_string(left()) << ", "
+                  << "right: " << std::to_string(right()) << ", "
+                  << "top: " << std::to_string(top()) << ", "
+                  << "bottom: " << std::to_string(bottom()) << std::endl;
     }
 
     void print_position() const override {
         std::cout << "Player position" << "(" << position.x << ", " << position.y << ")\n";
     }
 
-    Vector get_posicion(){
+    Vector get_posicion() {
         return position;
     }
 
@@ -192,18 +187,28 @@ class Player : public Collidable {
     }
 
     void reload() const {
-        if(has_weapon()){
+        if (has_weapon()) {
             weapon->reload();
         }
     }
 
-    int get_id(){return id;} // para ver noamas
+    int get_id() { return id; }
 
     virtual ~Player() {}
-    Player(Vector initialPosition, int id) : Collidable(initialPosition, 10.0f, 20.0f), 
-        velocity(Vector(0,0)), 
-        speed(3.0f), 
-        is_on_ground(false), 
-        is_standing_on_something(false), shooting(false), jump_force(0), id(id), is_dead(false), direccion_mirada(Vector(0, 0)), weapon(nullptr) {}
+
+    Player(Vector initialPosition, int id, ColorDuck color)
+        : Collidable(initialPosition, 32.0f, 64.0f), 
+          velocity(Vector(0, 0)), 
+          speed(3.0f), 
+          is_on_ground(false), 
+          is_standing_on_something(false), 
+          shooting(false), 
+          jump_force(0), 
+          id(id), 
+          color(color), 
+          is_dead(false), 
+          direccion_mirada(Vector(0, 0)), 
+          weapon(nullptr) {}
 };
+
 #endif

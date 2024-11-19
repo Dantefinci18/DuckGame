@@ -7,12 +7,13 @@
 #include "../common/common_queue.h"
 #include "server_protocolo.h"
 
-Jugador::Jugador(Queue<Accion>& comandos, PlayerMonitor& monitor, Socket&& conexion):
+
+Jugador::Jugador(Queue<Accion>& comandos, PlayerMonitor& monitor, Socket&& conexion, ColorDuck color):
         protocolo(std::move(conexion)), 
         id(generar_id()),
         sender(protocolo, monitor, id), 
         receiver(protocolo, comandos, id),
-        playerPhysics({200.0f,300.0f}, id) {}
+        playerPhysics({200.0f,300.0f}, id, color) {}
 
 void Jugador::run() {
     sender.start();
@@ -52,3 +53,10 @@ int Jugador::generar_id() {
     std::cout << id << std::endl;
     return id;
 }
+
+
+
+
+
+Jugador::~Jugador() {}
+

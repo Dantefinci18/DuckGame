@@ -6,6 +6,10 @@
 #include <random>
 #include <cstdint>
 #include "../common/common_socket.h"
+#include "../common/common_color.h"
+#include "../common/common_queue.h"
+#include "../common/common_color.h"
+
 #include "server_receiver.h"
 #include "server_sender.h"
 #include "server_monitor.h"
@@ -21,7 +25,7 @@ private:
     int generar_id();
 
 public:
-    explicit Jugador(Queue<Accion> &comandos,PlayerMonitor& monitor ,Socket&& conexion);
+    explicit Jugador(Queue<Accion> &comandos,PlayerMonitor& monitor ,Socket&& conexion, ColorDuck color);
 
     void run();
 
@@ -34,6 +38,9 @@ public:
     int get_id();
     Player* get_fisicas();
     void update_fisicas(std::vector<Collidable*> collidables);
+
+
+    ~Jugador();
 };
 
 #endif

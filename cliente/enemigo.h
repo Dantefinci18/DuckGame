@@ -9,7 +9,7 @@
 
 class Enemigo {
 public:
-    Enemigo(int id, float x, float y, SdlWindow& window);
+    Enemigo(int id,std::string,float x, float y, SdlWindow& window);
 
     int get_id() const;
 

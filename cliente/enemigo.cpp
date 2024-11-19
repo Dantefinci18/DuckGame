@@ -1,8 +1,8 @@
 #include "enemigo.h"
 
 
-Enemigo::Enemigo(int id, float x, float y, SdlWindow& window) 
-    : id(id), duck(window,x,y) {
+Enemigo::Enemigo(int id,std::string color,float x, float y, SdlWindow& window) 
+    : id(id), duck(window,x,y,color) {
 }
 
 

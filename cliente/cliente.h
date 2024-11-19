@@ -13,6 +13,7 @@
 #include "../common/common_evento.h"
 #include "../common/common_accion.h"
 #include "../common/common_socket.h"
+#include "../common/common_color.h"
 #include "../server/Collidable.h"
 #include <SDL2/SDL.h>
 #include <unordered_map>
@@ -36,17 +37,18 @@ private:
 
     void ejecutar_juego();
     void procesar_eventos_recibidos();
-    void manejar_enemigos(const EventoMovimiento& evento_mov, std::vector<Collidable*> collidables);
+    void manejar_enemigos(const EventoMovimiento& evento_mov);
     void manejar_arma(const EventoPickup& evento_pickup, std::vector<Collidable*> collidables);
     void manejar_muerte(const EventoMuerte& evento_muerte);
     void spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables);
     void enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion);
     void controlar_eventos_del_teclado(ComandoAccion* tecla_anterior);
+    std::string procesar_color(ColorDuck color);
     void stop();
     void join();
 
 public:
-    explicit Cliente(int id,Socket&& socket,std::vector<Collidable*> collidables, float x_inicial, float y_inicial);
+    explicit Cliente(int id,ColorDuck color,Socket&& socket,std::vector<Collidable*> collidables, float x_inicial, float y_inicial);
     void start();
     ~Cliente();};
 

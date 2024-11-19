@@ -11,7 +11,7 @@
 
 class Duck {
 public:
-    Duck(SdlWindow& window, float x_inicial, float y_inicial);
+    Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string color);
 
     void render();
     bool esta_quieto();
@@ -32,14 +32,14 @@ private:
     SdlTexture armas;
     SdlTexture death;
     bool quieto = false;
-    bool is_dead;
+    bool is_dead = false;
     std::optional<WeaponType> weapon;
     int x_img = 0;
     int y_img = 0;
     float x_actual;
     float y_actual;
-    float x_des = x_actual;
-    int y_des = y_actual;
+    float x_des;
+    int y_des;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
 };
 
