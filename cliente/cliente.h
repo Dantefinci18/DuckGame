@@ -4,8 +4,9 @@
 #include "cliente_sender.h"
 #include "cliente_receiver.h"
 #include "cliente_protocolo.h"
+#include "duck.h"
+#include "mapa.h"
 #include "enemigo.h" 
-#include "DuckAnimacion.h"
 #include "Sdl/SdlWindow.h"
 #include <atomic>
 #include "../common/common_queue.h"
@@ -22,7 +23,8 @@ class Cliente {
 private:
     int id;
     SdlWindow window;
-    DuckAnimacion duck; 
+    Duck duck;
+    Mapa mapa;
     ClienteProtocolo protocolo;
     ClienteReceiver receiver;
     ClienteSender sender;

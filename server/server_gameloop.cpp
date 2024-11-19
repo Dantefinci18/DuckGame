@@ -100,7 +100,7 @@ void Gameloop::cargar_acciones() {
     procesar_acciones(acciones, mapa.getCollidables());
 }
 
-void Gameloop::sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(100)); }
+void Gameloop::sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(50)); }
 
 void Gameloop::cerrar_conexiones(){
     for (auto it = jugadores.begin(); it != jugadores.end();) {        

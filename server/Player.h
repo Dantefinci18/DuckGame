@@ -15,12 +15,21 @@ class Player : public Collidable {
         float speed;
         bool is_on_ground;
         bool is_standing_on_something;
+        int jump_force;
         int id;
     public:
         std::vector<std::shared_ptr<Evento>> eventos;
     void move() {
-        if (velocity.y > -5) {
+        std::cout << "Velocity y: " << velocity.y << std::endl;
+        std::cout << "Jump force: " << jump_force << std::endl;
+        std::cout << "Position y: " << position.y << std::endl;
+        std::cout << "--------------------------" << std::endl;
+        if (velocity.y > -8 && jump_force == 0) {
             velocity.y -= 1;
+        }
+        if (jump_force > 0) {
+            jump_force--;
+            velocity.y += 1;
         }
         position.y += velocity.y;
         position.x += velocity.x * speed;
@@ -38,13 +47,13 @@ class Player : public Collidable {
 
     void jump() {
         if (is_able_to_jump()) {
-            std::cout << "is_able" << std::endl;
             is_on_ground = false;
-            velocity.y = 10.0f;
+            jump_force = 15;
         }
     }
 
     virtual void update(std::vector<Collidable*> others) override {
+        
         int x_before = position.x;
         int y_before = position.y;
         move();
@@ -132,10 +141,9 @@ class Player : public Collidable {
     }
 
     bool is_able_to_jump() {
-        std::cout << is_on_ground << is_standing_on_something << std::endl;
         return is_on_ground || is_standing_on_something;
     }
     virtual ~Player() {}
-    Player(Vector initialPosition, int id) : Collidable(initialPosition, 10.0f, 20.0f), velocity(Vector(0,0)), speed(3.0f), is_on_ground(false), is_standing_on_something(false), id(id) {}
+    Player(Vector initialPosition, int id) : Collidable(initialPosition, 32.0f, 64.0f), velocity(Vector(0,0)), speed(3.0f), is_on_ground(false), is_standing_on_something(false), jump_force(0), id(id) {}
 };
 #endif
