@@ -14,6 +14,11 @@ void Gameloop::agregar_jugador(Socket& skt) {
     std::lock_guard<std::mutex> lock(mtx);
 
     ColorDuck color_asignado = static_cast<ColorDuck>(color % static_cast<int>(ColorDuck::MAX_COLOR));
+    
+    if(color_asignado == ColorDuck::MAX_COLOR){
+        std::cout << "MAX_COLOR\n";
+    }
+
     Jugador* jugador = new Jugador(comandos_acciones, monitor, std::move(skt), color_asignado);
 
     jugador->run();

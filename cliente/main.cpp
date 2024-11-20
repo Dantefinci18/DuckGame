@@ -41,14 +41,21 @@ int main(int argc, char* argv[]) {
                 mainWindow.mostrar_ventana_espera(true);
             
             }else if(evento->get_tipo() == Evento::EventoMapa){
+                mainWindow.mostrar_ventana_espera(false);
                 auto evento_mapa = static_cast<EventoMapa*>(evento.get());
                 collidables = evento_mapa->collidables;
+            
+            }else if (evento->get_tipo() == Evento::EventoMovimiento) {
+                auto evento_mov = static_cast<EventoMovimiento*>(evento.get());
+                x_inicial = evento_mov->x;
+                y_inicial = evento_mov->y;
+                color = evento_mov->color;
             }
         }
 
         Cliente cliente(id,color,lobby.get_socket(), collidables,x_inicial,y_inicial);
         cliente.start();
-    })
+    });
  
 
     QObject::connect(&mainWindow, &MainWindow::cargar_partida, [&]() {
@@ -61,14 +68,22 @@ int main(int argc, char* argv[]) {
                 mainWindow.mostrar_ventana_espera(true);
             
             }else if(evento->get_tipo() == Evento::EventoMapa){
+                mainWindow.mostrar_ventana_espera(false);
                 auto evento_mapa = static_cast<EventoMapa*>(evento.get());
                 collidables = evento_mapa->collidables;
+            
+            }else if (evento->get_tipo() == Evento::EventoMovimiento) {
+                auto evento_mov = static_cast<EventoMovimiento*>(evento.get());
+                x_inicial = evento_mov->x;
+                y_inicial = evento_mov->y;
+                color = evento_mov->color;
             }
         }
 
         Cliente cliente(id,color,lobby.get_socket(), collidables,x_inicial,y_inicial);
         cliente.start();
-    })
+        
+    });
 
    return app.exec();  
 }
