@@ -28,9 +28,10 @@ public:
 
     /* 
      * Funcion que mueve al pato a una posicion x y y
-     * Recibe un float con la nueva posicion x y un float con la nueva posicion y
+     * Recibe un float con la nueva posicion x y un float con la nueva posicion y.
+     * Tambien recibe si en esta nueva posicion el pato esta aleteando
      */ 
-    void mover_a(float nueva_x, float nueva_y);
+    void mover_a(float nueva_x, float nueva_y, bool is_flapping);
 
     /* 
      * Funcion que setea el arma del pato
@@ -83,6 +84,7 @@ private:
     SdlTexture death;
     bool quieto = false;
     bool is_dead = false;
+    bool is_flapping = false;
     std::optional<WeaponType> weapon;
     int x_img = 0;
     int y_img = 0;

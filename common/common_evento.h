@@ -28,8 +28,9 @@ public:
     ColorDuck color;
     float x;
     float y;
+    bool is_flapping;
 
-    EventoMovimiento(int id,ColorDuck color,float x, float y) : id(id),color(color), x(x), y(y) {}
+    EventoMovimiento(int id,ColorDuck color,float x, float y, bool is_flapping) : id(id),color(color), x(x), y(y), is_flapping(is_flapping) {}
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoMovimiento; }  
 };
