@@ -21,6 +21,8 @@ private:
     bool shooting;
     int jump_force;
     int id;
+    int gravity;
+    int ticks_to_reset_gravity;
     ColorDuck color;
     bool is_dead;
     Vector direccion_mirada;
@@ -38,20 +40,19 @@ public:
     std::vector<std::shared_ptr<Evento>> eventos;
 
     void move() {
-        if (velocity.y > -8 && jump_force == 0) {
+        if (velocity.y > gravity && jump_force == 0) {
             velocity.y -= 1;
         }
         if (jump_force > 0) {
             jump_force--;
             velocity.y += 1;
         }
+        if (velocity.y < gravity) {
+            velocity.y = gravity;
+        }
         position.y += velocity.y;
         position.x += velocity.x * speed;
-        if (position.y < 0) {
-            position.y = 0;
-            velocity.y = 0;
-            is_on_ground = true;
-        }
+        
     }
 
     Vector get_direccion_mirada() const {
@@ -92,6 +93,9 @@ public:
         if (is_able_to_jump()) {
             is_on_ground = false;
             jump_force = 15;
+        } else {
+            gravity = -2;
+            ticks_to_reset_gravity = 5;
         }
     }
 
@@ -100,6 +104,12 @@ public:
     }
 
     virtual void update(std::vector<Collidable*> others) override {
+        if (ticks_to_reset_gravity > 0) {
+            --ticks_to_reset_gravity;
+        }
+        if (ticks_to_reset_gravity == 0) {
+            gravity = -8;
+        }
         int x_before = position.x;
         int y_before = position.y;
         move();
@@ -114,9 +124,12 @@ public:
         if (!collide) {
             is_standing_on_something = false;
         }
-
+        if (top() < 0) {
+            morir();
+            return;
+        }
         if (x_before != position.x || y_before != position.y) {
-            eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y));
+            eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping()));
         }
     }
 
@@ -136,7 +149,7 @@ public:
                 return true;
             } else if (side == CollidableSide::Bottom) {
                 position.y = platform.bottom() - height;
-                velocity.y = -velocity.y;
+                velocity.y = gravity;
                 return true;
             } else if (side == CollidableSide::Left || side == CollidableSide::Right) {
                 velocity.x = 0;
@@ -186,6 +199,10 @@ public:
         return weapon != nullptr;
     }
 
+    bool is_flapping() {
+        return velocity.y == gravity && ticks_to_reset_gravity > 0;
+    }
+
     void reload() const {
         if (has_weapon()) {
             weapon->reload();
@@ -199,12 +216,14 @@ public:
     Player(Vector initialPosition, int id, ColorDuck color)
         : Collidable(initialPosition, 32.0f, 64.0f), 
           velocity(Vector(0, 0)), 
-          speed(3.0f), 
+          speed(6.0f), 
           is_on_ground(false), 
           is_standing_on_something(false), 
           shooting(false), 
           jump_force(0), 
           id(id), 
+          gravity(-8),
+          ticks_to_reset_gravity(0),
           color(color), 
           is_dead(false), 
           direccion_mirada(Vector(0, 0)), 

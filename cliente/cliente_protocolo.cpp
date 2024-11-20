@@ -67,7 +67,12 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
                 return nullptr;
             }
 
-            return serializador.deserializar_movimiento(id,color,x, y);
+            char is_flapping;
+            socket.recvall(&is_flapping, sizeof(is_flapping), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+            return serializador.deserializar_movimiento(id,color,x, y, is_flapping);
         }
         case Evento::EventoMapa: {
             uint8_t cantidad[32];

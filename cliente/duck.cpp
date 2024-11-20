@@ -2,7 +2,7 @@
 
 #define ANCHO_IMG_DUCK_TOTAL 180
 #define ALTO_VENTANA 600
-#define DESPLAZAMIENTO_X 3
+#define DESPLAZAMIENTO_X 6
 #define DESPLAZAMIENTO_Y 4
 #define FACTOR_ESCALA 2
 #define VELOCIDAD_SALTO 15
@@ -23,6 +23,7 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string colo
       x_des(x_inicial),
       y_des(static_cast<int>(y_inicial)),
       is_dead(false),
+      is_flapping(false),
       flip(SDL_FLIP_NONE) {}
 
 void Duck::render() {
@@ -67,11 +68,12 @@ void Duck::kill() {
     is_dead = true;
 }
 
-void Duck::mover_a(float x, float y) {
+void Duck::mover_a(float x, float y, bool is_flapping) {
     if (x != x_des || y != y_des) {
         quieto = false;
     }
     x_des = x;
+    this->is_flapping = is_flapping;
     y_des = y;
 }
 
@@ -113,7 +115,10 @@ void Duck::render_movimiento_vertical() {
         y_actual = y_des;
     }
 
-    if (distancia_vertical > 0) {
+    if (is_flapping) {
+        x_img = (x_img == 2 * ANCHO_IMG_DUCK ? 5 * ANCHO_IMG_DUCK : 2 * ANCHO_IMG_DUCK);
+    } 
+    else if (distancia_vertical > 0) {
         x_img = 3 * ANCHO_IMG_DUCK;
     } else if (distancia_vertical < 0) {
         x_img = (x_img < ANCHO_IMG_DUCK_TOTAL - ANCHO_IMG_DUCK) ? 4 * ANCHO_IMG_DUCK : 0;
