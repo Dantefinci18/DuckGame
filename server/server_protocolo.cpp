@@ -49,11 +49,10 @@ bool ProtocoloServidor::enviar_id(int id) {
 }
 void ProtocoloServidor::enviar_estado(const Evento& evento) {
     bool was_closed = false;
-    if(evento.get_tipo() == Evento::TipoEvento::EventoEspera){
-        std::cout << "Mando EventoEspera\n";
-    }
-
+    
     std::vector<uint8_t> bits = serializador.serializar_evento(evento);
+    
+
     conexion.sendall(bits.data(), bits.size(), &was_closed);
     if (was_closed) {
         throw std::runtime_error("Error al enviar estado");

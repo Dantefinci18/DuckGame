@@ -79,11 +79,11 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
 
 std::vector<uint8_t> Serializador::serializar_espera(const Evento::TipoEvento& tipo_evento){
 
-    std::vector<uint8_t> buffer(8, 0);  
-    uint8_t tipo_evento_bits = static_cast<uint8_t>(tipo_evento);
+    std::vector<uint8_t> buffer(8);  
 
+    uint8_t tipo = static_cast<uint8_t>(tipo_evento);
     for (int i = 0; i < 8; ++i) {
-        buffer[i] = (tipo_evento_bits >> (7 - i)) & 1;  
+        buffer[i] = (tipo >> (7 - i)) & 1;
     }
 
     return buffer;

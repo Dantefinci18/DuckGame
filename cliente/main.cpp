@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
         lobby.crear_partida(mapaSeleccionado);
         int id = lobby.recibir_id();
-        while (collidables.empty()) {
+        while (color == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
             
             if(evento->get_tipo() == Evento::EventoEspera){
@@ -58,11 +58,15 @@ int main(int argc, char* argv[]) {
     });
  
 
+    float x_inicial_dos = 0;
+    float y_inicial_dos = 0;
+    ColorDuck color_dos = ColorDuck::MAX_COLOR;
+
     QObject::connect(&mainWindow, &MainWindow::cargar_partida, [&]() {
         lobby.cargar_partida();
         int id = lobby.recibir_id();
         
-        while (collidables.empty()) {
+        while (color_dos == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
             if(evento->get_tipo() == Evento::EventoEspera){
                 mainWindow.mostrar_ventana_espera(true);
@@ -74,13 +78,13 @@ int main(int argc, char* argv[]) {
             
             }else if (evento->get_tipo() == Evento::EventoMovimiento) {
                 auto evento_mov = static_cast<EventoMovimiento*>(evento.get());
-                x_inicial = evento_mov->x;
-                y_inicial = evento_mov->y;
-                color = evento_mov->color;
+                x_inicial_dos = evento_mov->x;
+                y_inicial_dos = evento_mov->y;
+                color_dos = evento_mov->color;
             }
         }
 
-        Cliente cliente(id,color,lobby.get_socket(), collidables,x_inicial,y_inicial);
+        Cliente cliente(id,color_dos,lobby.get_socket(), collidables,x_inicial_dos,y_inicial_dos);
         cliente.start();
         
     });
