@@ -76,6 +76,8 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoLevantarse){
         return serializar_levantarse(evento);
     }
+
+    return std::vector<uint8_t>();
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {

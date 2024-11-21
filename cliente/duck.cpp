@@ -14,18 +14,21 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string colo
       movimiento_en_y("../Imagenes/movimiento_y" + color + ".png", window),
       armas("../Imagenes/guns.png", window),
       death("../Imagenes/duckDead" + color + ".png", window),
-      quieto(false),
-      weapon(std::nullopt),
-      x_img(0),
-      y_img(0),
-      x_actual(x_inicial),
-      y_actual(y_inicial),
-      x_des(x_inicial),
-      y_des(static_cast<int>(y_inicial)),
-      is_dead(false),
-      is_flapping(false),
-      esta_agachado(false),
-      flip(SDL_FLIP_NONE) {}
+      quieto(false),                
+      weapon(std::nullopt),          
+      x_img(0),                     
+      y_img(0),                     
+      x_actual(x_inicial),          
+      y_actual(y_inicial),          
+      is_dead(false),               
+      x_des(x_inicial),              
+      y_des(static_cast<int>(y_inicial)), 
+      is_flapping(false),            
+      esta_agachado(false),         
+      flip(SDL_FLIP_NONE)         
+{}
+
+
 
 void Duck::render() {
     bool en_movimiento_x = (x_actual != x_des);

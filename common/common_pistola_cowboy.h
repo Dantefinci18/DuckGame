@@ -11,7 +11,7 @@ class PistolaCowboy : public Weapon {
     }
 
     std::vector<Vector> shoot(Vector from, Vector direction, bool is_shooting) override{
-        
+        (void)is_shooting;
         std::vector<Vector> destinations;
 
         if(ammo <= 0){

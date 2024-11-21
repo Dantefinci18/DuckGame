@@ -68,7 +68,16 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             evento_ptr = std::make_unique<EventoLevantarse>(evento_levantarse.id);
             break;
      
-    }
+        }
+
+        case Evento::EventoEspera: {
+            evento_ptr = std::make_unique<EventoEspera>();
+            break;
+        }
+        default:
+            std::cout << "Error: Tipo de evento desconocido" << std::endl;
+            break;
+
     }
 
     return evento_ptr;

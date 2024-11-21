@@ -45,7 +45,6 @@ void Cliente::procesar_eventos_recibidos() {
                 }
 
                 case Evento::EventoDisparo: {
-                    auto evento_disparo = static_cast<EventoDisparo*>(evento_recibido.get());
                     break;
                 }
 
