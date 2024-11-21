@@ -42,6 +42,17 @@ public:
      * Funcion que mata al enemigo
      */
     void kill();
+
+    /* 
+     * Funcion que agacha al enemigo
+     */
+    void agacharse();
+
+    /* 
+     * Funcion que levanta al enemigo
+     */
+
+    void levantarse();
     
     /* 
      * Destructor de la clase Enemigo

@@ -34,6 +34,17 @@ public:
     void mover_a(float nueva_x, float nueva_y, bool is_flapping);
 
     /* 
+     * Funcion que agacha al pato
+     */
+    void agacharse();
+
+    /* 
+     * Funcion que levanta al pato
+     */
+    void levantarse();
+
+
+    /* 
      * Funcion que setea el arma del pato
      * Recibe un WeaponType
      */
@@ -82,17 +93,19 @@ private:
     SdlTexture movimiento_en_y;
     SdlTexture armas;
     SdlTexture death;
-    bool quieto = false;
-    bool is_dead = false;
-    bool is_flapping = false;
+    bool quieto;
     std::optional<WeaponType> weapon;
-    int x_img = 0;
-    int y_img = 0;
+    int x_img;
+    int y_img;
     float x_actual;
     float y_actual;
+    bool is_dead;
     float x_des;
     int y_des;
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    bool is_flapping;
+    bool esta_agachado;
+    SDL_RendererFlip flip;
+
 };
 
 #endif // DUCK_H

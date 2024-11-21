@@ -10,6 +10,19 @@
 #include "../lobby.h"
 #include <string>  
 
+
+class VentanaEsperando : public QMainWindow {
+    Q_OBJECT
+
+public:
+    explicit VentanaEsperando(QWidget *parent = nullptr);
+    virtual ~VentanaEsperando() override;
+
+private:
+    QLabel *statusLabel;
+};
+
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 

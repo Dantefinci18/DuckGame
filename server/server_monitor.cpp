@@ -55,12 +55,29 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             break;
         }
 
+        case Evento::EventoAgacharse: {
+            
+            const EventoAgacharse& evento_agacharse = static_cast<const EventoAgacharse&>(evento);
+            evento_ptr = std::make_unique<EventoAgacharse>(evento_agacharse.id);
+            break;
+        }
+
+        case Evento::EventoLevantarse: {
+            
+            const EventoLevantarse& evento_levantarse = static_cast<const EventoLevantarse&>(evento);
+            evento_ptr = std::make_unique<EventoLevantarse>(evento_levantarse.id);
+            break;
+     
+        }
+
         case Evento::EventoEspera: {
-            const EventoEspera& evento_muerte = static_cast<const EventoEspera&>(evento);
             evento_ptr = std::make_unique<EventoEspera>();
             break;
         }
-     
+        default:
+            std::cout << "Error: Tipo de evento desconocido" << std::endl;
+            break;
+
     }
 
     return evento_ptr;
