@@ -77,7 +77,13 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
             if (was_closed) {
                 throw std::runtime_error("Error al recibir color en evento de movimiento: conexión cerrada");
             }
-            return serializador.deserializar_movimiento(id,color ,x, y);
+
+            char is_flapping;
+            socket.recvall(&is_flapping, sizeof(is_flapping), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+            return serializador.deserializar_movimiento(id,color,x, y, is_flapping);
         }
         case Evento::EventoMapa: {
             uint8_t cantidad[32];

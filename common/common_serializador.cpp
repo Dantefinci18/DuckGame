@@ -90,7 +90,7 @@ std::vector<uint8_t> Serializador::serializar_espera(const Evento::TipoEvento& t
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
-    std::vector<uint8_t> bits(112); 
+    std::vector<uint8_t> bits(113); 
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
     for (int i = 0; i < 8; ++i) {
         bits[i] = (tipo_evento >> (7 - i)) & 1;
@@ -121,6 +121,8 @@ std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
         bits[104 + i] = (color_bits >> (7 - i)) & 1;
     }
 
+    char is_flapping = static_cast<char>(static_cast<const EventoMovimiento&>(evento).is_flapping);
+    bits[112] = is_flapping; 
     return bits;
 }
 
@@ -233,7 +235,7 @@ Evento::TipoEvento Serializador::deserializar_tipo_evento(const uint8_t* tipo_ev
 
 
 std::unique_ptr<Evento> Serializador::deserializar_movimiento(
-    const uint8_t* id_data, const uint8_t* color_data, const uint8_t* x_data, const uint8_t* y_data) {
+    const uint8_t* id_data, const uint8_t* color_data, const uint8_t* x_data, const uint8_t* y_data, char is_flapping) {
     int id;
     float x, y;
 
@@ -261,7 +263,7 @@ std::unique_ptr<Evento> Serializador::deserializar_movimiento(
     }
     memcpy(&y, &y_bits, sizeof(float));
 
-    return std::make_unique<EventoMovimiento>(id, color_asignado, x, y);
+    return std::make_unique<EventoMovimiento>(id, color_asignado, x, y, is_flapping);
 }
 
 

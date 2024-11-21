@@ -77,13 +77,13 @@ void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov) {
     if (evento_mov.id != id) {
         auto it = enemigos.find(evento_mov.id);
         if (it != enemigos.end()) {
-            it->second->mover_a(evento_mov.x, evento_mov.y);
+            it->second->mover_a(evento_mov.x, evento_mov.y, evento_mov.is_flapping);
         } else {
             enemigos[evento_mov.id] = std::make_unique<Enemigo>(
                 evento_mov.id,procesar_color(evento_mov.color) ,evento_mov.x, evento_mov.y, window);
         }
     } else {
-        duck.mover_a(evento_mov.x, evento_mov.y);
+        duck.mover_a(evento_mov.x, evento_mov.y, evento_mov.is_flapping);
     }
 }
 
