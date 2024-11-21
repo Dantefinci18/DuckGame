@@ -9,6 +9,7 @@
 #include <memory>
 #include "../common/common_weapon.h"
 #include "../common/common_evento.h"
+#include "../common/common_direcciones.h"
 class Player : public Collidable {
     private:
         Vector velocity;
@@ -19,15 +20,16 @@ class Player : public Collidable {
         int jump_force;
         int id;
         bool is_dead;
-        Vector direccion_mirada;
+        DireccionApuntada direccion_apuntada;
+        DireccionApuntada direccion_apuntada_anterior;
         std::unique_ptr<Weapon> weapon;
         
-        void mirar_a_derecha() {
-            direccion_mirada = Vector(1, 0);
+        void apuntar_a_derecha() {
+            direccion_apuntada = DireccionApuntada::APUNTADO_DERECHA;
         }
 
-        void mirar_a_izquierda() {
-            direccion_mirada = Vector(-1, 0);
+        void apuntar_a_izquierda() {
+            direccion_apuntada = DireccionApuntada::APUNTADO_IZQUIERDA;
         }
 
     public:
@@ -50,8 +52,8 @@ class Player : public Collidable {
         
     }
 
-    Vector get_direccion_mirada() const {
-        return direccion_mirada;
+    Vector get_direccion_apuntada() const {
+        return obtenerDireccion(direccion_apuntada);
     }
 
     std::vector<Vector> disparar() {
@@ -61,7 +63,7 @@ class Player : public Collidable {
         shooting = true;
         std::cout << "Disaparó el pato id "<< id << std::endl;
         eventos.push_back(std::make_shared<EventoDisparo>(id));
-        return weapon->shoot(position, direccion_mirada, shooting);
+        return weapon->shoot(position, get_direccion_apuntada(), shooting);
     }
 
     void morir(){
@@ -75,12 +77,25 @@ class Player : public Collidable {
         }
     }
 
+    void dejar_apuntar_arriba(){
+        direccion_apuntada = direccion_apuntada_anterior;
+    }
+
+    void apuntar_arriba(){
+        if(direccion_apuntada != DireccionApuntada::APUNTADO_ARRIBA){
+            direccion_apuntada_anterior = direccion_apuntada;
+            direccion_apuntada = DireccionApuntada::APUNTADO_ARRIBA;    
+        }
+    }
+
     void set_x_direction(float x) {
         velocity.x = x;
-        if (x > 0) {
-            mirar_a_derecha();
-        } else if (x < 0) {
-            mirar_a_izquierda();
+        if(direccion_apuntada != DireccionApuntada::APUNTADO_ARRIBA){
+            if (x > 0) {
+                apuntar_a_derecha();
+            } else if (x < 0) {
+                apuntar_a_izquierda();
+            } 
         }
     }
 
@@ -112,7 +127,7 @@ class Player : public Collidable {
         } 
 
         if (x_before != position.x || y_before != position.y) {
-            eventos.push_back(std::make_shared<EventoMovimiento>(id, position.x, position.y));
+            eventos.push_back(std::make_shared<EventoMovimiento>(id, position.x, position.y, direccion_apuntada));
         }
 
         //std::cout << velocity.to_string() << ", isOnGround" << std::to_string(is_on_ground) << std::endl;
@@ -204,6 +219,6 @@ class Player : public Collidable {
         velocity(Vector(0,0)), 
         speed(3.0f), 
         is_on_ground(false), 
-        is_standing_on_something(false), shooting(false), jump_force(0), id(id), is_dead(false), direccion_mirada(Vector(0, 0)), weapon(nullptr) {}
+        is_standing_on_something(false), shooting(false), jump_force(0), id(id), is_dead(false), direccion_apuntada(DireccionApuntada::APUNTADO_DERECHA),direccion_apuntada_anterior(DireccionApuntada::APUNTADO_DERECHA), weapon(nullptr) {}
 };
 #endif

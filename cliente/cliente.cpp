@@ -36,6 +36,13 @@ void Cliente::procesar_eventos_recibidos() {
             switch (evento_recibido->get_tipo()) {
                 case Evento::EventoMovimiento: {
                     auto evento_mov = static_cast<EventoMovimiento*>(evento_recibido.get());
+                    if (evento_mov->direccion_apuntada == DireccionApuntada::APUNTADO_ARRIBA) {
+                        std::cout << "APUNTA PARA ARRIBA" << std::endl;
+                    } else if (evento_mov->direccion_apuntada == DireccionApuntada::APUNTADO_DERECHA) {
+                        std::cout << "APUNTA A LA DERECHA" << std::endl;
+                    } else if (evento_mov->direccion_apuntada == DireccionApuntada::APUNTADO_IZQUIERDA) {
+                        std::cout << "APUNTA A LA IZQUIERDA" << std::endl;
+                    }
                     manejar_enemigos(*evento_mov, collidables);  
                     break;
                 }
@@ -155,9 +162,10 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
                     enviar_accion(tecla_anterior, DISPARAR);
                 } else if (evento.key.keysym.sym == SDLK_r) {
                     enviar_accion(tecla_anterior, RECARGAR);
+                } else if (evento.key.keysym.sym == SDLK_UP) {
+                    enviar_accion(tecla_anterior, APUNTAR_ARRIBA);
                 }
                 break;
-
             case SDL_KEYUP:
                 if (evento.key.keysym.sym == SDLK_LEFT || evento.key.keysym.sym == SDLK_RIGHT) {
                     enviar_accion(tecla_anterior, QUIETO);
@@ -165,6 +173,8 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
                     *tecla_anterior = ComandoAccion::QUIETO;
                 } else if (evento.key.keysym.sym == SDLK_v) {
                     enviar_accion(tecla_anterior, DEJAR_DISPARAR);
+                } else if (evento.key.keysym.sym == SDLK_UP) {
+                    enviar_accion(tecla_anterior, DEJAR_APUNTAR_ARRIBA);
                 }
                 break;
         }

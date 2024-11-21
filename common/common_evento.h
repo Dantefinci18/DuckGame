@@ -5,6 +5,7 @@
 #include <cstdint>
 #include "common_weapon.h" // Assuming WeaponType is defined here
 #include "../server/Collidable.h"
+#include "common_direcciones.h"
 class Evento {
 public:
     enum TipoEvento {
@@ -26,8 +27,9 @@ public:
     int id;
     float x;
     float y;
+    DireccionApuntada direccion_apuntada;
 
-    EventoMovimiento(int id, float x, float y) : id(id), x(x), y(y) {}
+    EventoMovimiento(int id, float x, float y, DireccionApuntada direccion_apuntada) : id(id), x(x), y(y), direccion_apuntada(direccion_apuntada) {}
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoMovimiento; }  
 };

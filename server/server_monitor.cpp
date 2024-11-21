@@ -17,7 +17,7 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
     switch (evento.get_tipo()) {
         case Evento::EventoMovimiento: {
             const EventoMovimiento& evento_movimiento = static_cast<const EventoMovimiento&>(evento);
-            evento_ptr = std::make_unique<EventoMovimiento>(evento_movimiento.id, evento_movimiento.x, evento_movimiento.y);
+            evento_ptr = std::make_unique<EventoMovimiento>(evento_movimiento.id, evento_movimiento.x, evento_movimiento.y, evento_movimiento.direccion_apuntada);
             break;
         }
         case Evento::EventoMapa: {

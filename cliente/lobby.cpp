@@ -57,8 +57,15 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
                 throw std::runtime_error("Error al recibir ID en evento de movimiento: conexión cerrada");
             }
 
-            return serializador.deserializar_movimiento(id, x, y);
+            uint8_t direccion_apuntada[8]; // Recibir la dirección apuntada
+            socket.recvall(direccion_apuntada, sizeof(direccion_apuntada), &was_closed);
+            if (was_closed) {
+                throw std::runtime_error("Error al recibir dirección apuntada en evento de movimiento: conexión cerrada");
+            }
+
+            return serializador.deserializar_movimiento(id, x, y, direccion_apuntada);
         }
+
         case Evento::EventoMapa: {
             uint8_t cantidad[32];
             socket.recvall(cantidad, sizeof(cantidad), &was_closed);

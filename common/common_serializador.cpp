@@ -71,8 +71,9 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
-    std::vector<uint8_t> bits(104); 
+    std::vector<uint8_t> bits(112);
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+
     for (int i = 0; i < 8; ++i) {
         bits[i] = (tipo_evento >> (7 - i)) & 1;
     }
@@ -83,17 +84,20 @@ std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
         bits[8 + i] = (x_bits >> (31 - i)) & 1;
     }
 
-    // Serializar y
     uint32_t y_bits;
     memcpy(&y_bits, &static_cast<const EventoMovimiento&>(evento).y, sizeof(float));
     for (int i = 0; i < 32; ++i) {
         bits[40 + i] = (y_bits >> (31 - i)) & 1;
     }
 
-    // Serializar id
     uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoMovimiento&>(evento).id);
     for (int i = 0; i < 32; ++i) {
         bits[72 + i] = (id_bits >> (31 - i)) & 1;
+    }
+
+    uint8_t direccion_apuntada = static_cast<uint8_t>(static_cast<const EventoMovimiento&>(evento).direccion_apuntada);
+    for (int i = 0; i < 8; ++i) {
+        bits[104 + i] = (direccion_apuntada >> (7 - i)) & 1;
     }
 
     return bits;
@@ -207,9 +211,10 @@ Evento::TipoEvento Serializador::deserializar_tipo_evento(const uint8_t* tipo_ev
 }
 
 
-std::unique_ptr<Evento> Serializador::deserializar_movimiento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data) {
+std::unique_ptr<Evento> Serializador::deserializar_movimiento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* direccion_data) {
     int id;
     float x, y;
+    DireccionApuntada direccion;
 
     uint32_t id_bits = 0;
     for (int i = 0; i < 32; ++i) {
@@ -222,14 +227,19 @@ std::unique_ptr<Evento> Serializador::deserializar_movimiento(const uint8_t* id_
         x_bits |= (x_data[i] << (31 - i));
     }
     memcpy(&x, &x_bits, sizeof(float));
- 
+
     uint32_t y_bits = 0;
     for (int i = 0; i < 32; ++i) {
         y_bits |= (y_data[i] << (31 - i));
     }
     memcpy(&y, &y_bits, sizeof(float));
 
-    return std::make_unique<EventoMovimiento>(id, x, y);
+    uint32_t direccion_bits = 0;
+    for (int i = 0; i < 8; ++i) {
+        direccion_bits |= (direccion_data[i] << (7 - i));
+    }
+    direccion = static_cast<DireccionApuntada>(direccion_bits);
+    return std::make_unique<EventoMovimiento>(id, x, y, direccion);
 }
 
 std::unique_ptr<Evento> Serializador::deserializar_pickup(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data) {

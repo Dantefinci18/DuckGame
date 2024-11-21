@@ -61,7 +61,12 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
                 return nullptr;
             }
 
-            return serializador.deserializar_movimiento(id, x, y);
+            uint8_t direccion_apuntada[8];
+            socket.recvall(direccion_apuntada, sizeof(direccion_apuntada), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+            return serializador.deserializar_movimiento(id, x, y, direccion_apuntada);
         }
         case Evento::EventoMapa: {
             uint8_t cantidad[32];

@@ -37,7 +37,7 @@ public:
 
 
 
-    std::unique_ptr<Evento> deserializar_movimiento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data);
+    std::unique_ptr<Evento> deserializar_movimiento(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* direccion_data);
     std::unique_ptr<Evento> deserializar_pickup(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
     std::unique_ptr<Evento> deserializar_spawn_arma(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
     std::unique_ptr<Evento> deserializar_disparo(const uint8_t* id_data);
