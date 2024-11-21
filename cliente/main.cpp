@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
         while (color == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
-            
+            evento->print();
             if(evento->get_tipo() == Evento::EventoEspera){
             
             }else if(evento->get_tipo() == Evento::EventoMapa){
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
         
          while (color == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
-            
+            evento->print();
             if(evento->get_tipo() == Evento::EventoEspera){
             
             }else if(evento->get_tipo() == Evento::EventoMapa){
