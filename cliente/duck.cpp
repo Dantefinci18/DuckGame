@@ -24,6 +24,7 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string colo
       y_des(static_cast<int>(y_inicial)),
       is_dead(false),
       is_flapping(false),
+      esta_agachado(false),
       flip(SDL_FLIP_NONE) {}
 
 void Duck::render() {
@@ -37,30 +38,39 @@ void Duck::render() {
         death.render(srcArea, destArea, flip);
         return;
     }
-    if (en_movimiento_x) {
-        render_movimiento_horizontal();
-    }
 
-    if (en_movimiento_y) {
-        render_movimiento_vertical();
-    } else if (!en_movimiento_x) {
-        render_idle();
-    }
+    if (esta_agachado) {
+        Area srcArea(5 * ANCHO_IMG_DUCK, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
+        int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA;
+        Area destArea(x_actual, y_renderizado, ANCHO_IMG_DUCK * FACTOR_ESCALA, ALTO_IMG_DUCK * FACTOR_ESCALA);
+        movimiento_en_y.render(srcArea, destArea, flip);
+    } else {
+        if (en_movimiento_x) {
+            render_movimiento_horizontal();
+        }
 
-    int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA;
-    Area srcArea(x_img, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
-    Area destArea(x_actual, y_renderizado, ANCHO_IMG_DUCK * FACTOR_ESCALA, ALTO_IMG_DUCK * FACTOR_ESCALA);
+        if (en_movimiento_y) {
+            render_movimiento_vertical();
+        } else if (!en_movimiento_x) {
+            render_idle();
+        }
 
-    if (en_movimiento_y) {
-        render_movimiento_salto(srcArea, destArea);
-    } else if (en_movimiento_x || quieto) {
-        movimientos_en_x.render(srcArea, destArea, flip);
+        int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA;
+        Area srcArea(x_img, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
+        Area destArea(x_actual, y_renderizado, ANCHO_IMG_DUCK * FACTOR_ESCALA, ALTO_IMG_DUCK * FACTOR_ESCALA);
+
+        if (en_movimiento_y) {
+            render_movimiento_salto(srcArea, destArea);
+        } else if (en_movimiento_x || quieto) {
+            movimientos_en_x.render(srcArea, destArea, flip);
+        }
     }
 
     if (weapon) {
-        render_arma(y_renderizado);
+        render_arma(ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA);
     }
 }
+
 
 bool Duck::esta_quieto() { return quieto; }
 
@@ -75,6 +85,14 @@ void Duck::mover_a(float x, float y, bool is_flapping) {
     x_des = x;
     this->is_flapping = is_flapping;
     y_des = y;
+}
+
+void Duck::agacharse() {
+    esta_agachado = true;
+}
+
+void Duck::levantarse() {
+    esta_agachado = false;
 }
 
 void Duck::set_weapon(WeaponType weapon) {

@@ -13,6 +13,8 @@ enum ComandoAccion : uint8_t{
     DISPARAR,
     DEJAR_DISPARAR,
     RECARGAR,
+    AGACHARSE,
+    LEVANTARSE,
     NUEVA_PARTIDA_ACCION,
     NONE_ACCION
 };

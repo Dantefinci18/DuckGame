@@ -34,6 +34,8 @@ public:
     std::vector<uint8_t> serializar_movimiento(const Evento& evento);
     std::vector<uint8_t> serializar_disparo(const Evento& evento);
     std::vector<uint8_t> serializar_muerte(const Evento& evento);
+    std::vector<uint8_t> serializar_agacharse(const Evento& evento);
+    std::vector<uint8_t> serializar_levantarse(const Evento& evento);
 
 
 

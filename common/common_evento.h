@@ -15,7 +15,9 @@ public:
         EventoSpawnArma,
         EventoMuerte,
         EventoDisparo,
-        EventoEspera
+        EventoEspera,
+        EventoAgacharse,
+        EventoLevantarse
     };
 
     virtual ~Evento() = default;
@@ -89,6 +91,23 @@ public:
 class EventoEspera : public Evento {
     public:
         TipoEvento get_tipo() const override { return TipoEvento::EventoEspera; }
+};
+
+class EventoAgacharse : public Evento {
+public:
+    int id;
+
+    EventoAgacharse(int id) : id(id) {}
+    TipoEvento get_tipo() const override { return TipoEvento::EventoAgacharse; } 
+};
+
+
+class EventoLevantarse : public Evento {
+public:
+    int id;
+
+    EventoLevantarse(int id) : id(id) {}
+    TipoEvento get_tipo() const override { return TipoEvento::EventoLevantarse; } 
 };
 
 #endif

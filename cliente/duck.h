@@ -34,6 +34,17 @@ public:
     void mover_a(float nueva_x, float nueva_y, bool is_flapping);
 
     /* 
+     * Funcion que agacha al pato
+     */
+    void agacharse();
+
+    /* 
+     * Funcion que levanta al pato
+     */
+    void levantarse();
+
+
+    /* 
      * Funcion que setea el arma del pato
      * Recibe un WeaponType
      */
@@ -85,6 +96,7 @@ private:
     bool quieto = false;
     bool is_dead = false;
     bool is_flapping = false;
+    bool esta_agachado = false;
     std::optional<WeaponType> weapon;
     int x_img = 0;
     int y_img = 0;

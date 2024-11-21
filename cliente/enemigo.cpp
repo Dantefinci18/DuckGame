@@ -25,4 +25,12 @@ void Enemigo::set_weapon(WeaponType new_weapon) {
 void Enemigo::kill() {
     duck.kill();
 }
+
+void Enemigo::agacharse() {
+    duck.agacharse();
+}
+
+void Enemigo::levantarse() {
+    duck.levantarse();
+}
 Enemigo::~Enemigo() {}

@@ -89,6 +89,12 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             player->dejar_disparar();
         } else if (command == RECARGAR){
             player->reload();
+        } else if (command == AGACHARSE){
+            std::cout << "agacharse" << std::endl;
+            player->agacharse();
+        } else if (command == LEVANTARSE){
+            std::cout << "levantarse" << std::endl;
+            player->levantarse();
         }
     }
 
