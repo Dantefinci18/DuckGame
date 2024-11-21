@@ -104,6 +104,9 @@ public:
     }
 
     virtual void update(std::vector<Collidable*> others) override {
+        if (is_duck_dead()) {
+            return;
+        }
         if (ticks_to_reset_gravity > 0) {
             --ticks_to_reset_gravity;
         }
@@ -124,12 +127,13 @@ public:
         if (!collide) {
             is_standing_on_something = false;
         }
-        if (top() < 0) {
-            morir();
-            return;
-        }
+        
         if (x_before != position.x || y_before != position.y) {
             eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping()));
+        }
+
+        if(top() < 0) {
+            morir();
         }
     }
 
