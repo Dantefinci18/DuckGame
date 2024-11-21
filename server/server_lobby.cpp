@@ -35,11 +35,14 @@ void ServerLobby::run(){
             
             }else if(partida == CARGAR_PARTIDA){
                 Gameloop *gameloop = obtener_partida_en_espera();
-                gameloop->agregar_jugador(skt);
-                jugadores_esperando.erase(id_jugador);
-                jugador->stop();
-                jugador->join();
-                delete jugador;
+                
+                if(gameloop != nullptr){
+                    gameloop->agregar_jugador(skt);
+                    jugadores_esperando.erase(id_jugador);
+                    jugador->stop();
+                    jugador->join();
+                    delete jugador;
+                }
 
             }
 
@@ -56,6 +59,8 @@ Gameloop *ServerLobby::obtener_partida_en_espera(){
             return partida;
         }
     }
+
+    return nullptr;
 }
 
 void ServerLobby::eliminar_terminadas(){
@@ -78,6 +83,7 @@ void ServerLobby::eliminar_partidas(){
      for (auto partida: partidas) {
         partida->stop();
         partida->cerrar_conexiones();
+        partida->join();
         delete partida;
     }
 

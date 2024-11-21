@@ -15,7 +15,6 @@ class MainWindow : public QMainWindow {
 
 public:
     explicit MainWindow(Lobby* lobby, QWidget *parent = nullptr);
-    void mostrar_ventana_espera(bool mostrar);
 
 signals:
     void crear_partida(const std::string& mapaSeleccionado);
@@ -30,8 +29,7 @@ private:
     QPushButton *crear_partida_Button;
     QPushButton *cargar_partida_Button;
     QLabel *statusLabel;
-    QComboBox *mapaComboBox;
-    QDialog *ventanaEspera;  
+    QComboBox *mapaComboBox; 
 };
 
 #endif // MAINWINDOW_H

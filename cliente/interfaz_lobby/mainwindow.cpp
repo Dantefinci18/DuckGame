@@ -12,8 +12,7 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     crear_partida_Button(new QPushButton("Crear partida", this)),
     cargar_partida_Button(new QPushButton("Cargar partida", this)),
     statusLabel(new QLabel("Esperando conexión...", this)),
-    mapaComboBox(new QComboBox(this)),
-    ventanaEspera(new QDialog(this)) 
+    mapaComboBox(new QComboBox(this))
 {
     setWindowTitle("Lobby");
     setFixedSize(800, 600);
@@ -36,11 +35,6 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     layout->addWidget(cargar_partida_Button);
     layout->addWidget(statusLabel);
     
-    QVBoxLayout *ventanaLayout = new QVBoxLayout(ventanaEspera);
-    QLabel *mensajeEspera = new QLabel("Esperando...", ventanaEspera);
-    ventanaLayout->addWidget(mensajeEspera);
-    ventanaEspera->setLayout(ventanaLayout);
-    ventanaEspera->setWindowModality(Qt::ApplicationModal);
 
     connect(crear_partida_Button, &QPushButton::clicked, this, &MainWindow::crear_partida_clicked);
     connect(cargar_partida_Button, &QPushButton::clicked, this, &MainWindow::cargar_partida_clicked);
@@ -57,14 +51,4 @@ void MainWindow::crear_partida_clicked() {
 
 void MainWindow::cargar_partida_clicked(){
     emit cargar_partida();
-}
-
-
-
-void MainWindow::mostrar_ventana_espera(bool mostrar) {
-    if (mostrar) {
-        ventanaEspera->show();
-    } else {
-        ventanaEspera->hide();
-    }
 }

@@ -10,6 +10,7 @@ target_sources(taller_client
     enemigo.cpp
     mapa.cpp
     duck.cpp
+    ventana_esperando.cpp
     interfaz_lobby/mainwindow.cpp
     interfaz_lobby/resources.qrc
 
@@ -22,6 +23,7 @@ target_sources(taller_client
     enemigo.h
     mapa.h
     duck.h
+    ventana_esperando.h
     interfaz_lobby/mainwindow.h
 )
 
@@ -31,4 +33,5 @@ add_library(sdldemo
   Sdl/SdlException.cpp
   Sdl/SdlWindow.cpp
 )
+
 
