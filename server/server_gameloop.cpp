@@ -77,7 +77,7 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         } else if (command == DISPARAR){
             std::vector<std::shared_ptr<Evento>> eventos;
             if(player->has_weapon()){
-                DisparoManager::procesar_disparo(*player, collidables, jugadores, eventos);
+                DisparoManager::procesar_disparo(*player, collidables, jugadores);
             }
             /*
             for (const auto& evento : eventos) {
@@ -89,6 +89,10 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             player->dejar_disparar();
         } else if (command == RECARGAR){
             player->reload();
+        } else if (command == AGACHARSE){
+            player->agacharse();
+        } else if (command == LEVANTARSE){
+            player->levantarse();
         }
     }
 

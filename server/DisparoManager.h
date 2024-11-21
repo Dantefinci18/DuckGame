@@ -11,9 +11,8 @@
 
 class DisparoManager {
 public:
-    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores,
-                                 std::vector<std::shared_ptr<Evento>>& eventos) {
-
+    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores) {
+        
         if (!player.has_weapon()) {
             return;
         }
