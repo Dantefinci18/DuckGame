@@ -14,6 +14,8 @@ enum ComandoAccion : uint8_t{
     DEJAR_DISPARAR,
     RECARGAR,
     NUEVA_PARTIDA_ACCION,
+    APUNTAR_ARRIBA,
+    DEJAR_APUNTAR_ARRIBA,
     NONE_ACCION
 };
 

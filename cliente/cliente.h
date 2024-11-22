@@ -70,6 +70,12 @@ private:
     void spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables);
 
     /*
+     * Funcion que maneja la direccion donde apunta un arma
+     * Recibe un evento de apuntar valido
+     */
+    void apuntar(const EventoApuntar& evento_apuntar);
+
+    /*
      * Funcion que envia una accion
      * Recibe un puntero a una accion anterior y una accion
      */

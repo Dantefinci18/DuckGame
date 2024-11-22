@@ -68,6 +68,10 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoMuerte){
         return serializar_muerte(evento);
     }
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoApuntar){
+        return serializar_apuntar(evento);
+    }
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
@@ -205,6 +209,27 @@ std::vector<uint8_t> Serializador::serializar_muerte(const Evento& evento) {
     return bits;
 }
 
+std::vector<uint8_t> Serializador::serializar_apuntar(const Evento& evento) {
+    std::vector<uint8_t> bits(48);
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        bits[i] = (tipo_evento >> (7 - i)) & 1;
+    }
+
+    uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoApuntar&>(evento).id);
+    for (int i = 0; i < 32; ++i) {
+        bits[8 + i] = (id_bits >> (31 - i)) & 1;
+    }
+
+    uint8_t direccion_bits = static_cast<uint8_t>(static_cast<const EventoApuntar&>(evento).direccion);
+    for (int i = 0; i < 8; ++i) {
+        bits[40 + i] = (direccion_bits >> (7 - i)) & 1;
+    }
+
+    return bits;
+}
+
 
 Evento::TipoEvento Serializador::deserializar_tipo_evento(const uint8_t* tipo_evento_data) {
     uint8_t tipo_evento_bits = 0;
@@ -321,6 +346,22 @@ std::unique_ptr<Evento> Serializador::deserializar_muerte(const uint8_t* id_data
     int id = static_cast<int>(id_bits);
 
     return std::make_unique<EventoMuerte>(id);
+}
+
+std::unique_ptr<Evento> Serializador::deserializar_apuntar(const uint8_t* id_data, const uint8_t* direccion_data) {
+    uint32_t id_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        id_bits |= (id_data[i] << (31 - i));
+    }
+    int id = static_cast<int>(id_bits);
+
+    uint32_t direccion_bits = 0;
+    for (int i = 0; i < 8; ++i) {
+        direccion_bits |= (direccion_data[i] << (7 - i));
+    }
+    DireccionApuntada direccion = static_cast<DireccionApuntada>(direccion_bits);
+
+    return std::make_unique<EventoApuntar>(id, direccion);
 }
 
 std::vector<uint8_t> Serializador::serializar_id(int id) {

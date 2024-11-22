@@ -89,6 +89,10 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             player->dejar_disparar();
         } else if (command == RECARGAR){
             player->reload();
+        } else if (command == APUNTAR_ARRIBA){
+            player->apuntar_arriba();
+        } else if (command == DEJAR_APUNTAR_ARRIBA){
+            player->dejar_apuntar_arriba();
         }
     }
 

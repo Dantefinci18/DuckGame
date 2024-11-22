@@ -65,7 +65,14 @@ void Cliente::procesar_eventos_recibidos() {
                     auto evento_spawn_arma = static_cast<EventoSpawnArma*>(evento_recibido.get());
                     spawn_arma(*evento_spawn_arma, collidables);
                     break;
-                }                
+                }
+
+                case Evento::EventoApuntar: {
+                    auto evento_apuntar = static_cast<EventoApuntar*>(evento_recibido.get());
+                    apuntar(*evento_apuntar);
+                    break;
+                }
+
                 default:
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
@@ -128,6 +135,16 @@ void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collid
     }
 }
 
+void Cliente::apuntar(const EventoApuntar& evento_apuntar){
+    if (evento_apuntar.direccion == DireccionApuntada::APUNTADO_ARRIBA) {
+        std::cout << "APUNTA PARA ARRIBA" << std::endl;
+    } else if (evento_apuntar.direccion == DireccionApuntada::APUNTADO_DERECHA) {
+        std::cout << "APUNTA A LA DERECHA" << std::endl;
+    } else if (evento_apuntar.direccion == DireccionApuntada::APUNTADO_IZQUIERDA) {
+        std::cout << "APUNTA A LA IZQUIERDA" << std::endl;
+    }
+}
+
 void Cliente::enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion) {
     if (*tecla_anterior != accion && conectado) {
         queue_acciones.push(std::move(accion));
@@ -155,6 +172,8 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
                     enviar_accion(tecla_anterior, DISPARAR);
                 } else if (evento.key.keysym.sym == SDLK_r) {
                     enviar_accion(tecla_anterior, RECARGAR);
+                } else if(evento.key.keysym.sym == SDLK_UP){
+                    enviar_accion(tecla_anterior, APUNTAR_ARRIBA);
                 }
                 break;
 
@@ -165,6 +184,8 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
                     *tecla_anterior = ComandoAccion::QUIETO;
                 } else if (evento.key.keysym.sym == SDLK_v) {
                     enviar_accion(tecla_anterior, DEJAR_DISPARAR);
+                } else if (evento.key.keysym.sym == SDLK_UP){
+                    enviar_accion(tecla_anterior, DEJAR_APUNTAR_ARRIBA);
                 }
                 break;
         }

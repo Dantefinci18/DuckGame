@@ -6,6 +6,7 @@
 #include "common_weapon.h" 
 #include "../server/Collidable.h"
 #include "../common/common_color.h"
+#include "../common/common_direcciones.h"
 class Evento {
 public:
     enum TipoEvento {
@@ -15,7 +16,8 @@ public:
         EventoSpawnArma,
         EventoMuerte,
         EventoDisparo,
-        EventoEspera
+        EventoEspera,
+        EventoApuntar
     };
 
     virtual ~Evento() = default;
@@ -89,6 +91,15 @@ public:
 class EventoEspera : public Evento {
     public:
         TipoEvento get_tipo() const override { return TipoEvento::EventoEspera; }
+};
+
+class EventoApuntar : public Evento {
+public:
+    int id;
+    DireccionApuntada direccion;
+
+    EventoApuntar(int id, DireccionApuntada direccion) : id(id), direccion(direccion){}
+    TipoEvento get_tipo() const override { return TipoEvento::EventoApuntar; } 
 };
 
 #endif
