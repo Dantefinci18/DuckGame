@@ -16,6 +16,7 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string colo
       death("../Imagenes/duckDead" + color + ".png", window),
       quieto(false),
       weapon(std::nullopt),
+      direccion_arma(DireccionApuntada::APUNTADO_DERECHA),
       x_img(0),
       y_img(0),
       x_actual(x_inicial),
@@ -60,6 +61,10 @@ void Duck::render() {
     if (weapon) {
         render_arma(y_renderizado);
     }
+}
+
+void Duck::apuntar_arma(DireccionApuntada direccion) {
+    direccion_arma = direccion;
 }
 
 bool Duck::esta_quieto() { return quieto; }
@@ -137,6 +142,32 @@ void Duck::render_movimiento_salto(Area& srcArea, Area& destArea) {
 
 void Duck::render_arma(int y_renderizado) {
     Area armaSrcArea(0, 0, 38, 38);
-    Area armaDestArea(x_actual + 20, y_renderizado + 25, 38, 38);
-    armas.render(armaSrcArea, armaDestArea, flip);
+    
+    int pos_arma_x = 0;
+    int pos_arma_y = 0;
+    double angle = 0.0;
+
+    switch (direccion_arma) {
+        case DireccionApuntada::APUNTADO_ARRIBA:
+            if(flip == SDL_FLIP_NONE){
+                angle = -90.0;
+                pos_arma_x = 20;
+            } else {
+                pos_arma_x = 10;
+                angle = 90.0;
+            }
+            pos_arma_y = 20;
+            break;
+        case DireccionApuntada::APUNTADO_DERECHA:
+            pos_arma_x = 20;
+            pos_arma_y = 25;
+            break;
+        case DireccionApuntada::APUNTADO_IZQUIERDA:
+            pos_arma_x = 10;
+            pos_arma_y = 25;
+            flip = SDL_FLIP_HORIZONTAL;
+            break;
+    }
+    Area armaDestArea(x_actual + pos_arma_x, y_renderizado + pos_arma_y, 38, 38);
+    armas.render(armaSrcArea, armaDestArea, flip, angle);
 }

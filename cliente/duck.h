@@ -8,6 +8,7 @@
 #include "Sdl/SdlWindow.h"
 #include "../server/Collidable.h"
 #include "../common/common_weapon.h"
+#include "../common/common_direcciones.h"
 
 class Duck {
 public:
@@ -32,6 +33,11 @@ public:
      * Tambien recibe si en esta nueva posicion el pato esta aleteando
      */ 
     void mover_a(float nueva_x, float nueva_y, bool is_flapping);
+
+    /*
+     * Funcion que debe recibir una direccion valida 
+     */
+    void apuntar_arma(DireccionApuntada direccion);
 
     /* 
      * Funcion que setea el arma del pato
@@ -86,6 +92,7 @@ private:
     bool is_dead = false;
     bool is_flapping = false;
     std::optional<WeaponType> weapon;
+    DireccionApuntada direccion_arma;
     int x_img = 0;
     int y_img = 0;
     float x_actual;

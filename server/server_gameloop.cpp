@@ -79,11 +79,6 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             if(player->has_weapon()){
                 DisparoManager::procesar_disparo(*player, collidables, jugadores, eventos);
             }
-            /*
-            for (const auto& evento : eventos) {
-                std::cout << "manda un evento" <<std::endl;
-                broadcast_evento(*evento);
-            }*/
         } else if (command == DEJAR_DISPARAR){
             std::cout << "Dejo de disparar" << std::endl;
             player->dejar_disparar();

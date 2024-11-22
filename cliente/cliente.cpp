@@ -135,13 +135,14 @@ void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collid
     }
 }
 
-void Cliente::apuntar(const EventoApuntar& evento_apuntar){
-    if (evento_apuntar.direccion == DireccionApuntada::APUNTADO_ARRIBA) {
-        std::cout << "APUNTA PARA ARRIBA" << std::endl;
-    } else if (evento_apuntar.direccion == DireccionApuntada::APUNTADO_DERECHA) {
-        std::cout << "APUNTA A LA DERECHA" << std::endl;
-    } else if (evento_apuntar.direccion == DireccionApuntada::APUNTADO_IZQUIERDA) {
-        std::cout << "APUNTA A LA IZQUIERDA" << std::endl;
+void Cliente::apuntar(const EventoApuntar& evento_apuntar) {
+    if (evento_apuntar.id == id) {
+        duck.apuntar_arma(evento_apuntar.direccion);
+    } else {
+        auto it = enemigos.find(evento_apuntar.id);
+        if (it != enemigos.end()) {
+            it->second->apuntar_arma(evento_apuntar.direccion);
+        }
     }
 }
 
