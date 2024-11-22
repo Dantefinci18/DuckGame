@@ -23,7 +23,6 @@ public:
      **/
     int render(const Area& src, const Area& dest, SDL_RendererFlip flip, double angle = 0.0, const SDL_Point* center = nullptr) const;
 
-
     SDL_Texture* getTexture() const;
 
 private:
