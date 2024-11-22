@@ -40,7 +40,7 @@ void Gameloop::agregar_jugador(Socket& skt) {
 
 
     
-void Gameloop::eliminar_jugador(std::unordered_map<int, Jugador*>::iterator& it){
+void Gameloop::eliminar_jugador(std::unordered_map<int, Jugador*>::iterator it){
    it->second->stop();
    delete it->second;
    cantidad_de_jugadores--;
@@ -83,6 +83,7 @@ void Gameloop::run() {
     }
 
     estado = TERMINADA;
+    cerrar_conexiones();
 }
 
 void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables){

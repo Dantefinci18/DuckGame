@@ -69,7 +69,6 @@ void ServerLobby::eliminar_terminadas(){
         if (partida->get_estado() == TERMINADA) {
             it = partidas.erase(it);
             partidas.remove(partida);
-            partida->cerrar_conexiones();
             delete partida;
         
         } else {
