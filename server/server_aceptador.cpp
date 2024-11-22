@@ -10,18 +10,15 @@
 Aceptador::Aceptador(Socket& skt):skt(skt) {}
 
 void Aceptador::run() {
-    gameloop.start();
+    lobby.start();
     while (_keep_running) {
         try {
 
             Socket conexion = skt.accept();
-            gameloop.eliminar_desconectados();
-            gameloop.agregar_jugador(conexion);
+            lobby.agregar_jugador(conexion);
 
         } catch (const LibError& e) {}
     }
 
-    gameloop.cerrar_conexiones();
-    gameloop.stop();
-    gameloop.join();
+    lobby.finalizar();
 }

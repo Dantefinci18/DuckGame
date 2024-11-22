@@ -21,10 +21,14 @@ public:
      * Recibe un string con el mapa seleccionado
      */
     void crear_partida(const std::string& mapa_seleccionado);
+
+    void cargar_partida();
+
     /*
      * Funcion que se une a una partida
      * Recibe un string con el nombre de la partida
      */
+    
     int recibir_id();
 
     /*

@@ -19,7 +19,8 @@ class ProtocoloServidor{
         ComandoPartida recibir_partida();
         
         bool enviar_id(int id);
-        void enviar_estado(const Evento& evento);   
+        void enviar_estado(const Evento& evento); 
+        Socket get_socket();  
         void cerrar_conexion();
 };
 

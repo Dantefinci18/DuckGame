@@ -6,10 +6,24 @@
 #include <QPixmap>
 #include <string>  
 
+VentanaEsperando::VentanaEsperando(QWidget *parent) :
+    QMainWindow(parent),
+    statusLabel(new QLabel("Esperando conexión...", this))
+{
+    setFixedSize(200, 100);
+    statusLabel->setAlignment(Qt::AlignCenter);
+    statusLabel->setGeometry(0, 50, 300, 50);
+    
+}
+
+VentanaEsperando::~VentanaEsperando() {}
+
+
 MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     QMainWindow(parent),
     lobby(lobby),
     crear_partida_Button(new QPushButton("Crear partida", this)),
+    cargar_partida_Button(new QPushButton("Cargar partida", this)),
     statusLabel(new QLabel("Esperando conexión...", this)),
     mapaComboBox(new QComboBox(this))
 {
@@ -31,12 +45,13 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     layout->addWidget(mapaComboBox);
     
     layout->addWidget(crear_partida_Button);
+    layout->addWidget(cargar_partida_Button);
     layout->addWidget(statusLabel);
+    
 
     connect(crear_partida_Button, &QPushButton::clicked, this, &MainWindow::crear_partida_clicked);
+    connect(cargar_partida_Button, &QPushButton::clicked, this, &MainWindow::cargar_partida_clicked);
 }
-
-MainWindow::~MainWindow() {}
 
 void MainWindow::crear_partida_clicked() {
     QString mapaSeleccionadoQString = mapaComboBox->currentText();
@@ -45,4 +60,8 @@ void MainWindow::crear_partida_clicked() {
     statusLabel->setText("Partida creada: " + mapaSeleccionadoQString);
     
     emit crear_partida(mapaSeleccionado);
+}
+
+void MainWindow::cargar_partida_clicked(){
+    emit cargar_partida();
 }

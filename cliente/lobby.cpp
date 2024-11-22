@@ -2,18 +2,30 @@
 #include <utility>
 #include <stdexcept>
 #include "cliente_protocolo.h"
+#include "../common/common_partida.h"
+
 Lobby::Lobby(const char* hostname, const char* servname) : socket(hostname, servname) {}
 
 void Lobby::crear_partida(const std::string& mapa_seleccionado) {
     (void)mapa_seleccionado;
     bool was_closed = false;
-    ComandoAccion comando = ComandoAccion::NUEVA_PARTIDA_ACCION;
-    std::vector<uint8_t> accion_serializada = serializador.serializar_accion(comando);
-    socket.sendall(accion_serializada.data(), accion_serializada.size(), &was_closed);
+    ComandoPartida comando = NUEVA_PARTIDA;
+    std::vector<uint8_t> partida_serializada = serializador.serializar_partida(comando);
+    socket.sendall(partida_serializada.data(), partida_serializada.size(), &was_closed);
     if (was_closed) {
         throw std::runtime_error("Error al enviar comando de nueva partida");
     }
     
+}
+
+void Lobby::cargar_partida(){
+    bool was_closed = false;
+    ComandoPartida comando = CARGAR_PARTIDA;
+    std::vector<uint8_t> accion_serializada = serializador.serializar_partida(comando);
+    socket.sendall(accion_serializada.data(), accion_serializada.size(), &was_closed);
+    if (was_closed) {
+        throw std::runtime_error("Error al enviar comando de cargar partida");
+    }
 }
 
 int Lobby::recibir_id() {
@@ -36,7 +48,9 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
         throw std::runtime_error("Error al recibir el tipo de evento: conexión cerrada");
     }
 
+    serializador.imprimir_uint8_t_array(tipo_evento,sizeof(tipo_evento));
     Evento::TipoEvento tipo = serializador.deserializar_tipo_evento(tipo_evento);
+
 
     switch (tipo) {
         case Evento::EventoMovimiento: {
@@ -92,7 +106,14 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
                 collidables.push_back(collidable);
             }
             return std::make_unique<EventoMapa>(collidables);
+        } 
+        
+        case Evento::EventoEspera: {
+            
+            std::cout << "se recibio espera\n";
+            return std::make_unique<EventoEspera>();
         }
+
         default:
             throw std::runtime_error("Error: Tipo de evento desconocido");
             

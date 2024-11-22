@@ -33,6 +33,7 @@ uint8_t Serializador::deserializar_enum(const uint8_t* data){
     return valor;
 }
 
+
 ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
     ComandoAccion accion = static_cast<ComandoAccion>(deserializar_enum(data));
     return accion;
@@ -68,7 +69,13 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoMuerte){
         return serializar_muerte(evento);
     }
-    
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoEspera){ 
+        std::vector<uint8_t> buffer = serializar_espera(Evento::TipoEvento::EventoEspera);
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+        return buffer;
+    }
+
     if (evento.get_tipo() == Evento::TipoEvento::EventoAgacharse){
         return serializar_agacharse(evento);
     }
@@ -78,6 +85,19 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     }
 
     return std::vector<uint8_t>();
+}
+
+std::vector<uint8_t> Serializador::serializar_espera(const Evento::TipoEvento& tipo_evento){
+
+    std::vector<uint8_t> buffer(8);  
+
+    uint8_t tipo = static_cast<uint8_t>(tipo_evento);
+    for (int i = 0; i < 8; ++i) {
+        buffer[i] = (tipo >> (7 - i)) & 1;
+    }
+
+    return buffer;
+    
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {

@@ -14,8 +14,6 @@
 class Servidor {
 private:
     Socket skt;
-    Queue<Accion> comandos_acciones;
-    PlayerMonitor monitor;
     Aceptador aceptador;
 
 public:
