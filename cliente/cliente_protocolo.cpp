@@ -183,6 +183,21 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             int id_deserializado = serializador.deserializar_id(id);
             return std::make_unique<EventoLevantarse>(id_deserializado);
         }
+        case Evento::EventoBala: {
+            uint8_t x[32];
+            socket.recvall(x, sizeof(x), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t y[32];
+            socket.recvall(y, sizeof(y), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            return serializador.deserialzar_bala(x, y);
+        }
         default:
             return nullptr; 
     }

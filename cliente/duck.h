@@ -16,6 +16,20 @@ public:
      */
     Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string color);
 
+
+    /* 
+     * Funcion que renderiza una bala
+     * Recibe un float con la posicion x y un float con la posicion y
+     */
+    void renderizar_bala(float x, float y);
+
+    /* 
+     * Funcion que setea una bala
+     * Recibe un float con la posicion x y un float con la posicion y
+     */
+    void setear_bala(float x, float y);
+
+
     /* 
      * Funcion que renderiza al pato
      */
@@ -93,6 +107,7 @@ private:
     SdlTexture movimiento_en_y;
     SdlTexture armas;
     SdlTexture death;
+    SdlTexture bala;
     bool quieto;
     std::optional<WeaponType> weapon;
     int x_img;
@@ -104,6 +119,9 @@ private:
     int y_des;
     bool is_flapping;
     bool esta_agachado;
+    bool bala_activa;  
+    float x_bala;
+    float y_bala;
     SDL_RendererFlip flip;
 
 };

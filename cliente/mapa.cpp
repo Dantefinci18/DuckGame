@@ -45,6 +45,8 @@ void Mapa::renderizar_mapa(){
     }
 }
 
+
+
 void Mapa::render() {
     Area srcArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);

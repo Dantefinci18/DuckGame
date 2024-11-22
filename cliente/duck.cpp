@@ -14,6 +14,7 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string colo
       movimiento_en_y("../Imagenes/movimiento_y" + color + ".png", window),
       armas("../Imagenes/guns.png", window),
       death("../Imagenes/duckDead" + color + ".png", window),
+      bala("../Imagenes/balas_magnum.png", window),
       quieto(false),                
       weapon(std::nullopt),          
       x_img(0),                     
@@ -24,9 +25,36 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string colo
       x_des(x_inicial),              
       y_des(static_cast<int>(y_inicial)), 
       is_flapping(false),            
-      esta_agachado(false),         
+      esta_agachado(false),
+      bala_activa(false),
+      x_bala(0),
+      y_bala(0),      
       flip(SDL_FLIP_NONE)         
 {}
+void Duck::renderizar_bala(float x, float y) {
+
+    const int ANCHO_BALA = 12;  
+    const int ALTO_BALA = 16; 
+    const int FACTOR_ESCALA_BALA = 4; 
+
+    
+    Area srcArea(0, 0, ANCHO_BALA, ALTO_BALA);
+
+    
+    int x_renderizado = x;
+    int y_renderizado = ALTO_VENTANA - y - ALTO_BALA * FACTOR_ESCALA_BALA;
+    Area destArea(x_renderizado, y_renderizado, ANCHO_BALA * FACTOR_ESCALA_BALA, ALTO_BALA * FACTOR_ESCALA_BALA);
+
+    bala.render(srcArea, destArea, SDL_FLIP_NONE);
+    bala_activa = false;
+    
+}
+
+void Duck::setear_bala(float x, float y) {
+    bala_activa = true;
+    x_bala = x;
+    y_bala = y;
+}
 
 
 
@@ -41,6 +69,12 @@ void Duck::render() {
         death.render(srcArea, destArea, flip);
         return;
     }
+
+    if (bala_activa) {
+        renderizar_bala(x_bala, y_bala);
+    }
+    
+
 
     if (esta_agachado) {
         Area srcArea(5 * ANCHO_IMG_DUCK, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);

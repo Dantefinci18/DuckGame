@@ -5,11 +5,15 @@
 #include <string>
 
 void PlayerMonitor::agregar_cola_evento(Queue<std::unique_ptr<Evento>>& cola_evento) {
+    std::lock_guard<std::mutex> lock(mtx); // Bloquea el mutex
     colas_de_eventos.push_back(&cola_evento);
 }
+
 void PlayerMonitor::eliminar_cola_evento(Queue<std::unique_ptr<Evento>>& cola_evento) {
+    std::lock_guard<std::mutex> lock(mtx); // Bloquea el mutex
     colas_de_eventos.remove(&cola_evento);
 }
+
 
 std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
     std::unique_ptr<Evento> evento_ptr;
@@ -74,6 +78,13 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             evento_ptr = std::make_unique<EventoEspera>();
             break;
         }
+
+        case Evento::EventoBala: {
+            
+            const EventoBala& evento_bala = static_cast<const EventoBala&>(evento);
+            evento_ptr = std::make_unique<EventoBala>(evento_bala.x, evento_bala.y);
+            break;
+        }
         default:
             std::cout << "Error: Tipo de evento desconocido" << std::endl;
             break;
@@ -84,8 +95,10 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
 }
 
 void PlayerMonitor::enviar_evento(const Evento& evento) {
+    std::lock_guard<std::mutex> lock(mtx); // Bloquea el mutex durante la iteración
     for (auto cola : colas_de_eventos) {
         std::unique_ptr<Evento> evento_ptr = broadcast_evento(evento);
         cola->push(std::move(evento_ptr));
     }
 }
+

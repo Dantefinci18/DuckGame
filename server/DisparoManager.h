@@ -5,40 +5,39 @@
 #include "Collidable.h"
 #include "server_jugador.h"
 #include "../common/common_evento.h"
+#include "bala.h"
 #include <vector>
+#include <unordered_map>
 #include <memory>
 #include <limits>
 
 class DisparoManager {
 public:
-    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores) {
-        
+    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores, std::vector<Bala>& balas) {
+
         if (!player.has_weapon()) {
-            return;
+            return;         
         }
 
         auto destinos = player.disparar();
 
-        Vector origen = player.get_posicion() + Vector(0,1); // ARREGLO PARA LEVANTAR LA LINEA DE TIRO
+        Vector origen = player.get_posicion() + Vector(0,1);
 
         for (const auto& destino : destinos) {
-
-            // no se si tiene mucha logica aca
-            //eventos.push_back(std::make_shared<EventoDisparo>(player.get_id()));
 
             Collidable* primer_impacto = nullptr;
             std::optional<Vector> punto_impacto = std::nullopt;
             float menor_distancia = std::numeric_limits<float>::max();
 
             for (auto& collidable : collidables) {
-                if(collidable->getType() != CollidableType::SpawnPlace){
-                    auto interseccion = collidable->intersection_point(origen, destino+Vector(0,1)); // ARREGLO PARA LEVANTAR LA LINEA DE TIRO
+                if(collidable->getType() != CollidableType::SpawnPlace) {
+                    auto interseccion = collidable->intersection_point(origen, destino + Vector(0,1));
                     if (interseccion) {
                         float distancia = (*interseccion - origen).magnitude();
                         if (distancia < menor_distancia) {
-                        menor_distancia = distancia;
-                        primer_impacto = collidable;
-                        punto_impacto = interseccion;
+                            menor_distancia = distancia;
+                            primer_impacto = collidable;
+                            punto_impacto = interseccion;
                         }
                     }  
                 }
@@ -58,8 +57,10 @@ public:
                 }
             }
 
-            player.print_position();
+            Bala nueva_bala(origen.x, origen.y, destino.x, destino.y, 0.5f); 
+            balas.push_back(nueva_bala);
 
+            
             if (primer_impacto && punto_impacto) {
                 switch (primer_impacto->getType()) {
                     case CollidableType::Player: {
@@ -72,16 +73,12 @@ public:
                         std::cout <<"Le pegaste a una plataforma en (" 
                                   << punto_impacto->x << ", " 
                                   << punto_impacto->y << ")" << std::endl;
-
-                        // ACA REBOTAR O ALGO ASI
                         break;
 
                     case CollidableType::Box:
                         std::cout << "Le pegaste a una caja en (" 
                                   << punto_impacto->x << ", " 
                                   << punto_impacto->y << ")" << std::endl;
-
-                        // no se si va box
                         break;
 
                     default:
@@ -93,11 +90,10 @@ public:
                 break;
             } else {
                 std::cout << "No hubo impacto en la dirección (" 
-                          << destino.x << ", " << destino.y + 1 << ")" << std::endl; // ARREGLO PARA LEVANTAR LA LINEA DE TIRO
+                          << destino.x << ", " << destino.y + 1 << ")" << std::endl;
             }
         }
     }
 };
-
 
 #endif // DISPARO_MANAGER_H

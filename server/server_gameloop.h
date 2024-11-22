@@ -12,6 +12,7 @@
 #include "server_monitor.h"
 #include "server_jugador.h"
 #include "server_mapa.h"
+#include "bala.h"
 
 class Gameloop: public Thread {
 private:
@@ -21,6 +22,7 @@ private:
     std::mutex mtx;
     Mapa mapa;
     int color;
+    std::vector<Bala> balas;  
 
     void sleep();
     void cargar_acciones();

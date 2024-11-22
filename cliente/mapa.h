@@ -27,6 +27,7 @@ public:
      */
     void renderizar_mapa();
 
+
     /* Renderiza el fondo
      */
     void render();
@@ -39,7 +40,7 @@ public:
 private:
     SdlTexture fondo;
     SdlTexture plataformas;
-    SdlTexture armas;           
+    SdlTexture armas;     
     std::vector<Collidable*> collidables_plataformas; 
 
 

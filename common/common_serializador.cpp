@@ -77,6 +77,10 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
         return serializar_levantarse(evento);
     }
 
+    if (evento.get_tipo() == Evento::TipoEvento::EventoBala){
+        return serializar_bala(evento);
+    }
+
     return std::vector<uint8_t>();
 }
 
@@ -247,6 +251,31 @@ std::vector<uint8_t> Serializador::serializar_levantarse(const Evento& evento) {
     return bits;
 }
 
+std::vector<uint8_t> Serializador::serializar_bala(const Evento& evento) {
+    std::vector<uint8_t> bits(72);
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        bits[i] = (tipo_evento >> (7 - i)) & 1;
+    }
+
+    uint32_t x_bits;
+    memcpy(&x_bits, &static_cast<const EventoBala&>(evento).x, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[8 + i] = (x_bits >> (31 - i)) & 1;
+    }
+
+    // Serializar y
+    uint32_t y_bits;
+    memcpy(&y_bits, &static_cast<const EventoBala&>(evento).y, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[40 + i] = (y_bits >> (31 - i)) & 1;
+    }
+    
+
+    return bits;
+}
+
 
 Evento::TipoEvento Serializador::deserializar_tipo_evento(const uint8_t* tipo_evento_data) {
     uint8_t tipo_evento_bits = 0;
@@ -363,6 +392,24 @@ std::unique_ptr<Evento> Serializador::deserializar_muerte(const uint8_t* id_data
     int id = static_cast<int>(id_bits);
 
     return std::make_unique<EventoMuerte>(id);
+}
+
+std::unique_ptr<Evento> Serializador::deserialzar_bala(const uint8_t* x_data, const uint8_t* y_data) {
+    float x, y;
+
+    uint32_t x_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        x_bits |= (x_data[i] << (31 - i));
+    }
+    memcpy(&x, &x_bits, sizeof(float));
+ 
+    uint32_t y_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        y_bits |= (y_data[i] << (31 - i));
+    }
+    memcpy(&y, &y_bits, sizeof(float));
+
+    return std::make_unique<EventoBala>(x, y);
 }
 
 std::vector<uint8_t> Serializador::serializar_id(int id) {

@@ -17,7 +17,8 @@ public:
         EventoDisparo,
         EventoEspera,
         EventoAgacharse,
-        EventoLevantarse
+        EventoLevantarse,
+        EventoBala
     };
 
     virtual ~Evento() = default;
@@ -108,6 +109,15 @@ public:
 
     EventoLevantarse(int id) : id(id) {}
     TipoEvento get_tipo() const override { return TipoEvento::EventoLevantarse; } 
+};
+
+class EventoBala : public Evento {
+public:
+    float x;
+    float y;
+
+    EventoBala(float x, float y) : x(x), y(y) {}
+    TipoEvento get_tipo() const override { return TipoEvento::EventoBala; } 
 };
 
 #endif
