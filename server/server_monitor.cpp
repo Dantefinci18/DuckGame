@@ -36,7 +36,7 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
         }
 
         case Evento::EventoSpawnArma: {
-            
+            std::cout << "spawn_arma" << std::endl;
             const EventoSpawnArma& evento_spawn = static_cast<const EventoSpawnArma&>(evento);
             evento_ptr = std::make_unique<EventoSpawnArma>(evento_spawn.x, evento_spawn.y, evento_spawn.weapon_type);
             break;
@@ -92,6 +92,7 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
 
 void PlayerMonitor::enviar_evento(const Evento& evento) {
     for (auto cola : colas_de_eventos) {
+        std::cout << "enviar_evento" << std::endl;
         std::unique_ptr<Evento> evento_ptr = broadcast_evento(evento);
         cola->push(std::move(evento_ptr));
     }

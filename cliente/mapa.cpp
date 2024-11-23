@@ -58,3 +58,21 @@ void Mapa::render() {
 void Mapa::set_collidables(const std::vector<Collidable*>& collidables) {
     this->collidables_plataformas = collidables;
 }
+
+// Move constructor
+Mapa::Mapa(Mapa&& other) noexcept
+    : fondo(std::move(other.fondo)),
+      plataformas(std::move(other.plataformas)),
+      armas(std::move(other.armas)),
+      collidables_plataformas(std::move(other.collidables_plataformas)) {}
+
+// Move assignment operator
+Mapa& Mapa::operator=(Mapa&& other) noexcept {
+    if (this != &other) {
+        fondo = std::move(other.fondo);
+        plataformas = std::move(other.plataformas);
+        armas = std::move(other.armas);
+        collidables_plataformas = std::move(other.collidables_plataformas);
+    }
+    return *this;
+}

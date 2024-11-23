@@ -24,7 +24,8 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string colo
       x_des(x_inicial),              
       y_des(static_cast<int>(y_inicial)), 
       is_flapping(false),            
-      esta_agachado(false),         
+      esta_agachado(false),    
+      reset(false),     
       flip(SDL_FLIP_NONE)         
 {}
 
@@ -34,6 +35,18 @@ void Duck::render() {
     bool en_movimiento_x = (x_actual != x_des);
     bool en_movimiento_y = (y_actual != y_des);
 
+    if (reset) {
+        std::cout << "reset" << std::endl;
+        weapon = std::nullopt;
+        is_dead = false;
+        esta_agachado = false;
+        is_flapping = false;
+        y_actual = y_des;
+        x_actual = x_des;
+        x_img = 0;
+        y_img = 0;
+        return;
+    }
     if (is_dead) {
         Area srcArea(0, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
         int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA;
@@ -81,12 +94,13 @@ void Duck::kill() {
     is_dead = true;
 }
 
-void Duck::mover_a(float x, float y, bool is_flapping) {
+void Duck::mover_a(float x, float y, bool is_flapping, bool reset) {
     if (x != x_des || y != y_des) {
         quieto = false;
     }
     x_des = x;
     this->is_flapping = is_flapping;
+    this->reset = reset;
     y_des = y;
 }
 

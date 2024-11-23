@@ -173,7 +173,7 @@ void Gameloop::cargar_acciones() {
             std::cout << "reseting!" << std::endl;
             //TODO: Cambiar para elegir un mapa random.
 
-            mapa = std::make_unique<Mapa>(1);
+            mapa = std::make_unique<Mapa>(2);
             
             EventoMapa eventoMapa(mapa->getCollidables());
             monitor.enviar_evento(eventoMapa);

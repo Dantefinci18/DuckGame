@@ -10,8 +10,8 @@ int Enemigo::get_id() const {
     return id;
 }
 
-void Enemigo::mover_a(float nueva_x, float nueva_y, bool is_flapping) {
-    duck.mover_a(nueva_x, nueva_y, is_flapping);
+void Enemigo::mover_a(float nueva_x, float nueva_y, bool is_flapping, bool reset) {
+    duck.mover_a(nueva_x, nueva_y, is_flapping, reset);
 }
 
 void Enemigo::renderizar() {

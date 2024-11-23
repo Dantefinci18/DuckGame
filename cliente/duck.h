@@ -29,9 +29,10 @@ public:
     /* 
      * Funcion que mueve al pato a una posicion x y y
      * Recibe un float con la nueva posicion x y un float con la nueva posicion y.
-     * Tambien recibe si en esta nueva posicion el pato esta aleteando
+     * Recibe si en esta nueva posicion el pato esta aleteando
+     * Recibe un booleano para saber si resetear la textura del pato.
      */ 
-    void mover_a(float nueva_x, float nueva_y, bool is_flapping);
+    void mover_a(float nueva_x, float nueva_y, bool is_flapping, bool reset);
 
     /* 
      * Funcion que agacha al pato
@@ -104,6 +105,7 @@ private:
     int y_des;
     bool is_flapping;
     bool esta_agachado;
+    bool reset;
     SDL_RendererFlip flip;
 
 };

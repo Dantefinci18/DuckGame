@@ -23,9 +23,10 @@ public:
     /* 
      * Funcion que mueve al enemigo a una posicion x y y
      * Recibe un float con la nueva posicion x y un float con la nueva posicion y
-     * Tambien recibe un booleano para saber si el pato esta aleteando.
+     * Recibe un booleano para saber si el pato esta aleteando.
+     * Recibe un booleano para saber si resetear la textura del pato.
      */
-    void mover_a(float nueva_x, float nueva_y, bool is_flapping);
+    void mover_a(float nueva_x, float nueva_y, bool is_flapping, bool reset);
     
     /* 
      * Funcion que renderiza al enemigo
