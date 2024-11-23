@@ -50,9 +50,7 @@ void Mapa::render() {
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
 
-    renderizar_mapa();  
-
-    
+    renderizar_mapa();      
 }
 
 void Mapa::set_collidables(const std::vector<Collidable*>& collidables) {

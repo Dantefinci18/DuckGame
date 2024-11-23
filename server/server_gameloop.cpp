@@ -173,17 +173,13 @@ void Gameloop::cargar_acciones() {
             std::cout << "reseting!" << std::endl;
             //TODO: Cambiar para elegir un mapa random.
 
-            mapa = std::make_unique<Mapa>(2);
+            mapa = std::make_unique<Mapa>(3);
             
-            EventoMapa eventoMapa(mapa->getCollidables());
-            monitor.enviar_evento(eventoMapa);
-            Jugador* winner = get_winner();
-            EventoWinRound eventoWinRound(winner->get_id());
-            monitor.enviar_evento(eventoWinRound);
-            reset_jugadores();
             ticks_round_win_screen = 60;
             should_reset_round = false;
-
+            EventoMapa eventoMapa(mapa->getCollidables());
+            monitor.enviar_evento(eventoMapa);
+            
         }
         return;
     }
@@ -192,6 +188,10 @@ void Gameloop::cargar_acciones() {
     if (winner) {
         std::cout << "found winner" << std::endl;
         should_reset_round = true;
+        Jugador* winner = get_winner();
+        EventoWinRound eventoWinRound(winner->get_id());
+        monitor.enviar_evento(eventoWinRound);
+        reset_jugadores();
         return;
     }
     procesar_acciones(acciones, mapa->getCollidables());

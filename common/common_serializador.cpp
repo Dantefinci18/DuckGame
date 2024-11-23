@@ -45,7 +45,6 @@ ComandoPartida Serializador::deserializar_partida(const uint8_t* data){
 }
 
 std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
-    std::cout << "serializing" << std::endl;
     if (evento.get_tipo() == Evento::TipoEvento::EventoPickup) {
         return serializar_pickup(evento);
     }

@@ -1,0 +1,17 @@
+collidables:
+  - type: Platform
+    x: 100
+    y: 200
+    width: 200
+    height: 20
+  - type: Platform
+    x: 500
+    y: 200
+    width: 200
+    height: 20
+  - type: SpawnPlace
+    x: 550
+    y: 220
+    width: 20
+    height: 20
+    

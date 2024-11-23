@@ -130,7 +130,6 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             return serializador.deserializar_pickup(id, x, y, weapon_type);
         }
         case Evento::EventoSpawnArma: {
-            std::cout << "found spawn event" << std::endl;
             uint8_t x[32];
             socket.recvall(x, sizeof(x), &was_closed);
             if (was_closed) {

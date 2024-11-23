@@ -4,6 +4,7 @@ Mapa::Mapa(int id_mapa) {
     std::map<int, std::string> map_files = {
         {1, "../server/mapas/mapa_1.yaml"},
         {2, "../server/mapas/mapa_2.yaml"},
+        {3, "../server/mapas/mapa_3.yaml"},
     };
     YAML::Node config = YAML::LoadFile(map_files[id_mapa]);
     

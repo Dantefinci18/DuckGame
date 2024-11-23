@@ -8,6 +8,7 @@
 #include "mapa.h"
 #include "enemigo.h" 
 #include "Sdl/SdlWindow.h"
+#include "Sdl/SdlMessage.h"
 #include <atomic>
 #include "../common/common_queue.h"
 #include "../common/common_evento.h"
@@ -25,7 +26,7 @@ private:
     int id;
     SdlWindow window;
     Duck duck;
-    Mapa mapa;
+    std::unique_ptr<Mapa> mapa;
     ClienteProtocolo protocolo;
     ClienteReceiver receiver;
     ClienteSender sender;
@@ -34,6 +35,7 @@ private:
     std::atomic<bool> conectado {true};
     std::unordered_map<int, std::unique_ptr<Enemigo>> enemigos;
     std::vector<Collidable*> collidables;
+    std::unique_ptr<SdlMessage> win_message;
 
     /*
      * Funcion que ejecuta el juego
@@ -100,6 +102,10 @@ private:
      */
     std::string procesar_color(ColorDuck color);
 
+    /*
+     * Funcion que procesa el evento de que alguien gano una ronda.
+     */
+    void handle_win_screen(const EventoWinRound& evento);
     /*
      * Funcion que para el cliente
      */
