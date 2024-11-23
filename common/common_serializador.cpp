@@ -33,6 +33,7 @@ uint8_t Serializador::deserializar_enum(const uint8_t* data){
     return valor;
 }
 
+
 ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
     ComandoAccion accion = static_cast<ComandoAccion>(deserializar_enum(data));
     return accion;
@@ -72,6 +73,35 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoApuntar){
         return serializar_apuntar(evento);
     }
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoEspera){ 
+        std::vector<uint8_t> buffer = serializar_espera(Evento::TipoEvento::EventoEspera);
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+        return buffer;
+    }
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoAgacharse){
+        return serializar_agacharse(evento);
+    }
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoLevantarse){
+        return serializar_levantarse(evento);
+    }
+
+    return std::vector<uint8_t>();
+}
+
+std::vector<uint8_t> Serializador::serializar_espera(const Evento::TipoEvento& tipo_evento){
+
+    std::vector<uint8_t> buffer(8);  
+
+    uint8_t tipo = static_cast<uint8_t>(tipo_evento);
+    for (int i = 0; i < 8; ++i) {
+        buffer[i] = (tipo >> (7 - i)) & 1;
+    }
+
+    return buffer;
+    
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
@@ -171,7 +201,7 @@ std::vector<uint8_t> Serializador::serializar_spawn_arma(const Evento& evento) {
     //Serializar weaponType
     uint32_t tipo_bits = static_cast<uint32_t>(static_cast<const EventoSpawnArma&>(evento).weapon_type);
     for (int i = 0; i < 32; ++i) {
-        bits[104 + i] = (tipo_bits >> (31 - i)) & 1;
+        bits[72 + i] = (tipo_bits >> (31 - i)) & 1;
     }
     //imprimir_uint8_t_array(bits.data(), 104);
     return bits;
@@ -225,6 +255,38 @@ std::vector<uint8_t> Serializador::serializar_apuntar(const Evento& evento) {
     uint8_t direccion_bits = static_cast<uint8_t>(static_cast<const EventoApuntar&>(evento).direccion);
     for (int i = 0; i < 8; ++i) {
         bits[40 + i] = (direccion_bits >> (7 - i)) & 1;
+    }
+
+    return bits;
+}
+
+std::vector<uint8_t> Serializador::serializar_agacharse(const Evento& evento) {
+    std::vector<uint8_t> bits(40);
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        bits[i] = (tipo_evento >> (7 - i)) & 1;
+    }
+
+    uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoAgacharse&>(evento).id);
+    for (int i = 0; i < 32; ++i) {
+        bits[8 + i] = (id_bits >> (31 - i)) & 1;
+    }
+
+    return bits;
+}
+
+std::vector<uint8_t> Serializador::serializar_levantarse(const Evento& evento) {
+    std::vector<uint8_t> bits(40);
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        bits[i] = (tipo_evento >> (7 - i)) & 1;
+    }
+
+    uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoLevantarse&>(evento).id);
+    for (int i = 0; i < 32; ++i) {
+        bits[8 + i] = (id_bits >> (31 - i)) & 1;
     }
 
     return bits;

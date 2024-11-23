@@ -40,6 +40,17 @@ public:
     void apuntar_arma(DireccionApuntada direccion);
 
     /* 
+     * Funcion que agacha al pato
+     */
+    void agacharse();
+
+    /* 
+     * Funcion que levanta al pato
+     */
+    void levantarse();
+
+
+    /* 
      * Funcion que setea el arma del pato
      * Recibe un WeaponType
      */
@@ -88,18 +99,20 @@ private:
     SdlTexture movimiento_en_y;
     SdlTexture armas;
     SdlTexture death;
-    bool quieto = false;
-    bool is_dead = false;
-    bool is_flapping = false;
+    bool quieto;
     std::optional<WeaponType> weapon;
     DireccionApuntada direccion_arma;
     int x_img = 0;
     int y_img = 0;
     float x_actual;
     float y_actual;
+    bool is_dead;
     float x_des;
     int y_des;
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    bool is_flapping;
+    bool esta_agachado;
+    SDL_RendererFlip flip;
+
 };
 
 #endif // DUCK_H

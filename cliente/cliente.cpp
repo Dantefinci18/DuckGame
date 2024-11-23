@@ -33,6 +33,7 @@ void Cliente::procesar_eventos_recibidos() {
     while (tried) {
         tried = queue_eventos.try_pop(evento_recibido);
         if (tried && evento_recibido) {
+            evento_recibido->print();
             switch (evento_recibido->get_tipo()) {
                 case Evento::EventoMovimiento: {
                     auto evento_mov = static_cast<EventoMovimiento*>(evento_recibido.get());
@@ -45,7 +46,6 @@ void Cliente::procesar_eventos_recibidos() {
                 }
 
                 case Evento::EventoDisparo: {
-                    auto evento_disparo = static_cast<EventoDisparo*>(evento_recibido.get());
                     break;
                 }
 
@@ -65,6 +65,18 @@ void Cliente::procesar_eventos_recibidos() {
                     auto evento_spawn_arma = static_cast<EventoSpawnArma*>(evento_recibido.get());
                     spawn_arma(*evento_spawn_arma, collidables);
                     break;
+                }             
+                case Evento::EventoAgacharse: {
+                    auto evento_agacharse = static_cast<EventoAgacharse*>(evento_recibido.get());
+                    agachar_duck(*evento_agacharse);
+                    break;
+                }
+
+                case Evento::EventoLevantarse: {
+                    auto evento_levantarse = static_cast<EventoLevantarse*>(evento_recibido.get());
+                    levantarse_duck(*evento_levantarse);
+                    break;
+                }   
                 }
 
                 case Evento::EventoApuntar: {
@@ -80,6 +92,29 @@ void Cliente::procesar_eventos_recibidos() {
         }
     }
 }
+
+void Cliente::agachar_duck(const EventoAgacharse& evento_agacharse) {
+    if (evento_agacharse.id != id) {
+        auto it = enemigos.find(evento_agacharse.id);
+        if (it != enemigos.end()) {
+            it->second->agacharse();
+        }
+    } else {
+        duck.agacharse();
+    }
+}
+
+void Cliente::levantarse_duck(const EventoLevantarse& evento_levantarse) {
+    if (evento_levantarse.id != id) {
+        auto it = enemigos.find(evento_levantarse.id);
+        if (it != enemigos.end()) {
+            it->second->levantarse();
+        }
+    } else {
+        duck.levantarse();
+    }
+}
+
 void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov) {
     if (evento_mov.id != id) {
         auto it = enemigos.find(evento_mov.id);
@@ -175,6 +210,8 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
                     enviar_accion(tecla_anterior, RECARGAR);
                 } else if(evento.key.keysym.sym == SDLK_UP){
                     enviar_accion(tecla_anterior, APUNTAR_ARRIBA);
+                } else if (evento.key.keysym.sym == SDLK_DOWN) {
+                    enviar_accion(tecla_anterior,AGACHARSE);
                 }
                 break;
 
@@ -187,6 +224,8 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
                     enviar_accion(tecla_anterior, DEJAR_DISPARAR);
                 } else if (evento.key.keysym.sym == SDLK_UP){
                     enviar_accion(tecla_anterior, DEJAR_APUNTAR_ARRIBA);
+                } else if (evento.key.keysym.sym == SDLK_DOWN) {
+                    enviar_accion(tecla_anterior, LEVANTARSE);
                 }
                 break;
         }

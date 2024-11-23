@@ -46,6 +46,19 @@ private:
     void procesar_eventos_recibidos();
 
     /*
+     * Funcion que maneja el movimiento del pato
+     * Recibe un evento de movimiento
+     */
+    void agachar_duck(const EventoAgacharse& evento_agacharse);
+
+    /*
+     * Funcion que maneja el movimiento del pato
+     * Recibe un evento de movimiento
+     */
+    void levantarse_duck(const EventoLevantarse& evento_levantarse);
+
+
+    /*
      * Funcion que maneja los enemigos
      * Recibe un evento de movimiento
      */

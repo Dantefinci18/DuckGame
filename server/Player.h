@@ -25,6 +25,7 @@ private:
     int ticks_to_reset_gravity;
     ColorDuck color;
     bool is_dead;
+    bool esta_agachado;
     DireccionApuntada direccion_apuntada;
     DireccionApuntada ultima_direccion_horizontal;
     std::unique_ptr<Weapon> weapon;
@@ -42,19 +43,27 @@ public:
     std::vector<std::shared_ptr<Evento>> eventos;
 
     void move() {
-        if (velocity.y > gravity && jump_force == 0) {
-            velocity.y -= 1;
-        }
-        if (jump_force > 0) {
-            jump_force--;
-            velocity.y += 1;
-        }
-        if (velocity.y < gravity) {
-            velocity.y = gravity;
-        }
-        position.y += velocity.y;
-        position.x += velocity.x * speed;
+
+    if (esta_agachado) {
+        velocity.x = 0;  
+        
     }
+
+    if (velocity.y > gravity && jump_force == 0) {
+        velocity.y -= 1;
+    }
+    if (jump_force > 0) {
+        jump_force--;
+        velocity.y += 1;
+    }
+    if (velocity.y < gravity) {
+        velocity.y = gravity;
+    }
+    
+    position.y += velocity.y;
+    position.x += velocity.x * speed;  
+}
+
 
     Vector get_direccion_apuntada() const {
         return obtenerDireccion(direccion_apuntada);
@@ -132,14 +141,19 @@ public:
     }
 
     void jump() {
+        if (esta_agachado) {
+            return;
+        }
+
         if (is_able_to_jump()) {
             is_on_ground = false;
             jump_force = 15;
         } else {
             gravity = -2;
             ticks_to_reset_gravity = 5;
-        }
     }
+}
+
 
     bool is_duck_dead() {
         return is_dead;
@@ -239,6 +253,21 @@ public:
         return is_on_ground || is_standing_on_something;
     }
 
+    void agacharse() {
+        if (is_standing_on_something && !esta_agachado) {
+            esta_agachado = true;
+            eventos.push_back(std::make_shared<EventoAgacharse>(id));
+    }
+}
+
+
+    void levantarse() {
+        if (esta_agachado) {
+            esta_agachado = false;
+            eventos.push_back(std::make_shared<EventoLevantarse>(id));
+        }
+    }
+
     bool has_weapon() const {
         return weapon != nullptr;
     }
@@ -270,6 +299,7 @@ public:
           ticks_to_reset_gravity(0),
           color(color),
           is_dead(false),
+          esta_agachado(false),
           direccion_apuntada(DireccionApuntada::APUNTADO_DERECHA),
           ultima_direccion_horizontal(DireccionApuntada::APUNTADO_DERECHA),
           weapon(nullptr) {}
