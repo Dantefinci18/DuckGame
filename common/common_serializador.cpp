@@ -197,7 +197,7 @@ std::vector<uint8_t> Serializador::serializar_spawn_arma(const Evento& evento) {
     //Serializar weaponType
     uint32_t tipo_bits = static_cast<uint32_t>(static_cast<const EventoSpawnArma&>(evento).weapon_type);
     for (int i = 0; i < 32; ++i) {
-        bits[104 + i] = (tipo_bits >> (31 - i)) & 1;
+        bits[72 + i] = (tipo_bits >> (31 - i)) & 1;
     }
     //imprimir_uint8_t_array(bits.data(), 104);
     return bits;
