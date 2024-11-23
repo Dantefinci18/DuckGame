@@ -22,6 +22,7 @@ class Weapon {
     // Devuelve una lista de puntos a donde tiene que ir la bala.
     virtual std::vector<Vector> shoot(Vector from, Vector direction, bool shooting) = 0;
     virtual void reload() = 0;
+    virtual bool es_automatica() = 0;
 };
 
 

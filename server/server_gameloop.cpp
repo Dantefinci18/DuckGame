@@ -111,10 +111,11 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             player->set_x_direction(0.0f);
         
         } else if (command == DISPARAR){
-            std::vector<std::shared_ptr<Evento>> eventos;
+            player->iniciar_disparo();
+            /*std::vector<std::shared_ptr<Evento>> eventos;
             if(player->has_weapon()){
                 DisparoManager::procesar_disparo(*player, collidables, jugadores);
-            }
+            }*/
         } else if (command == DEJAR_DISPARAR){
             std::cout << "Dejo de disparar" << std::endl;
             player->dejar_disparar();
@@ -149,7 +150,11 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
 
     for (auto& player : jugadores) {
         player.second->update_fisicas(collidables);
-    
+
+        if(player.second->get_fisicas()->esta_disparando()){
+            DisparoManager::procesar_disparo(*player.second->get_fisicas(), collidables, jugadores);
+        }
+
         for (auto& evento : player.second->get_fisicas()->eventos) {
             monitor.enviar_evento(*evento);
         }

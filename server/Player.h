@@ -73,14 +73,30 @@ public:
         if (!weapon) {
             return {};
         }
-        shooting = true;
-        eventos.push_back(std::make_shared<EventoDisparo>(id));
-        return weapon->shoot(position, get_direccion_apuntada(), shooting);
+        //shooting = true;
+        
+        auto destinos = weapon->shoot(position, get_direccion_apuntada(), shooting);
+        
+        if(!destinos.empty()){
+            std::cout << "Disparó el pato id " << id << std::endl;
+            eventos.push_back(std::make_shared<EventoDisparo>(id));
+        }
+        if(!weapon->es_automatica()){
+            shooting = false;
+        }
+        return destinos;
     }
 
     void morir() {
         eventos.push_back(std::make_shared<EventoMuerte>(id));
         is_dead = true;
+    }
+
+    void iniciar_disparo(){
+        if (!weapon) {
+            return;
+        }
+        shooting = true;
     }
 
     void dejar_disparar() {
@@ -89,7 +105,7 @@ public:
         }
     }
 
-    bool esta_disparando(){
+    bool esta_disparando() const {
         return shooting;
     }
 

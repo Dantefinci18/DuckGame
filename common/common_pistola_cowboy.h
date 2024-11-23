@@ -9,7 +9,9 @@ class PistolaCowboy : public Weapon {
         ammo = 6;
         std::cout << "Municion: " << ammo << std::endl;
     }
-
+    bool es_automatica() override {
+        return false;
+    }
     std::vector<Vector> shoot(Vector from, Vector direction, bool is_shooting) override{
         (void)is_shooting;
         std::vector<Vector> destinations;

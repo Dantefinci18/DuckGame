@@ -17,7 +17,9 @@ public:
         ammo = 6;
         std::cout << "Munición recargada: " << ammo << std::endl;
     }
-
+    bool es_automatica() override {
+        return false;
+    }
     std::vector<Vector> shoot(const Vector& from, const Vector& direction, bool is_shooting) override {
         std::vector<Vector> destinations;
 
