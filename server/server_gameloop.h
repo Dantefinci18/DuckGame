@@ -28,9 +28,10 @@ private:
     unsigned int capacidad_minima;
     unsigned int cantidad_de_jugadores = 0;
     std::mutex mtx;
-    Mapa mapa;
+    std::unique_ptr<Mapa> mapa;
     int color;
     int ticks_round_win_screen;
+    bool should_reset_round;
     
 
     void sleep();

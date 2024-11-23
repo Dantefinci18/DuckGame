@@ -239,6 +239,7 @@ public:
         weapon = nullptr;
         ticks_to_reset_gravity = 0;
         shooting = false;
+        position = {200.0f, 300.0f};
         eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping(), true));
         
     }

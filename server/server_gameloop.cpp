@@ -5,7 +5,7 @@
 
 
 Gameloop::Gameloop(Socket& skt,unsigned int capacidad_minima): 
-    capacidad_minima(capacidad_minima), mapa(1), color(0), ticks_round_win_screen(0){
+    capacidad_minima(capacidad_minima), mapa(std::make_unique<Mapa>(1)), color(0), ticks_round_win_screen(60), should_reset_round(false){
         agregar_jugador(skt);
         this->start();
     }
@@ -29,7 +29,7 @@ void Gameloop::agregar_jugador(Socket& skt) {
     
     if(cantidad_de_jugadores == capacidad_minima){
         estado = COMENZADA;
-        EventoMapa eventoMapa(mapa.getCollidables());
+        EventoMapa eventoMapa(mapa->getCollidables());
         monitor.enviar_evento(eventoMapa);
     
     }else{
@@ -166,26 +166,35 @@ void Gameloop::cargar_acciones() {
         acciones.push_back(accion);
         tried = comandos_acciones.try_pop(accion);
     }
-    --ticks_round_win_screen;
-    if (ticks_round_win_screen == 1) {
-        //TODO: Cambiar para elegir un mapa random.
-        delete &mapa;
-        mapa = Mapa(1);
-        
-        EventoMapa eventoMapa(mapa.getCollidables());
-        monitor.enviar_evento(eventoMapa);
-        ticks_round_win_screen = 0;
-    }
-    Jugador* winner = get_winner();
-    if (winner) {
-        std::cout << "found winner" std::endl;
-        ticks_round_win_screen = 60;
-        EventoWinRound eventoWinRound(winner->get_id());
-        monitor.enviar_evento(eventoWinRound);
-        reset_jugadores();
+    
+    if (should_reset_round) {
+        --ticks_round_win_screen;
+        if (ticks_round_win_screen == 0) {
+            std::cout << "reseting!" << std::endl;
+            //TODO: Cambiar para elegir un mapa random.
+
+            mapa = std::make_unique<Mapa>(1);
+            
+            EventoMapa eventoMapa(mapa->getCollidables());
+            monitor.enviar_evento(eventoMapa);
+            Jugador* winner = get_winner();
+            EventoWinRound eventoWinRound(winner->get_id());
+            monitor.enviar_evento(eventoWinRound);
+            reset_jugadores();
+            ticks_round_win_screen = 60;
+            should_reset_round = false;
+
+        }
         return;
     }
-    procesar_acciones(acciones, mapa.getCollidables());
+    
+    Jugador* winner = get_winner();
+    if (winner) {
+        std::cout << "found winner" << std::endl;
+        should_reset_round = true;
+        return;
+    }
+    procesar_acciones(acciones, mapa->getCollidables());
 }
 
 void Gameloop::reset_jugadores() { 
