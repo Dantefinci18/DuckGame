@@ -17,7 +17,8 @@ public:
         EventoDisparo,
         EventoEspera,
         EventoAgacharse,
-        EventoLevantarse
+        EventoLevantarse,
+        EventoWinRound
     };
 
     virtual ~Evento() = default;
@@ -32,8 +33,9 @@ public:
     float x;
     float y;
     bool is_flapping;
+    bool reset;
 
-    EventoMovimiento(int id,ColorDuck color,float x, float y, bool is_flapping) : id(id),color(color), x(x), y(y), is_flapping(is_flapping) {}
+    EventoMovimiento(int id,ColorDuck color,float x, float y, bool is_flapping, bool reset) : id(id),color(color), x(x), y(y), is_flapping(is_flapping), reset(reset) {}
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoMovimiento\", "
@@ -41,7 +43,8 @@ public:
             << "\"color\": " << static_cast<int>(color) << ", "
             << "\"x\": " << x << ", "
             << "\"y\": " << y << ", "
-            << "\"is_flapping\": " << (is_flapping ? "true" : "false")
+            << "\"is_flapping\": " << (is_flapping ? "true" : "false") << ", "
+            << "\"reset\": " << (reset ? "true" : "false")
             << " }";
         std::cout << oss.str() << std::endl;
     }
@@ -175,6 +178,20 @@ public:
         std::cout << oss.str() << std::endl;
     }
     TipoEvento get_tipo() const override { return TipoEvento::EventoLevantarse; } 
+};
+
+class EventoWinRound : public Evento {
+public:
+    int id;
+    EventoWinRound(int id) : id(id) {}
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoWinRound\", "
+            << "\"id\": " << id
+            << " }";
+        std::cout << oss.str() << std::endl;
+    }
+    TipoEvento get_tipo() const override { return TipoEvento::EventoWinRound; } 
 };
 
 #endif

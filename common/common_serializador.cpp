@@ -84,6 +84,10 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
         return serializar_levantarse(evento);
     }
 
+    if (evento.get_tipo() == Evento::TipoEvento::EventoWinRound) {
+        return serializar_win_round(evento);
+    }
+
     return std::vector<uint8_t>();
 }
 
@@ -101,7 +105,7 @@ std::vector<uint8_t> Serializador::serializar_espera(const Evento::TipoEvento& t
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
-    std::vector<uint8_t> bits(113); 
+    std::vector<uint8_t> bits(114); 
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
     for (int i = 0; i < 8; ++i) {
         bits[i] = (tipo_evento >> (7 - i)) & 1;
@@ -134,6 +138,9 @@ std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
 
     char is_flapping = static_cast<char>(static_cast<const EventoMovimiento&>(evento).is_flapping);
     bits[112] = is_flapping; 
+
+    char reset = static_cast<char>(static_cast<const EventoMovimiento&>(evento).reset);
+    bits[113] = reset; 
     return bits;
 }
 
@@ -267,6 +274,22 @@ std::vector<uint8_t> Serializador::serializar_levantarse(const Evento& evento) {
     return bits;
 }
 
+std::vector<uint8_t> Serializador::serializar_win_round(const Evento& evento) {
+    std::vector<uint8_t> bits(40);
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        bits[i] = (tipo_evento >> (7 - i)) & 1;
+    }
+
+    uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoWinRound&>(evento).id);
+    for (int i = 0; i < 32; ++i) {
+        bits[8 + i] = (id_bits >> (31 - i)) & 1;
+    }
+
+    return bits;
+}
+
 
 Evento::TipoEvento Serializador::deserializar_tipo_evento(const uint8_t* tipo_evento_data) {
     uint8_t tipo_evento_bits = 0;
@@ -278,7 +301,7 @@ Evento::TipoEvento Serializador::deserializar_tipo_evento(const uint8_t* tipo_ev
 
 
 std::unique_ptr<Evento> Serializador::deserializar_movimiento(
-    const uint8_t* id_data, const uint8_t* color_data, const uint8_t* x_data, const uint8_t* y_data, char is_flapping) {
+    const uint8_t* id_data, const uint8_t* color_data, const uint8_t* x_data, const uint8_t* y_data, char is_flapping, char reset) {
     int id;
     float x, y;
 
@@ -306,7 +329,7 @@ std::unique_ptr<Evento> Serializador::deserializar_movimiento(
     }
     memcpy(&y, &y_bits, sizeof(float));
 
-    return std::make_unique<EventoMovimiento>(id, color_asignado, x, y, is_flapping);
+    return std::make_unique<EventoMovimiento>(id, color_asignado, x, y, is_flapping, reset);
 }
 
 
@@ -515,8 +538,6 @@ Collidable* Serializador::deserializar_collidable(const uint8_t* collidable_data
     switch (tipo) {
     case CollidableType::Platform:
         return new Platform(Vector(x, y), width, height);
-    case CollidableType::Player:
-        return new Player(Vector(x, y), 0,ColorDuck::BLANCO);
     case CollidableType::SpawnPlace:
         return new SpawnPlace(Vector(x, y), width, height); 
     default:

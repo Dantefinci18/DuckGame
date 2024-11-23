@@ -17,7 +17,8 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
     switch (evento.get_tipo()) {
         case Evento::EventoMovimiento: {
             const EventoMovimiento& evento_movimiento = static_cast<const EventoMovimiento&>(evento);
-            evento_ptr = std::make_unique<EventoMovimiento>(evento_movimiento.id,evento_movimiento.color ,evento_movimiento.x, evento_movimiento.y, evento_movimiento.is_flapping);
+            evento_ptr = std::make_unique<EventoMovimiento>(evento_movimiento.id,evento_movimiento.color ,evento_movimiento.x, evento_movimiento.y, evento_movimiento.is_flapping,
+            evento_movimiento.reset);
             break;
         }
         case Evento::EventoMapa: {
@@ -72,6 +73,12 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
 
         case Evento::EventoEspera: {
             evento_ptr = std::make_unique<EventoEspera>();
+            break;
+        }
+
+        case Evento::EventoWinRound: {
+            const EventoWinRound& evento_win_round = static_cast<const EventoWinRound&>(evento);
+            evento_ptr = std::make_unique<EventoWinRound>(evento_win_round.id);
             break;
         }
         default:

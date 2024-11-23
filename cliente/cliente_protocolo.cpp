@@ -72,7 +72,13 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             if (was_closed) {
                 return nullptr;
             }
-            return serializador.deserializar_movimiento(id,color,x, y, is_flapping);
+
+            char reset;
+            socket.recvall(&reset, sizeof(reset), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+            return serializador.deserializar_movimiento(id,color,x, y, is_flapping, reset);
         }
         case Evento::EventoMapa: {
             uint8_t cantidad[32];
@@ -182,6 +188,16 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
 
             int id_deserializado = serializador.deserializar_id(id);
             return std::make_unique<EventoLevantarse>(id_deserializado);
+        }
+        case Evento::EventoWinRound: {
+            uint8_t id[32];
+            socket.recvall(id, sizeof(id), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            int id_deserializado = serializador.deserializar_id(id);
+            return std::make_unique<EventoWinRound>(id_deserializado);
         }
         default:
             return nullptr; 

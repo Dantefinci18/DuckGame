@@ -13,7 +13,7 @@ private:
 
 public:
     explicit Mapa(int id_mapa);
-
+    ~Mapa();
     const std::vector<Collidable*> getCollidables() const {
         return collidables;
     }

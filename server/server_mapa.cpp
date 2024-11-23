@@ -23,3 +23,10 @@ Mapa::Mapa(int id_mapa) {
         // Otros tipos de collidables. Cajas spawnplaces, etc.
     }
 }
+
+Mapa::~Mapa() {
+    for (Collidable* collidable : collidables) {
+        delete collidable; // Free dynamically allocated memory
+    }
+    collidables.clear(); // Clear the vector
+}

@@ -5,7 +5,7 @@
 
 
 Gameloop::Gameloop(Socket& skt,unsigned int capacidad_minima): 
-    capacidad_minima(capacidad_minima), mapa(1), color(0){
+    capacidad_minima(capacidad_minima), mapa(1), color(0), ticks_round_win_screen(0){
         agregar_jugador(skt);
         this->start();
     }
@@ -35,8 +35,7 @@ void Gameloop::agregar_jugador(Socket& skt) {
     }else{
         monitor.enviar_evento(EventoEspera());
     }
-
-    }
+}
 
 
     
@@ -167,10 +166,54 @@ void Gameloop::cargar_acciones() {
         acciones.push_back(accion);
         tried = comandos_acciones.try_pop(accion);
     }
-    
+    --ticks_round_win_screen;
+    if (ticks_round_win_screen == 1) {
+        //TODO: Cambiar para elegir un mapa random.
+        delete &mapa;
+        mapa = Mapa(1);
+        
+        EventoMapa eventoMapa(mapa.getCollidables());
+        monitor.enviar_evento(eventoMapa);
+        ticks_round_win_screen = 0;
+    }
+    Jugador* winner = get_winner();
+    if (winner) {
+        std::cout << "found winner" std::endl;
+        ticks_round_win_screen = 60;
+        EventoWinRound eventoWinRound(winner->get_id());
+        monitor.enviar_evento(eventoWinRound);
+        reset_jugadores();
+        return;
+    }
     procesar_acciones(acciones, mapa.getCollidables());
 }
 
+void Gameloop::reset_jugadores() { 
+    for (auto& player : jugadores) {
+        player.second->get_fisicas()->reset();
+        for (auto& evento : player.second->get_fisicas()->eventos) {
+            monitor.enviar_evento(*evento);
+        }
+        player.second->get_fisicas()->eventos.clear();
+    }
+}
+
+Jugador* Gameloop::get_winner() {
+    Jugador* winner = nullptr;
+    int alive_count = 0;
+
+    for (auto& pair : jugadores) {
+        Player* player = pair.second->get_fisicas();
+        if (!player->is_duck_dead()) {
+            ++alive_count;
+            if (alive_count > 1) {
+                return nullptr; // More than one player alive, no winner yet.
+            }
+            winner = pair.second;
+        }
+    }
+    return (alive_count == 1) ? winner : nullptr;
+}
 void Gameloop::sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(50)); }
 
 void Gameloop::cerrar_conexiones(){

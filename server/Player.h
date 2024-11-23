@@ -142,7 +142,7 @@ public:
         }
         
         if (x_before != position.x || y_before != position.y) {
-            eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping()));
+            eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping(), false));
         }
 
         if(top() < 0) {
@@ -227,6 +227,21 @@ public:
         }
     }
 
+    void reset() {
+        gravity = -8;
+        velocity = Vector(0,0);
+        is_on_ground = false;
+        is_standing_on_something = false;
+        jump_force = 0;
+        is_dead = false; 
+        esta_agachado = false;
+        direccion_mirada = Vector(0, 0); 
+        weapon = nullptr;
+        ticks_to_reset_gravity = 0;
+        shooting = false;
+        eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping(), true));
+        
+    }
     bool has_weapon() const {
         return weapon != nullptr;
     }
@@ -245,8 +260,8 @@ public:
 
     virtual ~Player() {}
 
-    Player(Vector initialPosition, int id, ColorDuck color)
-        : Collidable(initialPosition, 32.0f, 64.0f), 
+    Player(int id, ColorDuck color)
+        : Collidable({200.0f,300.0f}, 32.0f, 64.0f), 
           velocity(Vector(0, 0)), 
           speed(6.0f), 
           is_on_ground(false), 

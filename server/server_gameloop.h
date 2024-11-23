@@ -30,9 +30,13 @@ private:
     std::mutex mtx;
     Mapa mapa;
     int color;
+    int ticks_round_win_screen;
+    
 
     void sleep();
     void cargar_acciones();
+    Jugador* get_winner();
+    void reset_jugadores();
     void procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables);
     void eliminar_jugador(std::unordered_map<int, Jugador*>::iterator it);
     void eliminar_desconectados();
