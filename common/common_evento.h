@@ -152,7 +152,14 @@ class EventoApuntar : public Evento {
 public:
     int id;
     DireccionApuntada direccion;
-
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoApuntar\", "
+            << "\"id\": " << id
+            << "\"dirección \": " << static_cast<int>(direccion)
+            << " }";
+        std::cout << oss.str() << std::endl;
+    }
     EventoApuntar(int id, DireccionApuntada direccion) : id(id), direccion(direccion){}
     TipoEvento get_tipo() const override { return TipoEvento::EventoApuntar; } 
 };

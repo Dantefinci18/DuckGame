@@ -77,7 +77,6 @@ void Cliente::procesar_eventos_recibidos() {
                     levantarse_duck(*evento_levantarse);
                     break;
                 }   
-                }
 
                 case Evento::EventoApuntar: {
                     auto evento_apuntar = static_cast<EventoApuntar*>(evento_recibido.get());
@@ -85,9 +84,10 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
 
-                default:
+                default: {
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
+                }
             }
         }
     }
