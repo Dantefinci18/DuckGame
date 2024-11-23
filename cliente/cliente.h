@@ -46,6 +46,12 @@ private:
     void procesar_eventos_recibidos();
 
     /*
+     *  Funcion que maneja el disparo
+        * Recibe un evento de disparo
+        */
+    void disparar_bala(const EventoBala& evento_bala);
+
+    /*
      * Funcion que maneja el movimiento del pato
      * Recibe un evento de movimiento
      */

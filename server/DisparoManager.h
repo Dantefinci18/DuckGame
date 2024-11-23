@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Collidable.h"
 #include "server_jugador.h"
+#include "bala.h"
 #include "../common/common_evento.h"
 #include <vector>
 #include <memory>
@@ -11,7 +12,7 @@
 
 class DisparoManager {
 public:
-    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores) {
+    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores, std::vector<Bala>& balas) {
         
         if (!player.has_weapon()) {
             return;
@@ -19,12 +20,9 @@ public:
 
         auto destinos = player.disparar();
 
-        Vector origen = player.get_posicion() + Vector(0,1); // ARREGLO PARA LEVANTAR LA LINEA DE TIRO
+        Vector origen = player.get_posicion() + Vector(0,1); 
 
         for (const auto& destino : destinos) {
-
-            // no se si tiene mucha logica aca
-            //eventos.push_back(std::make_shared<EventoDisparo>(player.get_id()));
 
             Collidable* primer_impacto = nullptr;
             std::optional<Vector> punto_impacto = std::nullopt;
@@ -45,7 +43,7 @@ public:
             }
 
             for (auto& jugador : jugadores) {
-                if (jugador.second->get_fisicas() != &player && !jugador.second->get_fisicas()->is_duck_dead()) { 
+                if (jugador.second->get_fisicas() != &player && !jugador.second->get_fisicas()->is_duck_dead() && !jugador.second->get_fisicas()->is_agachado()) { 
                     auto interseccion = jugador.second->get_fisicas()->intersection_point(origen, destino);
                     if (interseccion) {
                         float distancia = (*interseccion - origen).magnitude();
@@ -57,6 +55,8 @@ public:
                     }
                 }
             }
+            Bala nueva_bala(origen.x, origen.y, destino.x, destino.y, 0.5f); 
+            balas.push_back(nueva_bala);
 
             player.print_position();
 

@@ -5,7 +5,7 @@ Mapa::Mapa(int id_mapa) {
         {1, "../server/mapas/mapa_1.yaml"},
     };
     YAML::Node config = YAML::LoadFile(map_files[id_mapa]);
-    
+
     for (const auto& item : config["collidables"]) {
         std::string tipo = item["type"].as<std::string>();
         Vector posicion(item["x"].as<float>(), item["y"].as<float>());
@@ -13,13 +13,20 @@ Mapa::Mapa(int id_mapa) {
         float height = item["height"].as<float>();
 
         if (tipo == "Platform") {
-            //TODO: Make this not a pointer
-            collidables.push_back(new Platform(posicion, width, height));
+            collidables.push_back(std::make_unique<Platform>(posicion, width, height));
         }
 
         if (tipo == "SpawnPlace") {
-            collidables.push_back(new SpawnPlace(posicion, width, height));
+            collidables.push_back(std::make_unique<SpawnPlace>(posicion, width, height));
         }
-        // Otros tipos de collidables. Cajas spawnplaces, etc.
     }
+}
+
+std::vector<Collidable*> Mapa::getCollidables() const {
+    std::vector<Collidable*> raw_collidables;
+    raw_collidables.reserve(collidables.size());
+    for (const auto& collidable : collidables) {
+        raw_collidables.push_back(collidable.get()); 
+    }
+    return raw_collidables;
 }

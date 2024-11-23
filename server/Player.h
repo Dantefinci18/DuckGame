@@ -258,7 +258,11 @@ public:
             esta_agachado = true;
             eventos.push_back(std::make_shared<EventoAgacharse>(id));
     }
-}
+    }   
+
+    bool is_agachado() {
+        return esta_agachado;
+    }
 
 
     void levantarse() {

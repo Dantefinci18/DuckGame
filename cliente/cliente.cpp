@@ -84,6 +84,16 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
 
+                case Evento::EventoEspera: {
+                    break;
+                }
+
+                case Evento::EventoBala: {
+                    auto evento_bala = static_cast<EventoBala*>(evento_recibido.get());
+                    disparar_bala(*evento_bala);
+                    break;
+                }
+
                 default: {
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
@@ -91,6 +101,10 @@ void Cliente::procesar_eventos_recibidos() {
             }
         }
     }
+}
+
+void Cliente::disparar_bala(const EventoBala& evento_bala) {
+    duck.setear_bala(evento_bala.x, evento_bala.y);
 }
 
 void Cliente::agachar_duck(const EventoAgacharse& evento_agacharse) {
