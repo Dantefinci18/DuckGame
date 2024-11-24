@@ -15,13 +15,15 @@ Mapa::Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collida
     armas("../Imagenes/guns.png", window),
     boxes("../Imagenes/box.png", window),
     explosion("../Imagenes/explosion.png", window),
+    x_expl(0),
+    y_expl(0),
+    esta_explotando(false),
     collidables_plataformas(collidables) {}
 
 void Mapa::eliminar_caja(float x, float y) {
-    //renderizar explosion en x e y
-    Area srcArea(0, 0, 64, 64);
-    Area destArea(x, ALTO_VENTANA - y, 64, 64);
-    explosion.render(srcArea, destArea, SDL_FLIP_NONE);
+    x_expl = x;
+    y_expl = y;
+    esta_explotando = true;
     
     
 }
@@ -66,6 +68,18 @@ void Mapa::renderizar_mapa() {
             Area boxSrcArea(0, 0, 28, 28);  
             Area boxDestArea(box_x, box_y, box_width, box_height); 
             boxes.render(boxSrcArea, boxDestArea, SDL_FLIP_NONE);
+        }
+        if (esta_explotando) {
+            float box_x = x_expl;
+            float box_y = ALTO_VENTANA - y_expl - 28 * FACTOR_ESCALA_BOX;
+            float box_width = 28 * FACTOR_ESCALA_BOX;
+            float box_height = 28 * FACTOR_ESCALA_BOX;
+
+            Area boxSrcArea(0, 0, 28, 28);
+            Area boxDestArea(box_x, box_y, box_width, box_height);
+            explosion.render(boxSrcArea, boxDestArea, SDL_FLIP_NONE);
+            esta_explotando = false;
+
         }
     }
 }

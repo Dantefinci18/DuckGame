@@ -35,18 +35,18 @@ collidables:
     width: 400
     height: 20
   - type: Box
-    x: 520
-    y: 240
+    x: 105
+    y: 205
     width: 20
     height: 20
   - type: Box
-    x: 520
-    y: 270
+    x: 205
+    y: 505
     width: 20
     height: 20
   - type: Box
-    x: 100
-    y: 85
+    x: 55
+    y: 55
     width: 20
     height: 20
   - type: Box

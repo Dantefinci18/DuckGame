@@ -47,7 +47,10 @@ private:
     SdlTexture plataformas;
     SdlTexture armas;    
     SdlTexture boxes;  
-    SdlTexture explosion;     
+    SdlTexture explosion;
+    float x_expl;
+    float y_expl;
+    bool esta_explotando;
     std::vector<Collidable*> collidables_plataformas; 
 
 
