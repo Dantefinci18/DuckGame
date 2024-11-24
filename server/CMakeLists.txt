@@ -18,6 +18,7 @@ target_sources(taller_server
     server_mapa.h
     server_lobby.h
     jugador_esperando.h
+    bala.h
 
     PRIVATE
     server_main.cpp
@@ -32,4 +33,5 @@ target_sources(taller_server
     server_mapa.cpp
     server_lobby.cpp
     jugador_esperando.cpp
+    bala.cpp
 )

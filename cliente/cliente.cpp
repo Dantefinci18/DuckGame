@@ -77,12 +77,34 @@ void Cliente::procesar_eventos_recibidos() {
                     levantarse_duck(*evento_levantarse);
                     break;
                 }   
-                default:
+
+                case Evento::EventoApuntar: {
+                    auto evento_apuntar = static_cast<EventoApuntar*>(evento_recibido.get());
+                    apuntar(*evento_apuntar);
+                    break;
+                }
+
+                case Evento::EventoEspera: {
+                    break;
+                }
+
+                case Evento::EventoBala: {
+                    auto evento_bala = static_cast<EventoBala*>(evento_recibido.get());
+                    disparar_bala(*evento_bala);
+                    break;
+                }
+
+                default: {
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
+                }
             }
         }
     }
+}
+
+void Cliente::disparar_bala(const EventoBala& evento_bala) {
+    duck.setear_bala(evento_bala.x, evento_bala.y);
 }
 
 void Cliente::agachar_duck(const EventoAgacharse& evento_agacharse) {
@@ -162,6 +184,17 @@ void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collid
     }
 }
 
+void Cliente::apuntar(const EventoApuntar& evento_apuntar) {
+    if (evento_apuntar.id == id) {
+        duck.apuntar_arma(evento_apuntar.direccion);
+    } else {
+        auto it = enemigos.find(evento_apuntar.id);
+        if (it != enemigos.end()) {
+            it->second->apuntar_arma(evento_apuntar.direccion);
+        }
+    }
+}
+
 void Cliente::enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion) {
     if (*tecla_anterior != accion && conectado) {
         queue_acciones.push(std::move(accion));
@@ -189,8 +222,9 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
                     enviar_accion(tecla_anterior, DISPARAR);
                 } else if (evento.key.keysym.sym == SDLK_r) {
                     enviar_accion(tecla_anterior, RECARGAR);
-                }
-                if (evento.key.keysym.sym == SDLK_DOWN) {
+                } else if(evento.key.keysym.sym == SDLK_UP){
+                    enviar_accion(tecla_anterior, APUNTAR_ARRIBA);
+                } else if (evento.key.keysym.sym == SDLK_DOWN) {
                     enviar_accion(tecla_anterior,AGACHARSE);
                 }
                 break;
@@ -202,8 +236,9 @@ void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
                     *tecla_anterior = ComandoAccion::QUIETO;
                 } else if (evento.key.keysym.sym == SDLK_v) {
                     enviar_accion(tecla_anterior, DEJAR_DISPARAR);
-                }
-                if (evento.key.keysym.sym == SDLK_DOWN) {
+                } else if (evento.key.keysym.sym == SDLK_UP){
+                    enviar_accion(tecla_anterior, DEJAR_APUNTAR_ARRIBA);
+                } else if (evento.key.keysym.sym == SDLK_DOWN) {
                     enviar_accion(tecla_anterior, LEVANTARSE);
                 }
                 break;

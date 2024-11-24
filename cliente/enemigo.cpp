@@ -22,6 +22,10 @@ void Enemigo::set_weapon(WeaponType new_weapon) {
     duck.set_weapon(new_weapon);
 }
 
+void Enemigo::apuntar_arma(DireccionApuntada direccion) {
+    duck.apuntar_arma(direccion);
+}
+
 void Enemigo::kill() {
     duck.kill();
 }

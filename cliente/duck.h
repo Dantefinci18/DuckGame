@@ -8,6 +8,7 @@
 #include "Sdl/SdlWindow.h"
 #include "../server/Collidable.h"
 #include "../common/common_weapon.h"
+#include "../common/common_direcciones.h"
 
 class Duck {
 public:
@@ -15,6 +16,15 @@ public:
      * Constructor de la clase Duck, recibe una ventana, un float con la posicion x inicial, un float con la posicion y inicial y un string con el color
      */
     Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string color);
+
+    /* 
+     * Funcion que setea la bala del pato
+     * Recibe un float con la posicion x y un float con la posicion y
+     */
+    void setear_bala(float x, float y);
+    
+
+    void render_bala();
 
     /* 
      * Funcion que renderiza al pato
@@ -32,6 +42,11 @@ public:
      * Tambien recibe si en esta nueva posicion el pato esta aleteando
      */ 
     void mover_a(float nueva_x, float nueva_y, bool is_flapping);
+
+    /*
+     * Funcion que debe recibir una direccion valida 
+     */
+    void apuntar_arma(DireccionApuntada direccion);
 
     /* 
      * Funcion que agacha al pato
@@ -93,15 +108,20 @@ private:
     SdlTexture movimiento_en_y;
     SdlTexture armas;
     SdlTexture death;
+    SdlTexture bala;
     bool quieto;
     std::optional<WeaponType> weapon;
-    int x_img;
-    int y_img;
+    DireccionApuntada direccion_arma;
+    int x_img = 0;
+    int y_img = 0;
     float x_actual;
     float y_actual;
     bool is_dead;
     float x_des;
     int y_des;
+    float x_bala;
+    float y_bala;
+    bool esta_disparando;
     bool is_flapping;
     bool esta_agachado;
     SDL_RendererFlip flip;

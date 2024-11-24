@@ -46,6 +46,12 @@ private:
     void procesar_eventos_recibidos();
 
     /*
+     *  Funcion que maneja el disparo
+        * Recibe un evento de disparo
+        */
+    void disparar_bala(const EventoBala& evento_bala);
+
+    /*
      * Funcion que maneja el movimiento del pato
      * Recibe un evento de movimiento
      */
@@ -81,6 +87,12 @@ private:
      * Recibe un evento de spawn de arma y un vector de collidables
      */
     void spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables);
+
+    /*
+     * Funcion que maneja la direccion donde apunta un arma
+     * Recibe un evento de apuntar valido
+     */
+    void apuntar(const EventoApuntar& evento_apuntar);
 
     /*
      * Funcion que envia una accion

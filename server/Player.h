@@ -26,15 +26,17 @@ private:
     ColorDuck color;
     bool is_dead;
     bool esta_agachado;
-    Vector direccion_mirada;
+    DireccionApuntada direccion_apuntada;
+    DireccionApuntada ultima_direccion_horizontal;
     std::unique_ptr<Weapon> weapon;
 
-    void mirar_a_derecha() {
-        direccion_mirada = Vector(1, 0);
+    void apuntar(DireccionApuntada nueva_direccion) {
+        direccion_apuntada = nueva_direccion;
+        enviar_direccion_apunte();
     }
 
-    void mirar_a_izquierda() {
-        direccion_mirada = Vector(-1, 0);
+    void enviar_direccion_apunte() {
+        eventos.push_back(std::make_shared<EventoApuntar>(id, direccion_apuntada));
     }
 
 public:
@@ -63,8 +65,8 @@ public:
 }
 
 
-    Vector get_direccion_mirada() const {
-        return direccion_mirada;
+    Vector get_direccion_apuntada() const {
+        return obtenerDireccion(direccion_apuntada);
     }
 
     std::vector<Vector> disparar() {
@@ -72,9 +74,8 @@ public:
             return {};
         }
         shooting = true;
-        std::cout << "Disparó el pato id " << id << std::endl;
         eventos.push_back(std::make_shared<EventoDisparo>(id));
-        return weapon->shoot(position, direccion_mirada, shooting);
+        return weapon->shoot(position, get_direccion_apuntada(), shooting);
     }
 
     void morir() {
@@ -88,13 +89,55 @@ public:
         }
     }
 
+    bool esta_disparando(){
+        return shooting;
+    }
+
+    void apuntar_a_derecha() {
+        ultima_direccion_horizontal = DireccionApuntada::APUNTADO_DERECHA;
+        apuntar(DireccionApuntada::APUNTADO_DERECHA);
+    }
+
+    void apuntar_a_izquierda() {
+        ultima_direccion_horizontal = DireccionApuntada::APUNTADO_IZQUIERDA;
+        apuntar(DireccionApuntada::APUNTADO_IZQUIERDA);
+    }
+
+    void dejar_apuntar_derecha() {
+        if (direccion_apuntada == DireccionApuntada::APUNTADO_DERECHA) {
+            apuntar(ultima_direccion_horizontal);
+        }
+    }
+
+    void dejar_apuntar_izquierda() {
+        if (direccion_apuntada == DireccionApuntada::APUNTADO_IZQUIERDA) {
+            apuntar(ultima_direccion_horizontal);
+        }
+    }
+
     void set_x_direction(float x) {
         velocity.x = x;
         if (x > 0) {
-            mirar_a_derecha();
+            ultima_direccion_horizontal = DireccionApuntada::APUNTADO_DERECHA;
+            if (direccion_apuntada != DireccionApuntada::APUNTADO_ARRIBA) {
+                apuntar_a_derecha();
+            }
         } else if (x < 0) {
-            mirar_a_izquierda();
+            ultima_direccion_horizontal = DireccionApuntada::APUNTADO_IZQUIERDA;
+            if (direccion_apuntada != DireccionApuntada::APUNTADO_ARRIBA) {
+                apuntar_a_izquierda();
+            }
         }
+    }
+
+    void apuntar_arriba() {
+        if (direccion_apuntada != DireccionApuntada::APUNTADO_ARRIBA) {
+            apuntar(DireccionApuntada::APUNTADO_ARRIBA);
+        }
+    }
+
+    void dejar_apuntar_arriba() {
+        apuntar(ultima_direccion_horizontal);
     }
 
     void jump() {
@@ -140,12 +183,12 @@ public:
         if (!collide) {
             is_standing_on_something = false;
         }
-        
+
         if (x_before != position.x || y_before != position.y) {
             eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping()));
         }
 
-        if(top() < 0) {
+        if (top() < 0) {
             morir();
         }
     }
@@ -157,7 +200,6 @@ public:
     virtual bool onCollision(Collidable& other) override {
         if (other.getType() == CollidableType::Platform) {
             Platform& platform = static_cast<Platform&>(other);
-
             CollidableSide side = getCollisionSide(platform);
             if (side == CollidableSide::Top) {
                 position.y = platform.top();
@@ -184,7 +226,6 @@ public:
             std::optional<std::unique_ptr<Weapon>> new_weapon = spawnPlace.get_weapon();
             if (new_weapon) {
                 weapon = std::move(new_weapon.value());
-                std::cout << "picked up weapon!" << std::endl;
                 eventos.push_back(std::make_shared<EventoPickup>(id, spawnPlace.position.x, spawnPlace.position.y, weapon->get_type()));
             }
         }
@@ -201,7 +242,7 @@ public:
     }
 
     void print_position() const override {
-        std::cout << "Player position" << "(" << position.x << ", " << position.y << ")\n";
+        std::cout << "Player position (" << position.x << ", " << position.y << ")\n";
     }
 
     Vector get_posicion() {
@@ -217,7 +258,11 @@ public:
             esta_agachado = true;
             eventos.push_back(std::make_shared<EventoAgacharse>(id));
     }
-}
+    }   
+
+    bool is_agachado() {
+        return esta_agachado;
+    }
 
 
     void levantarse() {
@@ -246,20 +291,21 @@ public:
     virtual ~Player() {}
 
     Player(Vector initialPosition, int id, ColorDuck color)
-        : Collidable(initialPosition, 32.0f, 64.0f), 
-          velocity(Vector(0, 0)), 
-          speed(6.0f), 
-          is_on_ground(false), 
-          is_standing_on_something(false), 
-          shooting(false), 
-          jump_force(0), 
-          id(id), 
+        : Collidable(initialPosition, 32.0f, 64.0f),
+          velocity(Vector(0, 0)),
+          speed(6.0f),
+          is_on_ground(false),
+          is_standing_on_something(false),
+          shooting(false),
+          jump_force(0),
+          id(id),
           gravity(-8),
           ticks_to_reset_gravity(0),
-          color(color), 
-          is_dead(false), 
+          color(color),
+          is_dead(false),
           esta_agachado(false),
-          direccion_mirada(Vector(0, 0)), 
+          direccion_apuntada(DireccionApuntada::APUNTADO_DERECHA),
+          ultima_direccion_horizontal(DireccionApuntada::APUNTADO_DERECHA),
           weapon(nullptr) {}
 };
 

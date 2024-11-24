@@ -6,6 +6,7 @@
 #include "common_weapon.h" 
 #include "../server/Collidable.h"
 #include "../common/common_color.h"
+#include "../common/common_direcciones.h"
 class Evento {
 public:
     enum TipoEvento {
@@ -16,8 +17,10 @@ public:
         EventoMuerte,
         EventoDisparo,
         EventoEspera,
+        EventoApuntar,
         EventoAgacharse,
-        EventoLevantarse
+        EventoLevantarse,
+        EventoBala
     };
 
     virtual ~Evento() = default;
@@ -146,6 +149,22 @@ class EventoEspera : public Evento {
         TipoEvento get_tipo() const override { return TipoEvento::EventoEspera; }
 };
 
+class EventoApuntar : public Evento {
+public:
+    int id;
+    DireccionApuntada direccion;
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoApuntar\", "
+            << "\"id\": " << id
+            << "\"dirección \": " << static_cast<int>(direccion)
+            << " }";
+        std::cout << oss.str() << std::endl;
+    }
+    EventoApuntar(int id, DireccionApuntada direccion) : id(id), direccion(direccion){}
+    TipoEvento get_tipo() const override { return TipoEvento::EventoApuntar; } 
+};
+
 class EventoAgacharse : public Evento {
 public:
     int id;
@@ -175,6 +194,22 @@ public:
         std::cout << oss.str() << std::endl;
     }
     TipoEvento get_tipo() const override { return TipoEvento::EventoLevantarse; } 
+};
+
+class EventoBala : public Evento {
+    public:
+        float x;
+        float y;
+        void print() const override {
+            std::ostringstream oss;
+            oss << "{ \"type\": \"EventoBala\", "
+                << "\"x\": " << x << ", "
+                << "\"y\": " << y
+                << " }";
+            std::cout << oss.str() << std::endl;
+        }
+        EventoBala(float x, float y) : x(x), y(y){}
+        TipoEvento get_tipo() const override { return TipoEvento::EventoBala; }
 };
 
 #endif
