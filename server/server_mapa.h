@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include "Platform.h"
 #include "SpawnPlace.h"
+#include "Box.h"
 
 class Mapa {
 private:

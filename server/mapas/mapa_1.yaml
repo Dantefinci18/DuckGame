@@ -34,3 +34,23 @@ collidables:
     y: 500
     width: 400
     height: 20
+  - type: Box
+    x: 520
+    y: 240
+    width: 20
+    height: 20
+  - type: Box
+    x: 520
+    y: 270
+    width: 20
+    height: 20
+  - type: Box
+    x: 100
+    y: 85
+    width: 20
+    height: 20
+  - type: Box
+    x: 200
+    y: 450
+    width: 20
+    height: 20

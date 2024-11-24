@@ -20,7 +20,8 @@ public:
         EventoApuntar,
         EventoAgacharse,
         EventoLevantarse,
-        EventoBala
+        EventoBala,
+        EventoCajaDestruida
     };
 
     virtual ~Evento() = default;
@@ -201,15 +202,26 @@ class EventoBala : public Evento {
         float x;
         float y;
         void print() const override {
+            
+        }
+        EventoBala(float x, float y) : x(x), y(y){}
+        TipoEvento get_tipo() const override { return TipoEvento::EventoBala; }
+};
+
+class EventoCajaDestruida : public Evento {
+    public:
+        float x;
+        float y;
+        void print() const override {
             std::ostringstream oss;
-            oss << "{ \"type\": \"EventoBala\", "
+            oss << "{ \"type\": \"EventoCajaDestruida\", "
                 << "\"x\": " << x << ", "
                 << "\"y\": " << y
                 << " }";
             std::cout << oss.str() << std::endl;
         }
-        EventoBala(float x, float y) : x(x), y(y){}
-        TipoEvento get_tipo() const override { return TipoEvento::EventoBala; }
+        EventoCajaDestruida(float x, float y) : x(x), y(y){}
+        TipoEvento get_tipo() const override { return TipoEvento::EventoCajaDestruida; }
 };
 
 #endif

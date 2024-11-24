@@ -45,6 +45,8 @@ private:
      */
     void procesar_eventos_recibidos();
 
+    void eliminar_caja(const EventoCajaDestruida& evento_caja_destruida);
+
     /*
      *  Funcion que maneja el disparo
         * Recibe un evento de disparo

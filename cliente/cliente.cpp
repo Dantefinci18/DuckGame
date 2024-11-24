@@ -94,6 +94,11 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
 
+                case Evento::EventoCajaDestruida: {
+                    auto evento_caja_destruida = static_cast<EventoCajaDestruida*>(evento_recibido.get());
+                    eliminar_caja(*evento_caja_destruida);
+                    break;
+                }
                 default: {
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
@@ -101,6 +106,10 @@ void Cliente::procesar_eventos_recibidos() {
             }
         }
     }
+}
+
+void Cliente::eliminar_caja(const EventoCajaDestruida& evento_caja_destruida) {
+    mapa.eliminar_caja(evento_caja_destruida.x, evento_caja_destruida.y);
 }
 
 void Cliente::disparar_bala(const EventoBala& evento_bala) {

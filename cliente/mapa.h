@@ -23,6 +23,12 @@ public:
      */
     Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collidable*> collidables);
     
+    /*
+     * Funcion que elimina una caja
+     * Recibe un float con la posicion x y un float con la posicion y
+     */
+    void eliminar_caja(float x, float y);
+
     /* Renderiza el mapa
      */
     void renderizar_mapa();
@@ -39,11 +45,14 @@ public:
 private:
     SdlTexture fondo;
     SdlTexture plataformas;
-    SdlTexture armas;           
+    SdlTexture armas;    
+    SdlTexture boxes;  
+    SdlTexture explosion;     
     std::vector<Collidable*> collidables_plataformas; 
 
 
     const int FACTOR_ESCALA = 2;
+    const int FACTOR_ESCALA_BOX = 2;
     const int ALTO_VENTANA = 600;
     const int ANCHO_VENTANA = 800;
    

@@ -198,7 +198,7 @@ public:
     }
 
     virtual bool onCollision(Collidable& other) override {
-        if (other.getType() == CollidableType::Platform) {
+        if (other.getType() == CollidableType::Platform || other.getType() == CollidableType::Box) {
             Platform& platform = static_cast<Platform&>(other);
             CollidableSide side = getCollisionSide(platform);
             if (side == CollidableSide::Top) {

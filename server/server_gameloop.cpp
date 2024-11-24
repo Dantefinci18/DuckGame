@@ -88,6 +88,9 @@ void Gameloop::run() {
 }
 
 void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables){
+    
+    std::vector<std::shared_ptr<Evento>> eventos;
+
     for (auto& accion : acciones) {
         std::lock_guard<std::mutex> lock(mtx);
 
@@ -113,7 +116,7 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         
         } else if (command == DISPARAR){
             if(player->has_weapon()){
-                DisparoManager::procesar_disparo(*player, collidables, jugadores,balas);
+                DisparoManager::procesar_disparo(*player, collidables, jugadores,balas,eventos);
             }
         } else if (command == DEJAR_DISPARAR){
             std::cout << "Dejo de disparar" << std::endl;
@@ -149,11 +152,17 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
 
     for (auto& bala : balas) {
         while (bala.actualizar(0.3f)) {
-            std::cout << "bala actualizada" << std::endl;
-            std::cout << "bala x: " << bala.getX() << " bala y: " << bala.getY() << std::endl;
+            
             EventoBala eventoBala(bala.getX(), bala.getY());
             monitor.enviar_evento(eventoBala);
         }
+    }
+
+
+    for (auto& evento : eventos) {
+        std::cout << "evento enviado" << std::endl;
+        std::cout << "evento tipo: " << evento->get_tipo() << std::endl;
+        monitor.enviar_evento(*evento);
     }
 
     for (auto& player : jugadores) {

@@ -21,6 +21,10 @@ class Box : public Collidable {
             << "bottom: " <<  std::to_string(bottom()) << std::endl;
     }
 
+    virtual void update([[maybe_unused]]std::vector<Collidable*> others) override {
+    
+    }
+
     void print_position() const override {
         std::cout << "Box position" << "(" << position.x << ", " << position.y << ")\n";
     }

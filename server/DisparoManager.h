@@ -12,7 +12,7 @@
 
 class DisparoManager {
 public:
-    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores, std::vector<Bala>& balas) {
+    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores, std::vector<Bala>& balas, std::vector<std::shared_ptr<Evento>>& eventos) {
         
         if (!player.has_weapon()) {
             return;
@@ -32,6 +32,7 @@ public:
                 if(collidable->getType() != CollidableType::SpawnPlace){
                     auto interseccion = collidable->intersection_point(origen, destino+Vector(0,1)); // ARREGLO PARA LEVANTAR LA LINEA DE TIRO
                     if (interseccion) {
+
                         float distancia = (*interseccion - origen).magnitude();
                         if (distancia < menor_distancia) {
                         menor_distancia = distancia;
@@ -64,30 +65,36 @@ public:
                 switch (primer_impacto->getType()) {
                     case CollidableType::Player: {
                         Player* jugador_disparado = dynamic_cast<Player*>(primer_impacto);
-                        jugador_disparado->morir();
+                        if (jugador_disparado) {
+                            jugador_disparado->morir();
+                        } else {
+                            std::cerr << "Error: dynamic_cast a Player falló." << std::endl;
+                        }
                         break;
                     }
 
                     case CollidableType::Platform:
-                        std::cout <<"Le pegaste a una plataforma en (" 
-                                  << punto_impacto->x << ", " 
-                                  << punto_impacto->y << ")" << std::endl;
+                        std::cout << "Le pegaste a una plataforma en (" 
+                        << punto_impacto->x << ", " 
+                        << punto_impacto->y << ")" << std::endl;
 
-                        // ACA REBOTAR O ALGO ASI
+                        // Lógica de rebote o algo similar aquí
                         break;
 
-                    case CollidableType::Box:
+                    case CollidableType::Box: {
                         std::cout << "Le pegaste a una caja en (" 
-                                  << punto_impacto->x << ", " 
-                                  << punto_impacto->y << ")" << std::endl;
+                        << punto_impacto->x << ", " 
+                        << punto_impacto->y << ")" << std::endl;
 
-                        // no se si va box
+                        EventoCajaDestruida evento_caja_destruida(punto_impacto->x, punto_impacto->y);
+                        eventos.push_back(std::make_shared<EventoCajaDestruida>(evento_caja_destruida));
                         break;
+                    }
 
                     default:
                         std::cout << "Impacto desconocido en (" 
-                                  << punto_impacto->x << ", " 
-                                  << punto_impacto->y << ")" << std::endl;
+                        << punto_impacto->x << ", " 
+                        << punto_impacto->y << ")" << std::endl;
                         break;
                 }
                 break;

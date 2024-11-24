@@ -88,6 +88,12 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
     
         }
 
+        case Evento::EventoCajaDestruida: {
+            const EventoCajaDestruida& evento_caja_destruida = static_cast<const EventoCajaDestruida&>(evento);
+            evento_ptr = std::make_unique<EventoCajaDestruida>(evento_caja_destruida.x, evento_caja_destruida.y);
+            break;
+        }
+
         default: {
             std::cerr << "Error: Tipo de evento desconocido" << std::endl;
             break;

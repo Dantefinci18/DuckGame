@@ -19,6 +19,11 @@ Mapa::Mapa(int id_mapa) {
         if (tipo == "SpawnPlace") {
             collidables.push_back(std::make_unique<SpawnPlace>(posicion, width, height));
         }
+
+        if (tipo == "Box") {
+            collidables.push_back(std::make_unique<Box>(posicion, width, height));
+        }
+
     }
 }
 
