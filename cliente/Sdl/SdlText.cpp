@@ -1,10 +1,16 @@
 #include <stdexcept>
-#include "SdlMessage.h"
+#include "SdlText.h"
 #include <SDL2/SDL_ttf.h>
 #include "SdlWindow.h"
 #include <iostream>
-SdlMessage::SdlMessage(const std::string& text, const SdlWindow& window)
-    : text(text), renderer(window.getRenderer()), texture(nullptr), textWidth(0), textHeight(0) {
+SdlText::SdlText(const std::string& text, const SdlWindow& window, int textWidth, int textHeight)
+        : text(text), 
+        renderer(window.getRenderer()), 
+        texture(nullptr), 
+        textWidth(textWidth), 
+        textHeight(textHeight), 
+        windowWidth(window.width), 
+        windowHeight(window.height) {
     if (!renderer) {
         throw std::runtime_error("Renderer is null.");
     }
@@ -12,13 +18,13 @@ SdlMessage::SdlMessage(const std::string& text, const SdlWindow& window)
     createTexture();
 }
 
-SdlMessage::~SdlMessage() {
+SdlText::~SdlText() {
     if (texture) {
         SDL_DestroyTexture(texture);
     }
 }
 
-void SdlMessage::createTexture() {
+void SdlText::createTexture() {
     // Initialize TTF if not already done
     if (TTF_Init() == -1) {
         throw std::runtime_error("Failed to initialize TTF: " + std::string(TTF_GetError()));
@@ -31,7 +37,7 @@ void SdlMessage::createTexture() {
     }
 
     // Render the text into an SDL_Surface
-    SDL_Color color = {255, 255, 255, 255}; // White color
+    SDL_Color color = {0, 0, 0, 0}; // White color
     SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
     if (!surface) {
         TTF_CloseFont(font);
@@ -40,8 +46,6 @@ void SdlMessage::createTexture() {
 
     // Convert the surface into an SDL_Texture
     texture = SDL_CreateTextureFromSurface(renderer, surface);
-    textWidth = surface->w;
-    textHeight = surface->h;
 
     SDL_FreeSurface(surface);
     TTF_CloseFont(font);
@@ -51,11 +55,11 @@ void SdlMessage::createTexture() {
     }
 }
 
-void SdlMessage::render() const {
+void SdlText::render() const {
     if (!texture) {
         return; // Nothing to render
     }
-    std::cout << "rendering" << std::endl;
+
     // Get window dimensions (use hardcoded values or get them dynamically)
     int windowWidth = 800;
     int windowHeight = 600;

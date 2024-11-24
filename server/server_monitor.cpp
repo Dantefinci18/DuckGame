@@ -24,7 +24,7 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
         case Evento::EventoMapa: {
             
             const EventoMapa& evento_mapa = static_cast<const EventoMapa&>(evento);
-            evento_ptr = std::make_unique<EventoMapa>(evento_mapa.collidables);
+            evento_ptr = std::make_unique<EventoMapa>(evento_mapa.collidables, evento_mapa.leaderboard);
             break;
         }
 

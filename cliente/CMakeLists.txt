@@ -31,11 +31,6 @@ add_library(sdldemo
   Sdl/SdlException.cpp
   Sdl/SdlWindow.cpp
   Sdl/SdlMessage.cpp
-)
-
-target_link_libraries(sdldemo
-  ${SDL2_LIBRARIES}
-  ${SDL2_TTF_LIBRARIES}
-  ${SDL2_IMAGE_LIBRARIES}
+  Sdl/SdlText.cpp
 )
 

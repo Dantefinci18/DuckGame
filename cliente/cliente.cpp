@@ -283,8 +283,8 @@ std::string Cliente::procesar_color(ColorDuck color){
 
 void Cliente::handle_win_screen(const EventoWinRound& evento) {
     win_message = evento.id == id 
-        ? std::make_unique<SdlMessage>("You win!", window) 
-        : std::make_unique<SdlMessage>("Better luck next time!", window);
+        ? std::make_unique<SdlFullscreenMessage>("Keep going!", window,  800, 600) 
+        : std::make_unique<SdlFullscreenMessage>("Quack quack...\nBetter luck next time!", window, 800, 600);
 }
 
 void Cliente::stop() {

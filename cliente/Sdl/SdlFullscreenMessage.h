@@ -10,16 +10,16 @@ struct SDL_Texture;
 struct SDL_Renderer;
 struct SdlWindow;
 
-class SdlMessage {
+class SdlFullscreenMessage {
 public:
     /**
      * Crea un SDL_Texture, lanza una excepción si el filename es inválido
      **/
-    explicit SdlMessage(const std::string& text, const SdlWindow& window);
+    explicit SdlFullscreenMessage(const std::string& text, const SdlWindow& window);
     /**
      * Libera la memoria reservada por la textura
      **/
-    ~SdlMessage();
+    ~SdlFullscreenMessage();
     /**
      * Renderiza la textura cargada
      **/
@@ -32,8 +32,9 @@ private:
     SDL_Renderer* renderer;     // The renderer for the SDL window
     SDL_Texture* texture;       // The texture for the rendered text
     int textWidth;              // The width of the text texture
-    int textHeight;             // The height of the text texture
-
+    int textHeight;            // The height of the text texture
+    int windowHeight;
+    int windowWidth;
     /**
      * Helper function to create the texture from the text.
      **/

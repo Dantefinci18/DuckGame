@@ -6,6 +6,7 @@
 #include "cliente_protocolo.h"
 #include <vector>
 #include "../server/Collidable.h"
+#include "../server/server_leaderboard.h"
 #include <memory>
 #include "../common/common_evento.h"
 

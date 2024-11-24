@@ -100,7 +100,34 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
                 Collidable* collidable = serializador.deserializar_collidable(collidable_data);
                 collidables.push_back(collidable);
             }
-            return std::make_unique<EventoMapa>(collidables);
+
+            uint8_t basic_leaderboard_fields[64];
+            socket.recvall(basic_leaderboard_fields, sizeof(basic_leaderboard_fields), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            auto [round, set_of_rounds] = serializador.deserializar_tuple64(basic_leaderboard_fields);
+            uint8_t cantidad_map[32];
+            socket.recvall(cantidad_map, sizeof(cantidad_map), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            int cantidad_leaderboard = serializador.deserializar_cantidad(cantidad_map);
+            std::unordered_map<int,int> leaderboard;
+            for (int i = 0; i < cantidad_leaderboard; i++) {
+                uint8_t leaderboard_tuple[64];
+                socket.recvall(leaderboard_tuple, sizeof(leaderboard_tuple), &was_closed);
+                if (was_closed) {
+                    return nullptr;
+                }
+
+                auto [player, rounds_won] = serializador.deserializar_tuple64(leaderboard_tuple);
+                leaderboard[player] = rounds_won;
+            }
+            Leaderboard lb(round, set_of_rounds, leaderboard);
+            return std::make_unique<EventoMapa>(collidables, lb);
         }
         case Evento::EventoPickup: {
             uint8_t x[32];

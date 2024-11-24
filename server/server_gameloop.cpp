@@ -5,7 +5,7 @@
 
 
 Gameloop::Gameloop(Socket& skt,unsigned int capacidad_minima): 
-    capacidad_minima(capacidad_minima), mapa(std::make_unique<Mapa>(1)), color(0), ticks_round_win_screen(60), should_reset_round(false){
+    capacidad_minima(capacidad_minima), mapa(std::make_unique<Mapa>(1)), color(0), ticks_round_win_screen(60), should_reset_round(false), leaderboard(){
         agregar_jugador(skt);
         this->start();
     }
@@ -29,7 +29,7 @@ void Gameloop::agregar_jugador(Socket& skt) {
     
     if(cantidad_de_jugadores == capacidad_minima){
         estado = COMENZADA;
-        EventoMapa eventoMapa(mapa->getCollidables());
+        EventoMapa eventoMapa(mapa->getCollidables(), leaderboard);
         monitor.enviar_evento(eventoMapa);
     
     }else{
@@ -172,12 +172,10 @@ void Gameloop::cargar_acciones() {
         if (ticks_round_win_screen == 0) {
             std::cout << "reseting!" << std::endl;
             //TODO: Cambiar para elegir un mapa random.
-
             mapa = std::make_unique<Mapa>(3);
-            
             ticks_round_win_screen = 60;
             should_reset_round = false;
-            EventoMapa eventoMapa(mapa->getCollidables());
+            EventoMapa eventoMapa(mapa->getCollidables(), leaderboard);
             monitor.enviar_evento(eventoMapa);
             
         }
@@ -186,12 +184,7 @@ void Gameloop::cargar_acciones() {
     
     Jugador* winner = get_winner();
     if (winner) {
-        std::cout << "found winner" << std::endl;
-        should_reset_round = true;
-        Jugador* winner = get_winner();
-        EventoWinRound eventoWinRound(winner->get_id());
-        monitor.enviar_evento(eventoWinRound);
-        reset_jugadores();
+        handle_winner(winner);
         return;
     }
     procesar_acciones(acciones, mapa->getCollidables());
@@ -223,6 +216,23 @@ Jugador* Gameloop::get_winner() {
     }
     return (alive_count == 1) ? winner : nullptr;
 }
+
+void Gameloop::handle_winner(Jugador* winner) {
+    should_reset_round = true;
+    leaderboard.win_round(winner->get_id());
+    int match_winner = leaderboard.get_match_winner();
+    if (match_winner != 0) {
+        EventoWinMatch eventoWinMatch(match_winner);
+        monitor.enviar_evento(eventoWinMatch);
+        _keep_running = false;
+        return;
+    }
+    EventoWinRound eventoWinRound(winner->get_id());
+    monitor.enviar_evento(eventoWinRound);
+    reset_jugadores();
+    return;
+}
+
 void Gameloop::sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(50)); }
 
 void Gameloop::cerrar_conexiones(){

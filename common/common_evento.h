@@ -5,6 +5,7 @@
 #include <cstdint>
 #include "common_weapon.h" 
 #include "../server/Collidable.h"
+#include "../server/server_leaderboard.h"
 #include "../common/common_color.h"
 class Evento {
 public:
@@ -18,7 +19,8 @@ public:
         EventoEspera,
         EventoAgacharse,
         EventoLevantarse,
-        EventoWinRound
+        EventoWinRound,
+        EventoWinMatch
     };
 
     virtual ~Evento() = default;
@@ -58,14 +60,16 @@ public:
 class EventoMapa : public Evento {
 public:
     std::vector<Collidable*> collidables;
+    Leaderboard leaderboard;
 
-    EventoMapa(const std::vector<Collidable*>& collidables)
-        : collidables(collidables) {}
+    EventoMapa(const std::vector<Collidable*>& collidables, Leaderboard leaderboard)
+        : collidables(collidables), leaderboard(leaderboard) {}
 
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoMapa\", "
-            << "\"collidables_count\": " << collidables.size()
+            << "\"collidables_count\": " << collidables.size() << ", "
+            << "\"leaderboard\": " << leaderboard.to_json()
             << " }";
         std::cout << oss.str() << std::endl;
     }
@@ -195,6 +199,20 @@ public:
         std::cout << oss.str() << std::endl;
     }
     TipoEvento get_tipo() const override { return TipoEvento::EventoWinRound; } 
+};
+
+class EventoWinMatch : public Evento {
+public:
+    int id;
+    EventoWinMatch(int id) : id(id) {}
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoWinMatch\", "
+            << "\"id\": " << id
+            << " }";
+        std::cout << oss.str() << std::endl;
+    }
+    TipoEvento get_tipo() const override { return TipoEvento::EventoWinMatch; } 
 };
 
 #endif

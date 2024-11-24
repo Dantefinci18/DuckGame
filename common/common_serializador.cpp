@@ -495,6 +495,48 @@ std::vector<uint8_t> Serializador::serializar_mapa(const Evento& evento) {
         offset += 160; 
     }
 
+    // Serialize leaderboard
+    const Leaderboard& leaderboard = static_cast<const EventoMapa&>(evento).leaderboard;
+
+    // Serialize leaderboard basic fields
+    std::vector<uint8_t> leaderboard_bits(64); // 3 fields * 32 bits each
+    uint32_t round = leaderboard.round;
+    for (int i = 0; i < 32; ++i) {
+        leaderboard_bits[i] = (round >> (31 - i)) & 1;
+    }
+
+    uint32_t set_of_rounds = leaderboard.set_of_rounds;
+    for (int i = 0; i < 32; ++i) {
+        leaderboard_bits[32 + i] = (set_of_rounds >> (31 - i)) & 1;
+    }
+
+    bits.insert(bits.end(), leaderboard_bits.begin(), leaderboard_bits.end());
+
+    // Serialize player_rounds_won
+    std::unordered_map<int,int> player_rounds_won = leaderboard.player_rounds_won;
+    uint32_t map_size = static_cast<uint32_t>(player_rounds_won.size());
+    std::vector<uint8_t> map_bits(32 + map_size * 64); // 32 for size, 64 for each entry (32 key + 32 value)
+
+    for (int i = 0; i < 32; ++i) {
+        map_bits[i] = (map_size >> (31 - i)) & 1;
+    }
+
+    int map_offset = 32;
+    for (const auto& [player_id, rounds_won] : player_rounds_won) {
+        uint32_t player_bits = static_cast<uint32_t>(player_id);
+        for (int i = 0; i < 32; ++i) {
+            map_bits[map_offset + i] = (player_bits >> (31 - i)) & 1;
+        }
+
+        uint32_t rounds_bits = static_cast<uint32_t>(rounds_won);
+        for (int i = 0; i < 32; ++i) {
+            map_bits[map_offset + 32 + i] = (rounds_bits >> (31 - i)) & 1;
+        }
+
+        map_offset += 64;
+    }
+
+    bits.insert(bits.end(), map_bits.begin(), map_bits.end());
     return bits;
 }
 
@@ -543,7 +585,18 @@ Collidable* Serializador::deserializar_collidable(const uint8_t* collidable_data
         return nullptr; 
     }
 
-    return nullptr;
+    return nullptr;   
+}
 
-    
+std::tuple<int, int> Serializador::deserializar_tuple64(const uint8_t* tuple_data) {
+    uint32_t value1 = 0;
+    for (int i = 0; i < 32; ++i) {
+        value1 |= (tuple_data[i] << (31 - i));
+    }
+
+    uint32_t value2 = 0;
+    for (int i = 0; i < 32; ++i) {
+        value2 |= (tuple_data[i + 32] << (31 - i));
+    }
+    return std::make_tuple<int,int>(value1, value2);
 }

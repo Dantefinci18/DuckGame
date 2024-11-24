@@ -6,13 +6,14 @@
 #include <cstdint>
 #include <memory>
 #include <bitset>
-
+#include <tuple>
 #include "../common/common_accion.h"
 #include "../common/common_evento.h"
 #include "../server/Collidable.h"
 #include "../server/Platform.h"
 #include "../server/Player.h"
 #include "../server/SpawnPlace.h"
+#include "../server/server_leaderboard.h"
 #include "common_partida.h"
 
 class Serializador {
@@ -58,6 +59,7 @@ public:
 
     
     Collidable* deserializar_collidable(const uint8_t* collidable_data);
+    std::tuple<int, int> deserializar_tuple64(const uint8_t* tuple_data);
 
 };
 #endif //COMMON_SERIALIZADOR_H

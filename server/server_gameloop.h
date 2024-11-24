@@ -12,6 +12,7 @@
 #include "server_monitor.h"
 #include "server_jugador.h"
 #include "server_mapa.h"
+#include "server_leaderboard.h"
 
 enum EstadoGameloop{
     EN_ESPERA,
@@ -32,11 +33,13 @@ private:
     int color;
     int ticks_round_win_screen;
     bool should_reset_round;
+    Leaderboard leaderboard;
     
 
     void sleep();
     void cargar_acciones();
     Jugador* get_winner();
+    void handle_winner(Jugador* winner);
     void reset_jugadores();
     void procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables);
     void eliminar_jugador(std::unordered_map<int, Jugador*>::iterator it);

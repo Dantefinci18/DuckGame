@@ -8,7 +8,7 @@
 #include "mapa.h"
 #include "enemigo.h" 
 #include "Sdl/SdlWindow.h"
-#include "Sdl/SdlMessage.h"
+#include "Sdl/SdlFullscreenMessage.h"
 #include <atomic>
 #include "../common/common_queue.h"
 #include "../common/common_evento.h"
@@ -35,7 +35,7 @@ private:
     std::atomic<bool> conectado {true};
     std::unordered_map<int, std::unique_ptr<Enemigo>> enemigos;
     std::vector<Collidable*> collidables;
-    std::unique_ptr<SdlMessage> win_message;
+    std::unique_ptr<SdlFullscreenMessage> win_message;
 
     /*
      * Funcion que ejecuta el juego
