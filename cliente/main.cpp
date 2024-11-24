@@ -3,12 +3,14 @@
 #include "Sdl/SdlWindow.h"
 #include "Sdl/SdlTexture.h"
 #include "cliente.h"
-#include "lobby.h"
+#include "cliente_protocolo.h"
+#include "../common/common_socket.h"
 #include <QApplication>
 #include "interfaz_lobby/mainwindow.h"
 #include "../server/Collidable.h"
 #include "../server/Platform.h"  
 #include "../common/common_color.h"
+#include "../common/common_comando_partida.h"
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -21,18 +23,26 @@ int main(int argc, char* argv[]) {
     const char* hostname = argv[1];
     const char* servname = argv[2];
 
-    Lobby lobby(hostname, servname);  
+    Socket conexion(hostname,servname);
+    ClienteProtocolo protocolo(std::move(conexion));  
 
-    MainWindow mainWindow(&lobby);    
-    mainWindow.show();               
+    MainWindow mainWindow;    
+    mainWindow.show();
+    mainWindow.agregar_partida("DANTE lol");  
+    mainWindow.agregar_partida("alto juego ete");
+    
+    VentanaNuevaPartida ventanaNuevaPartida;             
+    VentanaEsperando ventanaEsperando;
 
     std::vector<Collidable*> collidables; 
     float x_inicial = 0;
     float y_inicial = 0;
     ColorDuck color = ColorDuck::MAX_COLOR;
 
-    QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
-        lobby.crear_partida(mapaSeleccionado);
+    QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] () {
+        mainWindow.hide();
+        ventanaNuevaPartida.show();
+        /*lobby.crear_partida(mapaSeleccionado);
         int id = lobby.recibir_id();
         std::cout <<  id << std::endl;
 
@@ -57,12 +67,26 @@ int main(int argc, char* argv[]) {
         }
 
         Cliente cliente(id,color,lobby.get_socket(), collidables,x_inicial,y_inicial);
-        cliente.start();
+        cliente.start();*/
     });
 
-    QObject::connect(&mainWindow, &MainWindow::cargar_partida, [&]() {       
+    QObject::connect(&ventanaNuevaPartida, &VentanaNuevaPartida::volver, [&] () {
+        ventanaNuevaPartida.hide();
+        mainWindow.show();
+    });
+
+    QObject::connect(&ventanaNuevaPartida, &VentanaNuevaPartida::crear_partida, [&] (
+        const std::string& nombre, const std::string& mapaSeleccionado, const unsigned int cantidad_de_jugadores) {
+            
+            ComandoNuevaPartida nueva_partida(nombre,cantidad_de_jugadores);
+            protocolo.enviar_comando_partida(nueva_partida);
+            ventanaNuevaPartida.hide();
+            ventanaEsperando.show();
+    });
+   /* QObject::connect(&mainWindow, &MainWindow::cargar_partida, [&]() {       
         lobby.cargar_partida();
-        int id = lobby.recibir_id();
+        //obby.recibir_partidas_disponibles()
+        /*int id = lobby.recibir_id();
         std::cout <<  id << std::endl;
         
          while (color == ColorDuck::MAX_COLOR) {
@@ -86,9 +110,9 @@ int main(int argc, char* argv[]) {
         }
 
         Cliente cliente(id,color,lobby.get_socket(), collidables,x_inicial,y_inicial);
-        cliente.start();
+        cliente.start();*/
         
-    });
+    //});
 
    return app.exec();  
 }

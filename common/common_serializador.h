@@ -13,7 +13,7 @@
 #include "../server/Platform.h"
 #include "../server/Player.h"
 #include "../server/SpawnPlace.h"
-#include "common_partida.h"
+#include "common_comando_partida.h"
 
 class Serializador {
 private:

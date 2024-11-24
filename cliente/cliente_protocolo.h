@@ -6,6 +6,7 @@
 #include "../common/common_accion.h"
 #include "../common/common_serializador.h"
 #include "../server/Collidable.h"
+#include "../common/common_comando_partida.h"
 #include <vector>
 #include <memory>
 
@@ -45,6 +46,8 @@ class ClienteProtocolo{
          * y lo retorna
          */
         std::vector<Collidable*> recibir_mapa();
+
+        bool enviar_comando_partida(ComandoPartida& comando_partida);
 
     private:
         Socket socket;

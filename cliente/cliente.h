@@ -115,7 +115,7 @@ public:
     /*
      * Constructor de la clase Cliente, recibe un id, un color, un socket, un vector de collidables, un float con la posicion x inicial y un float con la posicion y inicial
      */
-    explicit Cliente(int id,ColorDuck color,Socket&& socket,std::vector<Collidable*> collidables, float x_inicial, float y_inicial);
+    explicit Cliente(int id,ColorDuck color,ClienteProtocolo& protocolo,std::vector<Collidable*> collidables, float x_inicial, float y_inicial);
     
     /*
      * Funcion que inicia el cliente

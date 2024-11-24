@@ -8,12 +8,12 @@
 #include <memory>
 #include "../server/Platform.h"  
 
-Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
+Cliente::Cliente(int id,ColorDuck color,ClienteProtocolo& protocolo, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
     : id(id),
       window(800,600),
       duck(window, x_inicial,y_inicial, procesar_color(color)),
       mapa(window, "../Imagenes/forest.png", collidables),
-      protocolo(std::move(socket)),
+      protocolo(std::move(protocolo)),
       receiver(protocolo, queue_eventos, conectado),
       sender(protocolo, queue_acciones),
       collidables(collidables) {}
