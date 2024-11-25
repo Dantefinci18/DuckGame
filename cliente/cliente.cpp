@@ -8,11 +8,12 @@
 #include <memory>
 #include "../server/Platform.h"  
 
-Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
+Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial)
     : id(id),
       window(800,600),
       duck(window, x_inicial,y_inicial, procesar_color(color)),
       mapa(std::make_unique<Mapa>(window, "../Imagenes/forest.png", collidables)),
+      leaderboard(ClientLeaderboard(window, leaderboard.round, leaderboard.max_rounds, leaderboard.set_of_rounds, leaderboard.player_rounds_won)),
       protocolo(std::move(socket)),
       receiver(protocolo, queue_eventos, conectado),
       sender(protocolo, queue_acciones),
@@ -45,6 +46,9 @@ void Cliente::procesar_eventos_recibidos() {
                     auto evento_mapa = static_cast<EventoMapa*>(evento_recibido.get());
                     mapa = std::make_unique<Mapa>(window, "../Imagenes/forest.png", evento_mapa->collidables);
                     collidables = evento_mapa->collidables;
+                    leaderboard.update_map(evento_mapa->leaderboard.player_rounds_won);
+                    leaderboard.update_round(evento_mapa->leaderboard.round);
+                    leaderboard.update_set(evento_mapa->leaderboard.set_of_rounds);
                     win_message = nullptr;
                     break;
                 }
@@ -233,9 +237,10 @@ void Cliente::ejecutar_juego() {
 
         if (currentTime - lastRenderTime >= frameDelay) {
             lastRenderTime = currentTime;
-
+            
             mapa->render();
-
+            //leaderboard.render(duck);
+            
             duck.render();
             if (win_message) {
                 win_message->render();
@@ -243,7 +248,6 @@ void Cliente::ejecutar_juego() {
             for (auto& pair : enemigos) {
                 pair.second->renderizar();  
             }
-
             window.render();
         }
 
@@ -283,8 +287,8 @@ std::string Cliente::procesar_color(ColorDuck color){
 
 void Cliente::handle_win_screen(const EventoWinRound& evento) {
     win_message = evento.id == id 
-        ? std::make_unique<SdlFullscreenMessage>("Keep going!", window,  800, 600) 
-        : std::make_unique<SdlFullscreenMessage>("Quack quack...\nBetter luck next time!", window, 800, 600);
+        ? std::make_unique<SdlFullscreenMessage>("Keep going!", window) 
+        : std::make_unique<SdlFullscreenMessage>("Quack quack...\nBetter luck next time!", window);
 }
 
 void Cliente::stop() {

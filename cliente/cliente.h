@@ -4,6 +4,7 @@
 #include "cliente_sender.h"
 #include "cliente_receiver.h"
 #include "cliente_protocolo.h"
+#include "cliente_leaderboard.h"
 #include "duck.h"
 #include "mapa.h"
 #include "enemigo.h" 
@@ -16,6 +17,7 @@
 #include "../common/common_socket.h"
 #include "../common/common_color.h"
 #include "../server/Collidable.h"
+#include "../server/server_leaderboard.h"
 #include <SDL2/SDL.h>
 #include <unordered_map>
 #include <memory>  
@@ -27,6 +29,7 @@ private:
     SdlWindow window;
     Duck duck;
     std::unique_ptr<Mapa> mapa;
+    ClientLeaderboard leaderboard;
     ClienteProtocolo protocolo;
     ClienteReceiver receiver;
     ClienteSender sender;
@@ -121,7 +124,7 @@ public:
     /*
      * Constructor de la clase Cliente, recibe un id, un color, un socket, un vector de collidables, un float con la posicion x inicial y un float con la posicion y inicial
      */
-    explicit Cliente(int id,ColorDuck color,Socket&& socket,std::vector<Collidable*> collidables, float x_inicial, float y_inicial);
+    explicit Cliente(int id,ColorDuck color,Socket&& socket,std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial);
     
     /*
      * Funcion que inicia el cliente

@@ -25,7 +25,8 @@ void Mapa::renderizar_mapa(){
             float plat_height = platform->height; 
 
             Area platformSrcArea(0, 0, 38,38);  
-            Area platformDestArea(plat_x, plat_y, plat_width, plat_height); 
+            Area platformDestArea(plat_x, plat_y, plat_width, plat_height);
+            //std::cout << "plataforma_render" << std::endl; 
             plataformas.render(platformSrcArea, platformDestArea, SDL_FLIP_NONE);
         }
 
@@ -39,6 +40,7 @@ void Mapa::renderizar_mapa(){
 
                 Area armaSrcArea(0, 0, 38,38);  
                 Area armaDestArea(plat_x, plat_y, plat_width, plat_height); 
+                //std::cout << "arma_render" << std::endl;
                 armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
             }
         }
@@ -48,6 +50,7 @@ void Mapa::renderizar_mapa(){
 void Mapa::render() {
     Area srcArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
     Area destArea(0, 0, ANCHO_VENTANA, ALTO_VENTANA);
+    //std::cout << "fondo_render" << std::endl;
     fondo.render(srcArea, destArea, SDL_FLIP_NONE);
 
     renderizar_mapa();      

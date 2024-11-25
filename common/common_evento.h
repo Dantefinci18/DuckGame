@@ -39,9 +39,6 @@ public:
 
     EventoMovimiento(int id,ColorDuck color,float x, float y, bool is_flapping, bool reset) : id(id),color(color), x(x), y(y), is_flapping(is_flapping), reset(reset) {}
     void print() const override {
-        if (!reset) {
-            return;
-        }
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoMovimiento\", "
             << "\"id\": " << id << ", "

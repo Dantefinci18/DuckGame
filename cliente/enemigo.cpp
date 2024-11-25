@@ -15,6 +15,7 @@ void Enemigo::mover_a(float nueva_x, float nueva_y, bool is_flapping, bool reset
 }
 
 void Enemigo::renderizar() {
+    //std::cout << "render_enemigo" << std::endl;
     duck.render();
 }
  

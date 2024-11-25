@@ -13,10 +13,10 @@ struct SdlWindow;
 class SdlText {
 public:
     /**
-     * Crea un SdlText
+     * Crea un SdlText: recibe un x y un y con el 0,0 abajo a la izquierda de la ventana
      **/
     explicit SdlText(const std::string& text, const SdlWindow& window, 
-        const int text_height, const int text_width);
+        const int text_height, const int text_width, int x, int y);
     /**
      * Libera la memoria reservada por la textura
      **/
@@ -26,7 +26,7 @@ public:
      **/
     void render() const;
 
-
+    void set_text(std::string text);
 
 private:
     std::string text;           // The message text
@@ -36,6 +36,8 @@ private:
     int textHeight;             // The height of the text texture
     int windowWidth;
     int windowHeight;
+    int x;
+    int y;
     /**
      * Helper function to create the texture from the text.
      **/
