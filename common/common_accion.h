@@ -16,6 +16,8 @@ enum ComandoAccion : uint8_t{
     AGACHARSE,
     LEVANTARSE,
     NUEVA_PARTIDA_ACCION,
+    APUNTAR_ARRIBA,
+    DEJAR_APUNTAR_ARRIBA,
     NONE_ACCION
 };
 

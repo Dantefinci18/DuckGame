@@ -6,6 +6,7 @@
 #include "Sdl/SdlWindow.h"
 #include "../server/Collidable.h"
 #include "../common/common_weapon.h"
+#include "../common/common_direcciones.h"
 
 class Enemigo {
 public:
@@ -38,6 +39,12 @@ public:
      * Recibe un WeaponType
      */
     void set_weapon(WeaponType weapon);
+
+    /*
+    * Debe recibir una dirección valida.
+    * Setea la dirección apuntada del enemigo
+    */
+    void apuntar_arma(DireccionApuntada direccion);
 
     /* 
      * Funcion que mata al enemigo

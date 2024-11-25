@@ -13,6 +13,7 @@
 #include "server_jugador.h"
 #include "server_mapa.h"
 #include "server_leaderboard.h"
+#include "bala.h"
 
 enum EstadoGameloop{
     EN_ESPERA,
@@ -35,6 +36,8 @@ private:
     bool should_reset_round;
     Leaderboard leaderboard;
     
+    std::vector<Bala> balas;  
+
 
     void sleep();
     void cargar_acciones();
