@@ -21,7 +21,7 @@ int Leaderboard::get_match_winner() {
     int won_id = 0;
     int won_amount = 0;
     for (auto& player : player_rounds_won) {
-        if (player.second >= 2 && player.second > won_amount) {
+        if (player.second >= 10 && player.second > won_amount) {
             won_id = player.first;
             won_amount = player.second;
         }
