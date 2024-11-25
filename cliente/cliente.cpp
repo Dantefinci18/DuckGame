@@ -3,10 +3,12 @@
 #include "../common/common_evento.h"
 #include "../common/common_queue.h"
 #include "../common/common_weapon_utils.h"
+
 #include "enemigo.h"
 #include <iostream>
 #include <memory>
 #include "../server/Platform.h"  
+#include "../server/SpawnWeaponBox.h"
 
 Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial)
     : id(id),
@@ -114,6 +116,18 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
 
+                case Evento::EventoCajaDestruida: {
+                    auto evento_caja_destruida = static_cast<EventoCajaDestruida*>(evento_recibido.get());
+                    eliminar_caja(*evento_caja_destruida);
+                    break;
+                }
+
+                case Evento::EventoSpawnArmaBox: {
+                    auto evento_spawn_arma_box = static_cast<EventoSpawnArmaBox*>(evento_recibido.get());
+                    agregar_collidable(*evento_spawn_arma_box);
+
+                    break;
+                }
                 default: {
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
@@ -121,6 +135,16 @@ void Cliente::procesar_eventos_recibidos() {
             }
         }
     }
+}
+
+void Cliente::agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box) {
+    collidables.push_back(new SpawnWeaponBox(Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 20, 20));
+
+    mapa->agregar_collidable(new SpawnWeaponBox(Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 20, 20));
+    }
+
+void Cliente::eliminar_caja(const EventoCajaDestruida& evento_caja_destruida) {
+    mapa->eliminar_caja(evento_caja_destruida.x, evento_caja_destruida.y);
 }
 
 void Cliente::disparar_bala(const EventoBala& evento_bala) {
@@ -172,8 +196,18 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
         if (collidable->getType() == CollidableType::SpawnPlace 
             && collidable->position.x == evento_pickup.x
             && collidable->position.y == evento_pickup.y) {
+                std::cout << "toy acaaaaaaaaaaaaaaaaaaaaaaaa" << std::endl;
             SpawnPlace* sPlace = static_cast<SpawnPlace*>(collidable);
             sPlace->clear_weapon();
+
+        }
+        if (collidable->getType() == CollidableType::SpawnWeaponBox 
+            && collidable->position.x == evento_pickup.x
+            && collidable->position.y == evento_pickup.y) {
+            std::cout << "clearing weapon" << std::endl;
+            SpawnWeaponBox* sWeaponBox = static_cast<SpawnWeaponBox*>(collidable);
+            sWeaponBox->clear_weapon();
+            mapa->clear_weapon(sWeaponBox);
         }
     }
     if (evento_pickup.id != id) {
@@ -198,6 +232,8 @@ void Cliente::manejar_muerte(const EventoMuerte& evento_muerte) {
 }
 
 void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables) {
+    
+
     for (auto& collidable : collidables) {
         if (collidable->getType() == CollidableType::SpawnPlace 
             && collidable->position.x == evento_spawn.x
@@ -205,6 +241,8 @@ void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collid
             SpawnPlace* sPlace = static_cast<SpawnPlace*>(collidable);
             sPlace->set_weapon(WeaponUtils::create_weapon(evento_spawn.weapon_type));
         }
+
+
     }
 }
 

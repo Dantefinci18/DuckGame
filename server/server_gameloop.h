@@ -38,13 +38,14 @@ private:
     
     std::vector<Bala> balas;  
 
-
     void sleep();
     void cargar_acciones();
+    void procesar_acciones(std::vector<Accion> acciones, Mapa &mapa);
     Jugador* get_winner();
     void handle_winner(Jugador* winner);
-    void reset_jugadores();
+    void reset_jugadores(); 
     void procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables);
+
     void eliminar_jugador(std::unordered_map<int, Jugador*>::iterator it);
     void eliminar_desconectados();
 

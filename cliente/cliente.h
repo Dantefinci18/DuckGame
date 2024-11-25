@@ -52,6 +52,14 @@ private:
     void procesar_eventos_recibidos();
 
     /*
+     * Funcion que maneja el spawn de un arma
+     * Recibe un evento de spawn de arma y un vector de collidables
+     */
+    void agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box);
+
+    void eliminar_caja(const EventoCajaDestruida& evento_caja_destruida);
+
+    /*
      *  Funcion que maneja el disparo
         * Recibe un evento de disparo
         */

@@ -5,9 +5,11 @@
 #include <cstdint>
 #include "common_weapon.h" 
 #include "../server/Collidable.h"
-#include "../server/server_leaderboard.h"
 #include "../common/common_color.h"
 #include "../common/common_direcciones.h"
+#include "../server/server_leaderboard.h"
+
+
 class Evento {
 public:
     enum TipoEvento {
@@ -23,7 +25,9 @@ public:
         EventoLevantarse,
         EventoWinRound,
         EventoWinMatch,
-        EventoBala
+        EventoBala,
+        EventoCajaDestruida,
+        EventoSpawnArmaBox
     };
 
     virtual ~Evento() = default;
@@ -40,18 +44,11 @@ public:
     bool is_flapping;
     bool reset;
 
-    EventoMovimiento(int id,ColorDuck color,float x, float y, bool is_flapping, bool reset) : id(id),color(color), x(x), y(y), is_flapping(is_flapping), reset(reset) {}
+    EventoMovimiento(int id, ColorDuck color, float x, float y, bool is_flapping, bool reset) 
+        : id(id), color(color), x(x), y(y), is_flapping(is_flapping), reset(reset) {}
+
     void print() const override {
-        std::ostringstream oss;
-        oss << "{ \"type\": \"EventoMovimiento\", "
-            << "\"id\": " << id << ", "
-            << "\"color\": " << static_cast<int>(color) << ", "
-            << "\"x\": " << x << ", "
-            << "\"y\": " << y << ", "
-            << "\"is_flapping\": " << (is_flapping ? "true" : "false") << ", "
-            << "\"reset\": " << (reset ? "true" : "false")
-            << " }";
-        std::cout << oss.str() << std::endl;
+        
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoMovimiento; }  
@@ -73,6 +70,7 @@ public:
             << " }";
         std::cout << oss.str() << std::endl;
     }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoMapa; }  
 };
 
@@ -84,6 +82,7 @@ public:
 
     EventoSpawnArma(float x, float y, WeaponType weapon_type) 
         : x(x), y(y), weapon_type(weapon_type) {}
+
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoSpawnArma\", "
@@ -93,6 +92,7 @@ public:
             << " }";
         std::cout << oss.str() << std::endl;
     }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnArma; } 
 };
 
@@ -105,6 +105,7 @@ public:
 
     EventoPickup(int id, float x, float y, WeaponType weapon_type) 
         : id(id), x(x), y(y), weapon_type(weapon_type) {}
+
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoPickup\", "
@@ -115,6 +116,7 @@ public:
             << " }";
         std::cout << oss.str() << std::endl;
     }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoPickup; } 
 };
 
@@ -123,6 +125,7 @@ public:
     int id;
 
     EventoMuerte(int id) : id(id) {}
+
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoMuerte\", "
@@ -130,6 +133,7 @@ public:
             << " }";
         std::cout << oss.str() << std::endl;
     }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoMuerte; } 
 };
 
@@ -137,7 +141,8 @@ class EventoDisparo : public Evento {
 public:
     int id;
 
-    EventoDisparo(int id) : id(id){}
+    EventoDisparo(int id) : id(id) {}
+
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoDisparo\", "
@@ -145,30 +150,35 @@ public:
             << " }";
         std::cout << oss.str() << std::endl;
     }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoDisparo; } 
 };
 
 class EventoEspera : public Evento {
-    public:
-        void print() const override {
-            std::cout << "{ \"type\": \"EventoEspera\" }" << std::endl;
-        }
-        TipoEvento get_tipo() const override { return TipoEvento::EventoEspera; }
+public:
+    void print() const override {
+        std::cout << "{ \"type\": \"EventoEspera\" }" << std::endl;
+    }
+
+    TipoEvento get_tipo() const override { return TipoEvento::EventoEspera; }
 };
 
 class EventoApuntar : public Evento {
 public:
     int id;
     DireccionApuntada direccion;
+
+    EventoApuntar(int id, DireccionApuntada direccion) : id(id), direccion(direccion) {}
+
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoApuntar\", "
-            << "\"id\": " << id
-            << "\"dirección \": " << static_cast<int>(direccion)
+            << "\"id\": " << id << ", "
+            << "\"direccion\": " << static_cast<int>(direccion)
             << " }";
         std::cout << oss.str() << std::endl;
     }
-    EventoApuntar(int id, DireccionApuntada direccion) : id(id), direccion(direccion){}
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoApuntar; } 
 };
 
@@ -177,6 +187,7 @@ public:
     int id;
 
     EventoAgacharse(int id) : id(id) {}
+
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoAgacharse\", "
@@ -184,15 +195,16 @@ public:
             << " }";
         std::cout << oss.str() << std::endl;
     }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoAgacharse; } 
 };
-
 
 class EventoLevantarse : public Evento {
 public:
     int id;
 
     EventoLevantarse(int id) : id(id) {}
+
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoLevantarse\", "
@@ -200,13 +212,16 @@ public:
             << " }";
         std::cout << oss.str() << std::endl;
     }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoLevantarse; } 
 };
 
 class EventoWinRound : public Evento {
 public:
     int id;
+
     EventoWinRound(int id) : id(id) {}
+
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoWinRound\", "
@@ -214,13 +229,16 @@ public:
             << " }";
         std::cout << oss.str() << std::endl;
     }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoWinRound; } 
 };
 
 class EventoWinMatch : public Evento {
 public:
     int id;
+
     EventoWinMatch(int id) : id(id) {}
+
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoWinMatch\", "
@@ -228,23 +246,63 @@ public:
             << " }";
         std::cout << oss.str() << std::endl;
     }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoWinMatch; } 
 };
 
 class EventoBala : public Evento {
-    public:
-        float x;
-        float y;
-        void print() const override {
-            std::ostringstream oss;
-            oss << "{ \"type\": \"EventoBala\", "
-                << "\"x\": " << x << ", "
-                << "\"y\": " << y
-                << " }";
-            std::cout << oss.str() << std::endl;
-        }
-        EventoBala(float x, float y) : x(x), y(y){}
-        TipoEvento get_tipo() const override { return TipoEvento::EventoBala; }
+public:
+    float x;
+    float y;
+
+    EventoBala(float x, float y) : x(x), y(y) {}
+
+    void print() const override {
+        
+    }
+
+    TipoEvento get_tipo() const override { return TipoEvento::EventoBala; }
 };
 
-#endif
+class EventoCajaDestruida : public Evento {
+public:
+    float x;
+    float y;
+
+    EventoCajaDestruida(float x, float y) : x(x), y(y) {}
+
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoCajaDestruida\", "
+            << "\"x\": " << x << ", "
+            << "\"y\": " << y
+            << " }";
+        std::cout << oss.str() << std::endl;
+    }
+
+    TipoEvento get_tipo() const override { return TipoEvento::EventoCajaDestruida; }
+
+};
+
+class EventoSpawnArmaBox : public Evento {
+public:
+    float x;
+    float y;
+    WeaponType weapon_type; 
+    EventoSpawnArmaBox(float x, float y, WeaponType weapon_type) 
+        : x(x), y(y), weapon_type(weapon_type) {}
+
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoSpawnArmaBox\", "
+            << "\"x\": " << x << ", "
+            << "\"y\": " << y << ", "
+            << "\"weapon_type\": " << static_cast<int>(weapon_type)
+            << " }";
+        std::cout << oss.str() << std::endl;
+    }
+
+    TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnArmaBox; } 
+};
+
+#endif // COMMON_EVENTO_H

@@ -14,4 +14,23 @@ collidables:
     y: 220
     width: 20
     height: 20
-    
+  - type: Box
+    x: 105
+    y: 230
+    width: 20
+    height: 20
+  - type: Box
+    x: 505
+    y: 230
+    width: 20
+    height: 20
+  - type: Platform
+    x: 300
+    y: 350
+    width: 150
+    height: 20
+  - type: Box
+    x: 305
+    y: 380
+    width: 20
+    height: 20

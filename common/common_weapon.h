@@ -4,8 +4,8 @@
 #include <vector>
 #include <cmath>
 enum class WeaponType {
-    PistolaCowboy
-    // Future types can be added here
+    PistolaCowboy,
+    None
 };
 
 class Weapon {    

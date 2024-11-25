@@ -5,6 +5,8 @@
 #include "Collidable.h"
 #include "Platform.h"
 #include "SpawnPlace.h"
+#include "SpawnWeaponBox.h"
+#include "Box.h"
 #include <iostream>
 #include <optional>
 #include <memory>
@@ -217,6 +219,27 @@ public:
             return false;
         }
 
+        if (other.getType() == CollidableType::Box) {
+            Box& box = static_cast<Box&>(other);
+            if (box.esta_activa()) {
+                CollidableSide side = getCollisionSide(box);
+                if (side == CollidableSide::Top) {
+                    position.y = box.top();
+                    velocity.y = 0;
+                    is_standing_on_something = true;
+                    return true;
+                } else if (side == CollidableSide::Bottom) {
+                    position.y = box.bottom() - height;
+                    velocity.y = gravity;
+                    return true;
+                } else if (side == CollidableSide::Left || side == CollidableSide::Right) {
+                    velocity.x = 0;
+                    return true;
+                }
+            }
+            
+        }
+
         if (other.getType() == CollidableType::SpawnPlace) {
             SpawnPlace& spawnPlace = static_cast<SpawnPlace&>(other);
             CollidableSide side = getCollisionSide(spawnPlace);
@@ -228,6 +251,20 @@ public:
                 weapon = std::move(new_weapon.value());
                 eventos.push_back(std::make_shared<EventoPickup>(id, spawnPlace.position.x, spawnPlace.position.y, weapon->get_type()));
             }
+        }
+
+        if (other.getType() == CollidableType::SpawnWeaponBox) {
+            SpawnWeaponBox& spawnWeaponBox = static_cast<SpawnWeaponBox&>(other);
+            CollidableSide side = getCollisionSide(spawnWeaponBox);
+            if (side == CollidableSide::None) {
+                return false;
+            }
+            std::optional<std::unique_ptr<Weapon>> new_weapon = spawnWeaponBox.get_weapon();
+            if (new_weapon) {
+                weapon = std::move(new_weapon.value());
+                eventos.push_back(std::make_shared<EventoPickup>(id, spawnWeaponBox.position.x, spawnWeaponBox.position.y, weapon->get_type()));
+            }
+
         }
 
         return false;

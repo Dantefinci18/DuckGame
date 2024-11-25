@@ -12,7 +12,8 @@ enum class CollidableType {
     Platform,
     Player,
     Box,
-    SpawnPlace // Future types can be added here
+    SpawnPlace,
+    SpawnWeaponBox
 };
 
 enum class CollidableSide {
