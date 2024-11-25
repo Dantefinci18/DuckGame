@@ -3,7 +3,7 @@
 #include "common_weapon.h"
 class PistolaCowboy : public Weapon {
     public:
-    PistolaCowboy() : Weapon(6, WeaponType::PistolaCowboy, 200) {}
+    PistolaCowboy() : Weapon(6, WeaponType::PistolaCowboy, 200) {} // aca 200 es los tiles hardcodeado de distancia en realidad
 
     void reload() override {
         ammo = 6;
@@ -12,8 +12,8 @@ class PistolaCowboy : public Weapon {
     bool es_automatica() override {
         return false;
     }
-    std::vector<Vector> shoot(Vector from, Vector direction, bool is_shooting) override{
-        (void)is_shooting;
+
+    std::vector<Vector> shoot(Vector from, Vector direction, bool& tiene_retroceso) override{
         std::vector<Vector> destinations;
 
         if(ammo <= 0){
@@ -21,7 +21,7 @@ class PistolaCowboy : public Weapon {
         }
 
         ammo--;
-
+        tiene_retroceso = false;
         // Normalize the direction vector to get a unit vector
         float magnitude = direction.magnitude();//std::sqrt(direction.x * direction.x + direction.y * direction.y);
         Vector unitDirection(direction.x / magnitude, direction.y / magnitude);

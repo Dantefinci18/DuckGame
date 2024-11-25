@@ -69,14 +69,22 @@ public:
         return obtenerDireccion(direccion_apuntada);
     }
 
+    Vector get_posicion_arma() const {
+        return position + Vector(0,5);
+    }
+
     std::vector<Vector> disparar() {
         if (!weapon) {
             return {};
         }
         //shooting = true;
+        bool tiene_retroceso = false;
+        auto destinos = weapon->shoot(get_posicion_arma(), get_direccion_apuntada(), tiene_retroceso);
         
-        auto destinos = weapon->shoot(position, get_direccion_apuntada(), shooting);
-        
+        if(tiene_retroceso){
+            std::cout << "aca hacer el retroceso" << std::endl;
+        }
+
         if(!destinos.empty()){
             std::cout << "Disparó el pato id " << id << std::endl;
             eventos.push_back(std::make_shared<EventoDisparo>(id));

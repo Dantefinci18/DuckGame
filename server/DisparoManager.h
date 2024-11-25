@@ -19,7 +19,7 @@ public:
 
         auto destinos = player.disparar();
 
-        Vector origen = player.get_posicion() + Vector(0,1); // ARREGLO PARA LEVANTAR LA LINEA DE TIRO
+        Vector origen = player.get_posicion_arma();
 
         for (const auto& destino : destinos) {
 
@@ -32,7 +32,7 @@ public:
 
             for (auto& collidable : collidables) {
                 if(collidable->getType() != CollidableType::SpawnPlace){
-                    auto interseccion = collidable->intersection_point(origen, destino+Vector(0,1)); // ARREGLO PARA LEVANTAR LA LINEA DE TIRO
+                    auto interseccion = collidable->intersection_point(origen, destino);
                     if (interseccion) {
                         float distancia = (*interseccion - origen).magnitude();
                         if (distancia < menor_distancia) {
@@ -93,7 +93,7 @@ public:
                 break;
             } else {
                 std::cout << "No hubo impacto en la dirección (" 
-                          << destino.x << ", " << destino.y + 1 << ")" << std::endl; // ARREGLO PARA LEVANTAR LA LINEA DE TIRO
+                          << destino.x << ", " << destino.y << ")" << std::endl;
             }
         }
     }
