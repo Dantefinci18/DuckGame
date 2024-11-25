@@ -308,6 +308,12 @@ std::vector<uint8_t> Serializador::serializar_levantarse(const Evento& evento) {
 
 std::vector<uint8_t> Serializador::serializar_win_round(const Evento& evento) {
     std::vector<uint8_t> bits(40);
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        bits[i] = (tipo_evento >> (7 - i)) & 1;
+    }
+
     uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoWinRound&>(evento).id);
     for (int i = 0; i < 32; ++i) {
         bits[8 + i] = (id_bits >> (31 - i)) & 1;
@@ -315,6 +321,7 @@ std::vector<uint8_t> Serializador::serializar_win_round(const Evento& evento) {
 
     return bits;
 }
+
 std::vector<uint8_t> Serializador::serializar_bala(const Evento& evento) {
     std::vector<uint8_t> bits(72);
 

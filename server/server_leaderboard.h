@@ -31,7 +31,7 @@ class Leaderboard {
     Leaderboard() : player_rounds_won(), round(1), set_of_rounds(1), max_rounds(5) {}
 
     Leaderboard(int round, int set_of_rounds, std::unordered_map<int,int> player_rounds_won) :
-        player_rounds_won(player_rounds_won), round(round), set_of_rounds(set_of_rounds), max_rounds(2) {}
+        player_rounds_won(player_rounds_won), round(round), set_of_rounds(set_of_rounds), max_rounds(5) {}
 
     std::string to_json() const {
         std::ostringstream oss;
