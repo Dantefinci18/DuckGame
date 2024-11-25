@@ -41,5 +41,16 @@ std::vector<Collidable*> Mapa::getCollidables() const {
 void Mapa::agregar_collidables(std::vector<Collidable*> nuevos_collidables) {
     for (auto& collidable : nuevos_collidables) {
         collidables.push_back(std::unique_ptr<Collidable>(collidable));
+        for (auto& collidable_viejo : collidables) {
+        if (collidable_viejo->getType() == CollidableType::Box) {
+            Box* box = static_cast<Box*>(collidable_viejo.get());
+            if (box->get_position().x == collidable->position.x && box->get_position().y == collidable->position.y){
+                box->desactivar();
+            }
+        }
     }
+    }
+
+    
+    
 }

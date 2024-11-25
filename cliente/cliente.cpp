@@ -138,6 +138,8 @@ void Cliente::procesar_eventos_recibidos() {
 }
 
 void Cliente::agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box) {
+    collidables.push_back(new SpawnWeaponBox(Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 20, 20));
+
     mapa->agregar_collidable(new SpawnWeaponBox(Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 20, 20));
     }
 
@@ -194,8 +196,18 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
         if (collidable->getType() == CollidableType::SpawnPlace 
             && collidable->position.x == evento_pickup.x
             && collidable->position.y == evento_pickup.y) {
+                std::cout << "toy acaaaaaaaaaaaaaaaaaaaaaaaa" << std::endl;
             SpawnPlace* sPlace = static_cast<SpawnPlace*>(collidable);
             sPlace->clear_weapon();
+
+        }
+        if (collidable->getType() == CollidableType::SpawnWeaponBox 
+            && collidable->position.x == evento_pickup.x
+            && collidable->position.y == evento_pickup.y) {
+            std::cout << "clearing weapon" << std::endl;
+            SpawnWeaponBox* sWeaponBox = static_cast<SpawnWeaponBox*>(collidable);
+            sWeaponBox->clear_weapon();
+            mapa->clear_weapon(sWeaponBox);
         }
     }
     if (evento_pickup.id != id) {

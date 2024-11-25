@@ -11,12 +11,12 @@ collidables:
     height: 20
   - type: SpawnPlace
     x: 300
-    y: 70
+    y: 80
     width: 20
     height: 20
   - type: SpawnPlace
     x: 600
-    y: 70
+    y: 80
     width: 20
     height: 20
   - type: Platform
@@ -35,18 +35,18 @@ collidables:
     width: 400
     height: 20
   - type: Box
-    x: 105
-    y: 205
+    x: 200
+    y: 530
     width: 20
     height: 20
   - type: Box
-    x: 205
-    y: 505
+    x: 100
+    y: 230
     width: 20
     height: 20
   - type: Box
     x: 55
-    y: 55
+    y: 80
     width: 20
     height: 20
   - type: Box

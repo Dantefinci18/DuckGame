@@ -10,6 +10,7 @@
 #include "../server/Collidable.h"
 #include "../server/Platform.h"
 #include "../server/SpawnPlace.h"
+#include "../server/SpawnWeaponBox.h"
 
 
 /* 
@@ -44,6 +45,12 @@ public:
      * Recibe un float con la posicion x y un float con la posicion y
      */
     void eliminar_caja(float x, float y);
+
+    /*
+     * Funcion que limpia un arma
+     * Recibe un puntero a un SpawnWeaponBox
+     */
+    void clear_weapon(SpawnWeaponBox* sWeaponBox);
 
     /* Renderiza el mapa
      */

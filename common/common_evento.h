@@ -48,16 +48,7 @@ public:
         : id(id), color(color), x(x), y(y), is_flapping(is_flapping), reset(reset) {}
 
     void print() const override {
-        std::ostringstream oss;
-        oss << "{ \"type\": \"EventoMovimiento\", "
-            << "\"id\": " << id << ", "
-            << "\"color\": " << static_cast<int>(color) << ", "
-            << "\"x\": " << x << ", "
-            << "\"y\": " << y << ", "
-            << "\"is_flapping\": " << (is_flapping ? "true" : "false") << ", "
-            << "\"reset\": " << (reset ? "true" : "false")
-            << " }";
-        std::cout << oss.str() << std::endl;
+        
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoMovimiento; }  
@@ -267,12 +258,7 @@ public:
     EventoBala(float x, float y) : x(x), y(y) {}
 
     void print() const override {
-        std::ostringstream oss;
-        oss << "{ \"type\": \"EventoBala\", "
-            << "\"x\": " << x << ", "
-            << "\"y\": " << y
-            << " }";
-        std::cout << oss.str() << std::endl;
+        
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoBala; }
@@ -308,7 +294,7 @@ public:
 
     void print() const override {
         std::ostringstream oss;
-        oss << "{ \"type\": \"EventoSpawnArma\", "
+        oss << "{ \"type\": \"EventoSpawnArmaBox\", "
             << "\"x\": " << x << ", "
             << "\"y\": " << y << ", "
             << "\"weapon_type\": " << static_cast<int>(weapon_type)
