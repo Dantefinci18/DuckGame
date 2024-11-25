@@ -87,6 +87,10 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
         return serializar_win_round(evento);
     }
 
+    if (evento.get_tipo() == Evento::TipoEvento::EventoWinMatch) {
+        return serializar_win_round(evento);
+    }
+
     return std::vector<uint8_t>();
 }
 

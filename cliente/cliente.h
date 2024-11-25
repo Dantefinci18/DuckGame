@@ -39,6 +39,7 @@ private:
     std::unordered_map<int, std::unique_ptr<Enemigo>> enemigos;
     std::vector<Collidable*> collidables;
     std::unique_ptr<SdlFullscreenMessage> win_message;
+    bool should_end;
 
     /*
      * Funcion que ejecuta el juego
@@ -100,15 +101,19 @@ private:
     void controlar_eventos_del_teclado(ComandoAccion* tecla_anterior);
 
     /*
-     * Funcion que procesa un color
-     * Recibe un color
-     */
-    std::string procesar_color(ColorDuck color);
-
-    /*
      * Funcion que procesa el evento de que alguien gano una ronda.
      */
     void handle_win_screen(const EventoWinRound& evento);
+
+    /*
+     * Funcion que procesa el evento de que alguien gano la partida.
+     */
+    void handle_win_match_screen(const EventoWinMatch& evento);
+
+    /*
+     * Funcion que dada un mapa de IDs y rondas ganadas devuelve un mapa con el color como clave y las rondas ganadas como value.
+     */
+    std::unordered_map<ColorDuck, int> get_colors(std::unordered_map<int,int> players_rounds);
     /*
      * Funcion que para el cliente
      */

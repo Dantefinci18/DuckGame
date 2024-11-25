@@ -21,6 +21,9 @@ class Leaderboard {
     */
     int get_match_winner();
 
+    /* Adds a player to the leaderboard (used in gameloop when is waiting for players to join)*/
+    void add_player_id(int id);
+
     //Leaderboard();
 
     //explicit Leaderboard(int round, int set_of_rounds, std::unordered_map<int,int> player_rounds_won);

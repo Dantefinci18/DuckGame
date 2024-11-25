@@ -8,6 +8,9 @@ void Leaderboard::win_round(int player_id) {
     player_rounds_won[player_id] = player_rounds_won[player_id] + 1;
 }
 
+void Leaderboard::add_player_id(int id) {
+    player_rounds_won[id] = 0;
+}
 int Leaderboard::get_match_winner() {
     // It is not FINAL round of the set yet.
     if (round % max_rounds != 0) {

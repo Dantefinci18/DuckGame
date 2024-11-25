@@ -1,7 +1,7 @@
 #include "enemigo.h"
 
 
-Enemigo::Enemigo(int id,std::string color,float x, float y, SdlWindow& window) 
+Enemigo::Enemigo(int id, ColorDuck color,float x, float y, SdlWindow& window) 
     : id(id), duck(window,x,y,color) {
 }
 
@@ -33,5 +33,9 @@ void Enemigo::agacharse() {
 
 void Enemigo::levantarse() {
     duck.levantarse();
+}
+
+ColorDuck Enemigo::get_color() {
+    return duck.get_color();
 }
 Enemigo::~Enemigo() {}

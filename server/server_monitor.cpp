@@ -81,6 +81,12 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             evento_ptr = std::make_unique<EventoWinRound>(evento_win_round.id);
             break;
         }
+
+        case Evento::EventoWinMatch: {
+            const EventoWinMatch& evento_win_match = static_cast<const EventoWinMatch&>(evento);
+            evento_ptr = std::make_unique<EventoWinMatch>(evento_win_match.id);
+            break;
+        }
         default:
             std::cout << "Error: Tipo de evento desconocido" << std::endl;
             break;

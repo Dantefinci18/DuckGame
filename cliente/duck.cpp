@@ -9,11 +9,12 @@
 #define ANCHO_IMG_DUCK 32
 #define ALTO_IMG_DUCK 38
 
-Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string color)
-    : movimientos_en_x("../Imagenes/duck_x" + color + ".png", window),
-      movimiento_en_y("../Imagenes/movimiento_y" + color + ".png", window),
+Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial,ColorDuck color)
+    : movimientos_en_x("../Imagenes/duck_x" + procesar_color(color) + ".png", window),
+      movimiento_en_y("../Imagenes/movimiento_y" + procesar_color(color) + ".png", window),
       armas("../Imagenes/guns.png", window),
-      death("../Imagenes/duckDead" + color + ".png", window),
+      death("../Imagenes/duckDead" + procesar_color(color) + ".png", window),
+      color(color),
       quieto(false),                
       weapon(std::nullopt),          
       x_img(0),                     
@@ -174,4 +175,35 @@ void Duck::render_arma(int y_renderizado) {
     Area armaSrcArea(0, 0, 38, 38);
     Area armaDestArea(x_actual + 20, y_renderizado + 25, 38, 38);
     armas.render(armaSrcArea, armaDestArea, flip);
+}
+
+std::string Duck::procesar_color(ColorDuck color){
+    switch (color){
+        case ColorDuck::AZUL:
+            return "_azul";
+        case ColorDuck::ROJO:
+            return "_rojo";
+        case ColorDuck::VERDE:
+            return "_verde";
+        case ColorDuck::AMARILLO:
+            return "_amarillo";
+        case ColorDuck::ROSA:
+            return "_rosa";
+        case ColorDuck::NARANJA:
+            return "_naranja";
+        case ColorDuck::CELESTE:
+            return "_celeste";
+        case ColorDuck::NEGRO:
+            return "_negro";
+        case ColorDuck::BLANCO:
+            return "_blanco";
+        case ColorDuck::MAX_COLOR:
+            return "Max";
+        default:
+            return "";
+    }
+}
+
+ColorDuck Duck::get_color() {
+    return color;
 }

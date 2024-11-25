@@ -23,7 +23,7 @@ void Gameloop::agregar_jugador(Socket& skt) {
 
     jugador->run();
     jugadores[jugador->get_id()] = jugador;
-
+    leaderboard.add_player_id(jugador->get_id());
     cantidad_de_jugadores++;
     color++;
     

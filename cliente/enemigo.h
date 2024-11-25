@@ -13,7 +13,7 @@ public:
     /* 
      * Constructor de la clase Enemigo, recibe un id, un string con el color, un float con la posicion x, un float con la posicion y y una ventana
      */
-    Enemigo(int id,std::string,float x, float y, SdlWindow& window);
+    Enemigo(int id, ColorDuck color,float x, float y, SdlWindow& window);
 
     /* 
      * Funcion que retorna el id del enemigo
@@ -54,6 +54,9 @@ public:
      */
 
     void levantarse();
+
+    /* Funcion que devuelve el color del enemigo*/
+    ColorDuck get_color();
     
     /* 
      * Destructor de la clase Enemigo

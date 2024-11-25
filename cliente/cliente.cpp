@@ -11,14 +11,15 @@
 Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial)
     : id(id),
       window(800,600),
-      duck(window, x_inicial,y_inicial, procesar_color(color)),
+      duck(window, x_inicial,y_inicial, color),
       mapa(std::make_unique<Mapa>(window, "../Imagenes/forest.png", collidables)),
       leaderboard(ClientLeaderboard(window, leaderboard.round, leaderboard.max_rounds, leaderboard.set_of_rounds, leaderboard.player_rounds_won)),
       protocolo(std::move(socket)),
       receiver(protocolo, queue_eventos, conectado),
       sender(protocolo, queue_acciones),
       collidables(collidables),
-      win_message(nullptr) {}
+      win_message(nullptr),
+      should_end(nullptr) {}
 
 void Cliente::start() {
     receiver.start();
@@ -90,6 +91,12 @@ void Cliente::procesar_eventos_recibidos() {
                     handle_win_screen(*evento_win);
                     break;
                 }
+
+                case Evento::EventoWinMatch: {
+                    auto evento_win = static_cast<EventoWinMatch*>(evento_recibido.get());
+                    handle_win_match_screen(*evento_win);
+                    break;
+                }
                 default:
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
@@ -125,12 +132,16 @@ void Cliente::manejar_enemigos(const EventoMovimiento& evento_mov) {
         auto it = enemigos.find(evento_mov.id);
         if (it != enemigos.end()) {
             it->second->mover_a(evento_mov.x, evento_mov.y, evento_mov.is_flapping, evento_mov.reset);
+            //This just sucks, change it
+            leaderboard.set_color(evento_mov.color, evento_mov.id);
         } else {
             enemigos[evento_mov.id] = std::make_unique<Enemigo>(
-                evento_mov.id,procesar_color(evento_mov.color) ,evento_mov.x, evento_mov.y, window);
+                evento_mov.id, evento_mov.color, evento_mov.x, evento_mov.y, window);
+            leaderboard.set_color(evento_mov.color, evento_mov.id);
         }
     } else {
         duck.mover_a(evento_mov.x, evento_mov.y, evento_mov.is_flapping, evento_mov.reset);
+        leaderboard.set_color(evento_mov.color, evento_mov.id);
     }
 }
 
@@ -231,7 +242,7 @@ void Cliente::ejecutar_juego() {
     Uint32 lastRenderTime = SDL_GetTicks();
 
     ComandoAccion tecla_anterior = QUIETO;
-
+    
     while (conectado) {
         Uint32 currentTime = SDL_GetTicks();
 
@@ -239,16 +250,21 @@ void Cliente::ejecutar_juego() {
             lastRenderTime = currentTime;
             
             mapa->render();
-            //leaderboard.render(duck);
+            leaderboard.render();
             
             duck.render();
             if (win_message) {
                 win_message->render();
+               
             }
             for (auto& pair : enemigos) {
                 pair.second->renderizar();  
             }
             window.render();
+             if (should_end) {
+                SDL_Delay(3000);
+                conectado = false;
+            }
         }
 
         procesar_eventos_recibidos();
@@ -258,32 +274,7 @@ void Cliente::ejecutar_juego() {
     }
 }
 
-std::string Cliente::procesar_color(ColorDuck color){
-    switch (color){
-        case ColorDuck::AZUL:
-            return "_azul";
-        case ColorDuck::ROJO:
-            return "_rojo";
-        case ColorDuck::VERDE:
-            return "_verde";
-        case ColorDuck::AMARILLO:
-            return "_amarillo";
-        case ColorDuck::ROSA:
-            return "_rosa";
-        case ColorDuck::NARANJA:
-            return "_naranja";
-        case ColorDuck::CELESTE:
-            return "_celeste";
-        case ColorDuck::NEGRO:
-            return "_negro";
-        case ColorDuck::BLANCO:
-            return "_blanco";
-        case ColorDuck::MAX_COLOR:
-            return "Max";
-        default:
-            return "";
-    }
-}
+
 
 void Cliente::handle_win_screen(const EventoWinRound& evento) {
     win_message = evento.id == id 
@@ -291,6 +282,27 @@ void Cliente::handle_win_screen(const EventoWinRound& evento) {
         : std::make_unique<SdlFullscreenMessage>("Quack quack...\nBetter luck next time!", window);
 }
 
+void Cliente::handle_win_match_screen(const EventoWinMatch& evento) {
+    win_message = evento.id == id 
+        ? std::make_unique<SdlFullscreenMessage>("QUACK! YOU QUACKED THEM ALL!", window) 
+        : std::make_unique<SdlFullscreenMessage>("They quacked you...", window);
+    should_end = true;
+}
+
+std::unordered_map<ColorDuck, int> Cliente::get_colors(std::unordered_map<int,int> players_rounds) {
+    std::unordered_map<ColorDuck, int> colors;
+    for (auto& player : players_rounds) {
+        if (player.first != id) {
+            auto it = enemigos.find(player.first);
+            if (it != enemigos.end()) {
+                colors[it->second->get_color()] = player.second;
+            } 
+        } else {
+            colors[duck.get_color()] = player.second;
+        }
+    }
+    return colors;
+}
 void Cliente::stop() {
     receiver.stop();
     sender.stop();

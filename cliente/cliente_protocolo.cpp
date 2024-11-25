@@ -225,6 +225,16 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             int id_deserializado = serializador.deserializar_id(id);
             return std::make_unique<EventoWinRound>(id_deserializado);
         }
+        case Evento::EventoWinMatch: {
+            uint8_t id[32];
+            socket.recvall(id, sizeof(id), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            int id_deserializado = serializador.deserializar_id(id);
+            return std::make_unique<EventoWinMatch>(id_deserializado);
+        }
         default:
             return nullptr; 
     }

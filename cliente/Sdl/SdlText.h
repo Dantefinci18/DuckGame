@@ -16,7 +16,7 @@ public:
      * Crea un SdlText: recibe un x y un y con el 0,0 abajo a la izquierda de la ventana
      **/
     explicit SdlText(const std::string& text, const SdlWindow& window, 
-        const int text_height, const int text_width, int x, int y);
+        const int text_height, const int text_width, int x, int y, SDL_Color colorText);
     /**
      * Libera la memoria reservada por la textura
      **/
@@ -27,11 +27,13 @@ public:
     void render() const;
 
     void set_text(std::string text);
-
+    void set_color(SDL_Color color);
+    
 private:
     std::string text;           // The message text
     SDL_Renderer* renderer;     // The renderer for the SDL window
     SDL_Texture* texture;       // The texture for the rendered text
+    SDL_Color color;
     int textWidth;              // The width of the text texture
     int textHeight;             // The height of the text texture
     int windowWidth;

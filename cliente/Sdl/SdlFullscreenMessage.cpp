@@ -56,10 +56,6 @@ void SdlFullscreenMessage::render() const {
         return; // Nothing to render
     }
 
-    // Get window dimensions (use hardcoded values or get them dynamically)
-    int windowWidth = 800;
-    int windowHeight = 600;
-
     // Render a semi-transparent black rectangle over the entire window
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128); // Black with 50% transparency

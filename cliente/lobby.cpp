@@ -112,7 +112,7 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
                 Collidable* collidable = serializador.deserializar_collidable(collidable_data);
                 collidables.push_back(collidable);
             }
-            
+
             uint8_t basic_leaderboard_fields[64];
             socket.recvall(basic_leaderboard_fields, sizeof(basic_leaderboard_fields), &was_closed);
             if (was_closed) {
