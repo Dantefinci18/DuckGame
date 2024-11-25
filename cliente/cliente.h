@@ -4,10 +4,12 @@
 #include "cliente_sender.h"
 #include "cliente_receiver.h"
 #include "cliente_protocolo.h"
+#include "cliente_leaderboard.h"
 #include "duck.h"
 #include "mapa.h"
 #include "enemigo.h" 
 #include "Sdl/SdlWindow.h"
+#include "Sdl/SdlFullscreenMessage.h"
 #include <atomic>
 #include "../common/common_queue.h"
 #include "../common/common_evento.h"
@@ -15,6 +17,7 @@
 #include "../common/common_socket.h"
 #include "../common/common_color.h"
 #include "../server/Collidable.h"
+#include "../server/server_leaderboard.h"
 #include <SDL2/SDL.h>
 #include <unordered_map>
 #include <memory>  
@@ -25,7 +28,8 @@ private:
     int id;
     SdlWindow window;
     Duck duck;
-    Mapa mapa;
+    std::unique_ptr<Mapa> mapa;
+    ClientLeaderboard leaderboard;
     ClienteProtocolo protocolo;
     ClienteReceiver receiver;
     ClienteSender sender;
@@ -34,6 +38,8 @@ private:
     std::atomic<bool> conectado {true};
     std::unordered_map<int, std::unique_ptr<Enemigo>> enemigos;
     std::vector<Collidable*> collidables;
+    std::unique_ptr<SdlFullscreenMessage> win_message;
+    bool should_end;
 
     /*
      * Funcion que ejecuta el juego
@@ -115,11 +121,19 @@ private:
     void controlar_eventos_del_teclado(ComandoAccion* tecla_anterior);
 
     /*
-     * Funcion que procesa un color
-     * Recibe un color
+     * Funcion que procesa el evento de que alguien gano una ronda.
      */
-    std::string procesar_color(ColorDuck color);
+    void handle_win_screen(const EventoWinRound& evento);
 
+    /*
+     * Funcion que procesa el evento de que alguien gano la partida.
+     */
+    void handle_win_match_screen(const EventoWinMatch& evento);
+
+    /*
+     * Funcion que dada un mapa de IDs y rondas ganadas devuelve un mapa con el color como clave y las rondas ganadas como value.
+     */
+    std::unordered_map<ColorDuck, int> get_colors(std::unordered_map<int,int> players_rounds);
     /*
      * Funcion que para el cliente
      */
@@ -135,7 +149,7 @@ public:
     /*
      * Constructor de la clase Cliente, recibe un id, un color, un socket, un vector de collidables, un float con la posicion x inicial y un float con la posicion y inicial
      */
-    explicit Cliente(int id,ColorDuck color,Socket&& socket,std::vector<Collidable*> collidables, float x_inicial, float y_inicial);
+    explicit Cliente(int id,ColorDuck color,Socket&& socket,std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial);
     
     /*
      * Funcion que inicia el cliente

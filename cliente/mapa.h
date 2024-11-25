@@ -22,6 +22,16 @@ public:
      * Constructor de la clase Mapa, recibe una ventanam, la ruta del fondo y un vector de collidables
      */
     Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collidable*> collidables);
+
+     ~Mapa() = default;
+
+    // Disable copying
+    Mapa(const Mapa&) = delete;
+    Mapa& operator=(const Mapa&) = delete;
+
+    // Enable moving
+    Mapa(Mapa&& other) noexcept;
+    Mapa& operator=(Mapa&& other) noexcept;
     
     /*
      * Funcion que agrega un collidable al mapa
