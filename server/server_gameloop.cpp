@@ -5,7 +5,7 @@
 
 
 Gameloop::Gameloop(Socket& skt,unsigned int capacidad_minima): 
-    capacidad_minima(capacidad_minima), mapa(1), color(0){
+    capacidad_minima(capacidad_minima), mapa(std::make_unique<Mapa>(1)), color(0), ticks_round_win_screen(60), should_reset_round(false), leaderboard(){
         agregar_jugador(skt);
         this->start();
     }
@@ -23,20 +23,19 @@ void Gameloop::agregar_jugador(Socket& skt) {
 
     jugador->run();
     jugadores[jugador->get_id()] = jugador;
-
+    leaderboard.add_player_id(jugador->get_id());
     cantidad_de_jugadores++;
     color++;
     
     if(cantidad_de_jugadores == capacidad_minima){
         estado = COMENZADA;
-        EventoMapa eventoMapa(mapa.getCollidables());
+        EventoMapa eventoMapa(mapa->getCollidables(), leaderboard);
         monitor.enviar_evento(eventoMapa);
     
     }else{
         monitor.enviar_evento(EventoEspera());
     }
-
-    }
+}
 
 
     
@@ -176,7 +175,70 @@ void Gameloop::cargar_acciones() {
         tried = comandos_acciones.try_pop(accion);
     }
     
-    procesar_acciones(acciones, mapa.getCollidables());
+    if (should_reset_round) {
+        --ticks_round_win_screen;
+        if (ticks_round_win_screen == 0) {
+            std::cout << "reseting!" << std::endl;
+            //TODO: Cambiar para elegir un mapa random.
+            mapa = std::make_unique<Mapa>(3);
+            ticks_round_win_screen = 60;
+            should_reset_round = false;
+            EventoMapa eventoMapa(mapa->getCollidables(), leaderboard);
+            monitor.enviar_evento(eventoMapa);
+            
+        }
+        return;
+    }
+    
+    Jugador* winner = get_winner();
+    if (winner) {
+        handle_winner(winner);
+        return;
+    }
+    procesar_acciones(acciones, mapa->getCollidables());
+}
+
+void Gameloop::reset_jugadores() { 
+    for (auto& player : jugadores) {
+        player.second->get_fisicas()->reset();
+        for (auto& evento : player.second->get_fisicas()->eventos) {
+            monitor.enviar_evento(*evento);
+        }
+        player.second->get_fisicas()->eventos.clear();
+    }
+}
+
+Jugador* Gameloop::get_winner() {
+    Jugador* winner = nullptr;
+    int alive_count = 0;
+
+    for (auto& pair : jugadores) {
+        Player* player = pair.second->get_fisicas();
+        if (!player->is_duck_dead()) {
+            ++alive_count;
+            if (alive_count > 1) {
+                return nullptr; // More than one player alive, no winner yet.
+            }
+            winner = pair.second;
+        }
+    }
+    return (alive_count == 1) ? winner : nullptr;
+}
+
+void Gameloop::handle_winner(Jugador* winner) {
+    should_reset_round = true;
+    leaderboard.win_round(winner->get_id());
+    int match_winner = leaderboard.get_match_winner();
+    if (match_winner != 0) {
+        EventoWinMatch eventoWinMatch(match_winner);
+        monitor.enviar_evento(eventoWinMatch);
+        _keep_running = false;
+        return;
+    }
+    EventoWinRound eventoWinRound(winner->get_id());
+    monitor.enviar_evento(eventoWinRound);
+    reset_jugadores();
+    return;
 }
 
 void Gameloop::sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(50)); }

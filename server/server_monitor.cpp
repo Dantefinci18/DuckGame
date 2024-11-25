@@ -17,13 +17,14 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
     switch (evento.get_tipo()) {
         case Evento::EventoMovimiento: {
             const EventoMovimiento& evento_movimiento = static_cast<const EventoMovimiento&>(evento);
-            evento_ptr = std::make_unique<EventoMovimiento>(evento_movimiento.id,evento_movimiento.color ,evento_movimiento.x, evento_movimiento.y, evento_movimiento.is_flapping);
+            evento_ptr = std::make_unique<EventoMovimiento>(evento_movimiento.id,evento_movimiento.color ,evento_movimiento.x, evento_movimiento.y, evento_movimiento.is_flapping,
+            evento_movimiento.reset);
             break;
         }
         case Evento::EventoMapa: {
             
             const EventoMapa& evento_mapa = static_cast<const EventoMapa&>(evento);
-            evento_ptr = std::make_unique<EventoMapa>(evento_mapa.collidables);
+            evento_ptr = std::make_unique<EventoMapa>(evento_mapa.collidables, evento_mapa.leaderboard);
             break;
         }
 
@@ -35,7 +36,7 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
         }
 
         case Evento::EventoSpawnArma: {
-            
+            std::cout << "spawn_arma" << std::endl;
             const EventoSpawnArma& evento_spawn = static_cast<const EventoSpawnArma&>(evento);
             evento_ptr = std::make_unique<EventoSpawnArma>(evento_spawn.x, evento_spawn.y, evento_spawn.weapon_type);
             break;
@@ -75,6 +76,18 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             break;
         }
 
+        case Evento::EventoWinRound: {
+            const EventoWinRound& evento_win_round = static_cast<const EventoWinRound&>(evento);
+            evento_ptr = std::make_unique<EventoWinRound>(evento_win_round.id);
+            break;
+        }
+
+        case Evento::EventoWinMatch: {
+            const EventoWinMatch& evento_win_match = static_cast<const EventoWinMatch&>(evento);
+            evento_ptr = std::make_unique<EventoWinMatch>(evento_win_match.id);
+            break;
+        }
+    
         case Evento::EventoApuntar: {
             const EventoApuntar& evento_apuntar = static_cast<const EventoApuntar&>(evento);
             evento_ptr = std::make_unique<EventoApuntar>(evento_apuntar.id, evento_apuntar.direccion);

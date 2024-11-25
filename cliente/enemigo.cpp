@@ -1,7 +1,7 @@
 #include "enemigo.h"
 
 
-Enemigo::Enemigo(int id,std::string color,float x, float y, SdlWindow& window) 
+Enemigo::Enemigo(int id, ColorDuck color,float x, float y, SdlWindow& window) 
     : id(id), duck(window,x,y,color) {
 }
 
@@ -10,11 +10,12 @@ int Enemigo::get_id() const {
     return id;
 }
 
-void Enemigo::mover_a(float nueva_x, float nueva_y, bool is_flapping) {
-    duck.mover_a(nueva_x, nueva_y, is_flapping);
+void Enemigo::mover_a(float nueva_x, float nueva_y, bool is_flapping, bool reset) {
+    duck.mover_a(nueva_x, nueva_y, is_flapping, reset);
 }
 
 void Enemigo::renderizar() {
+    //std::cout << "render_enemigo" << std::endl;
     duck.render();
 }
  
@@ -36,5 +37,9 @@ void Enemigo::agacharse() {
 
 void Enemigo::levantarse() {
     duck.levantarse();
+}
+
+ColorDuck Enemigo::get_color() {
+    return duck.get_color();
 }
 Enemigo::~Enemigo() {}

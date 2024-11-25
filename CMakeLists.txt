@@ -48,6 +48,7 @@ target_include_directories(taller_common PUBLIC .)
 # HEY!! TODO XXX: add more dependendies (either for client, server or editor)
 if(TALLER_CLIENT OR TALLER_EDITOR)
     include(FetchContent)
+
     FetchContent_Declare(
         libSDL2pp
         URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
@@ -60,23 +61,33 @@ endif()
 # ---------------
 # Client
 if(TALLER_CLIENT)
-    # HEY!! TODO XXX: Change the name of the executable to the one you like!
-    add_executable(taller_client)
+    find_package(SDL2 REQUIRED)
+    find_package(SDL2_ttf REQUIRED)
+    find_package(SDL2_image REQUIRED)
 
+    set(SDL2_INCLUDE_DIRS "/usr/include/SDL2")
+    set(SDL2_LIBRARIES "-lSDL2")
+
+    set(SDL2_TTF_INCLUDE_DIRS "/usr/include/SDL2")
+    set(SDL2_TTF_LIBRARIES "-lSDL2_ttf")
+
+    set(SDL2_IMAGE_INCLUDE_DIRS "/usr/include/SDL2")
+    set(SDL2_IMAGE_LIBRARIES "-lSDL2_image")
+    add_executable(taller_client)
+    
     # Make them depend on taller_common lib
     add_dependencies(taller_client taller_common SDL2pp::SDL2pp)
 
     # Add source files and enable warnings
-    # HEY!! TODO XXX: add more subfolders here
     add_subdirectory(cliente)
 
     set_project_warnings(taller_client ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
     # add libSDL2pp's headers
-    target_include_directories(taller_client PRIVATE ${libSDL2pp_SOURCE_DIR})
+    target_include_directories(taller_client PRIVATE ${libSDL2pp_SOURCE_DIR} ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
 
     # Link the taller_common lib target
-    target_link_libraries(taller_client taller_common sdldemo SDL2 SDL2_image)
+    target_link_libraries(taller_client taller_common sdldemo ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
 
     # Qt5 configuration for client
     find_package(Qt5 REQUIRED COMPONENTS Widgets)

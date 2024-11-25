@@ -8,6 +8,7 @@
 #include "Sdl/SdlWindow.h"
 #include "../server/Collidable.h"
 #include "../common/common_weapon.h"
+#include "../common/common_color.h"
 #include "../common/common_direcciones.h"
 
 class Duck {
@@ -15,7 +16,7 @@ public:
     /*
      * Constructor de la clase Duck, recibe una ventana, un float con la posicion x inicial, un float con la posicion y inicial y un string con el color
      */
-    Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string color);
+    Duck(SdlWindow& window, float x_inicial, float y_inicial, ColorDuck color);
 
     /* 
      * Funcion que setea la bala del pato
@@ -39,9 +40,10 @@ public:
     /* 
      * Funcion que mueve al pato a una posicion x y y
      * Recibe un float con la nueva posicion x y un float con la nueva posicion y.
-     * Tambien recibe si en esta nueva posicion el pato esta aleteando
+     * Recibe si en esta nueva posicion el pato esta aleteando
+     * Recibe un booleano para saber si resetear la textura del pato.
      */ 
-    void mover_a(float nueva_x, float nueva_y, bool is_flapping);
+    void mover_a(float nueva_x, float nueva_y, bool is_flapping, bool reset);
 
     /*
      * Funcion que debe recibir una direccion valida 
@@ -69,6 +71,9 @@ public:
      * Funcion que mata al pato
      */
     void kill();
+
+    /* Devuelve el color del pato */
+    ColorDuck get_color();
 
     /* 
      * Destructor de la clase Duck
@@ -104,10 +109,16 @@ private:
      */
     void render_arma(int y_renderizado);
 
+    /* Dado un color devuelve un string */
+    std::string procesar_color(ColorDuck color);
+
+    
+
     SdlTexture movimientos_en_x;
     SdlTexture movimiento_en_y;
     SdlTexture armas;
     SdlTexture death;
+    ColorDuck color;
     SdlTexture bala;
     bool quieto;
     std::optional<WeaponType> weapon;
@@ -124,6 +135,7 @@ private:
     bool esta_disparando;
     bool is_flapping;
     bool esta_agachado;
+    bool reset;
     SDL_RendererFlip flip;
 
 };

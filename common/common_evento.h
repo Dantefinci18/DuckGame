@@ -5,6 +5,7 @@
 #include <cstdint>
 #include "common_weapon.h" 
 #include "../server/Collidable.h"
+#include "../server/server_leaderboard.h"
 #include "../common/common_color.h"
 #include "../common/common_direcciones.h"
 class Evento {
@@ -20,6 +21,8 @@ public:
         EventoApuntar,
         EventoAgacharse,
         EventoLevantarse,
+        EventoWinRound,
+        EventoWinMatch,
         EventoBala
     };
 
@@ -35,8 +38,9 @@ public:
     float x;
     float y;
     bool is_flapping;
+    bool reset;
 
-    EventoMovimiento(int id,ColorDuck color,float x, float y, bool is_flapping) : id(id),color(color), x(x), y(y), is_flapping(is_flapping) {}
+    EventoMovimiento(int id,ColorDuck color,float x, float y, bool is_flapping, bool reset) : id(id),color(color), x(x), y(y), is_flapping(is_flapping), reset(reset) {}
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoMovimiento\", "
@@ -44,7 +48,8 @@ public:
             << "\"color\": " << static_cast<int>(color) << ", "
             << "\"x\": " << x << ", "
             << "\"y\": " << y << ", "
-            << "\"is_flapping\": " << (is_flapping ? "true" : "false")
+            << "\"is_flapping\": " << (is_flapping ? "true" : "false") << ", "
+            << "\"reset\": " << (reset ? "true" : "false")
             << " }";
         std::cout << oss.str() << std::endl;
     }
@@ -55,14 +60,16 @@ public:
 class EventoMapa : public Evento {
 public:
     std::vector<Collidable*> collidables;
+    Leaderboard leaderboard;
 
-    EventoMapa(const std::vector<Collidable*>& collidables)
-        : collidables(collidables) {}
+    EventoMapa(const std::vector<Collidable*>& collidables, Leaderboard leaderboard)
+        : collidables(collidables), leaderboard(leaderboard) {}
 
     void print() const override {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoMapa\", "
-            << "\"collidables_count\": " << collidables.size()
+            << "\"collidables_count\": " << collidables.size() << ", "
+            << "\"leaderboard\": " << leaderboard.to_json()
             << " }";
         std::cout << oss.str() << std::endl;
     }
@@ -194,6 +201,34 @@ public:
         std::cout << oss.str() << std::endl;
     }
     TipoEvento get_tipo() const override { return TipoEvento::EventoLevantarse; } 
+};
+
+class EventoWinRound : public Evento {
+public:
+    int id;
+    EventoWinRound(int id) : id(id) {}
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoWinRound\", "
+            << "\"id\": " << id
+            << " }";
+        std::cout << oss.str() << std::endl;
+    }
+    TipoEvento get_tipo() const override { return TipoEvento::EventoWinRound; } 
+};
+
+class EventoWinMatch : public Evento {
+public:
+    int id;
+    EventoWinMatch(int id) : id(id) {}
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoWinMatch\", "
+            << "\"id\": " << id
+            << " }";
+        std::cout << oss.str() << std::endl;
+    }
+    TipoEvento get_tipo() const override { return TipoEvento::EventoWinMatch; } 
 };
 
 class EventoBala : public Evento {

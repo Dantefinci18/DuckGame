@@ -6,13 +6,14 @@
 #include <cstdint>
 #include <memory>
 #include <bitset>
-
+#include <tuple>
 #include "../common/common_accion.h"
 #include "../common/common_evento.h"
 #include "../server/Collidable.h"
 #include "../server/Platform.h"
 #include "../server/Player.h"
 #include "../server/SpawnPlace.h"
+#include "../server/server_leaderboard.h"
 #include "common_partida.h"
 
 class Serializador {
@@ -38,9 +39,10 @@ public:
     std::vector<uint8_t> serializar_espera(const Evento::TipoEvento& evento);
     std::vector<uint8_t> serializar_agacharse(const Evento& evento);
     std::vector<uint8_t> serializar_levantarse(const Evento& evento);
+    std::vector<uint8_t> serializar_win_round(const Evento& evento);
     std::vector<uint8_t> serializar_bala(const Evento& evento);
 
-    std::unique_ptr<Evento> deserializar_movimiento(const uint8_t* id_data,const uint8_t* ,const uint8_t* x_data, const uint8_t* y_data, char is_flapping);
+    std::unique_ptr<Evento> deserializar_movimiento(const uint8_t* id_data,const uint8_t* ,const uint8_t* x_data, const uint8_t* y_data, char is_flapping, char reset);
     std::unique_ptr<Evento> deserializar_pickup(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
     std::unique_ptr<Evento> deserializar_spawn_arma(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
     std::unique_ptr<Evento> deserializar_disparo(const uint8_t* id_data);
@@ -61,6 +63,7 @@ public:
 
     
     Collidable* deserializar_collidable(const uint8_t* collidable_data);
+    std::tuple<int, int> deserializar_tuple64(const uint8_t* tuple_data);
 
 };
 #endif //COMMON_SERIALIZADOR_H
