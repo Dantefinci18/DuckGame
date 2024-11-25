@@ -77,9 +77,9 @@ void Mapa::renderizar_mapa() {
             SpawnPlace* spawnPlace = static_cast<SpawnPlace*>(collidable);
             if (spawnPlace->has_weapon()) {
                 float plat_x = spawnPlace->position.x;  
-                float plat_y = ALTO_VENTANA - spawnPlace->position.y - spawnPlace->height * FACTOR_ESCALA; 
-                float plat_width = spawnPlace->width * FACTOR_ESCALA;   
-                float plat_height = spawnPlace->height * FACTOR_ESCALA; 
+                float plat_y = ALTO_VENTANA - spawnPlace->position.y - spawnPlace->height * FACTOR_ESCALA_ARMA; 
+                float plat_width = spawnPlace->width * FACTOR_ESCALA_ARMA;   
+                float plat_height = spawnPlace->height * FACTOR_ESCALA_ARMA; 
 
                 Area armaSrcArea(0, 0, 38, 38);  
                 Area armaDestArea(plat_x, plat_y, plat_width, plat_height); 
@@ -104,9 +104,9 @@ void Mapa::renderizar_mapa() {
             SpawnWeaponBox* spawnWeaponBox = static_cast<SpawnWeaponBox*>(collidable);
 
             float plat_x = spawnWeaponBox->position.x;
-            float plat_y = ALTO_VENTANA - spawnWeaponBox->position.y - spawnWeaponBox->height * FACTOR_ESCALA;
-            float plat_width = spawnWeaponBox->width * FACTOR_ESCALA;
-            float plat_height = spawnWeaponBox->height * FACTOR_ESCALA;
+            float plat_y = ALTO_VENTANA - spawnWeaponBox->position.y - spawnWeaponBox->height * FACTOR_ESCALA_ARMA;
+            float plat_width = spawnWeaponBox->width * FACTOR_ESCALA_ARMA;
+            float plat_height = spawnWeaponBox->height * FACTOR_ESCALA_ARMA;
 
             Area armaSrcArea(0, 0, 38, 38);
             Area armaDestArea(plat_x, plat_y, plat_width, plat_height);
