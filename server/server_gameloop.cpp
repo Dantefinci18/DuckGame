@@ -39,22 +39,23 @@ void Gameloop::agregar_jugador(Socket& skt) {
 
 
     
-void Gameloop::eliminar_jugador(std::unordered_map<int, Jugador*>::iterator it){
+void Gameloop::eliminar_jugador(std::unordered_map<int, Jugador*>::iterator it) {
    it->second->stop();
-   delete it->second;
+   delete it->second; 
    cantidad_de_jugadores--;
 }
 
-void Gameloop::eliminar_desconectados(){
+void Gameloop::eliminar_desconectados() {
     std::lock_guard<std::mutex> lock(mtx);
 
     for (auto it = jugadores.begin(); it != jugadores.end();) {        
         if (!it->second->esta_conectado()) {
-            eliminar_jugador(it);
-            it = jugadores.erase(it);
-        
+            it->second->stop();        
+            delete it->second;          
+            it = jugadores.erase(it);  
+            cantidad_de_jugadores--;    
         } else {
-            ++it;
+            ++it;  
         }
     }
 }
@@ -110,20 +111,18 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             player->set_x_direction(0.0f);
         
         } else if (command == DISPARAR){
-            std::vector<std::shared_ptr<Evento>> eventos;
             if(player->has_weapon()){
-                DisparoManager::procesar_disparo(*player, collidables, jugadores);
+                DisparoManager::procesar_disparo(*player, collidables, jugadores,balas);
             }
-            /*
-            for (const auto& evento : eventos) {
-                std::cout << "manda un evento" <<std::endl;
-                broadcast_evento(*evento);
-            }*/
         } else if (command == DEJAR_DISPARAR){
             std::cout << "Dejo de disparar" << std::endl;
             player->dejar_disparar();
         } else if (command == RECARGAR){
             player->reload();
+        } else if (command == APUNTAR_ARRIBA){
+            player->apuntar_arriba();
+        } else if (command == DEJAR_APUNTAR_ARRIBA){
+            player->dejar_apuntar_arriba();
         } else if (command == AGACHARSE){
             player->agacharse();
         } else if (command == LEVANTARSE){
@@ -146,6 +145,15 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
     }
 
     std::lock_guard<std::mutex> lock(mtx);
+
+    for (auto& bala : balas) {
+        while (bala.actualizar(0.3f)) {
+            std::cout << "bala actualizada" << std::endl;
+            std::cout << "bala x: " << bala.getX() << " bala y: " << bala.getY() << std::endl;
+            EventoBala eventoBala(bala.getX(), bala.getY());
+            monitor.enviar_evento(eventoBala);
+        }
+    }
 
     for (auto& player : jugadores) {
         player.second->update_fisicas(collidables);
