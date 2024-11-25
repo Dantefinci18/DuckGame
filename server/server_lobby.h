@@ -11,7 +11,7 @@
 class ServerLobby : public Thread {
     private:
         std::list<Gameloop*> partidas;
-        Queue<std::tuple<int,ComandoPartida>> cola_comando_partidas;
+        Queue<std::tuple<int,std::unique_ptr<ComandoPartida>>> cola_comando_partidas;
         std::unordered_map<int, JugadorEsperando*> jugadores_esperando;
         std::mutex mtx;
 

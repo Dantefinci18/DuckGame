@@ -9,7 +9,6 @@
 #include <QDialog>
 #include <QVBoxLayout> 
 #include <QTextEdit>
-#include "../lobby.h"
 #include <string>  
 
 class VentanaNuevaPartida: public QMainWindow {

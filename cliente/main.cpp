@@ -79,7 +79,9 @@ int main(int argc, char* argv[]) {
         const std::string& nombre, const std::string& mapaSeleccionado, const unsigned int cantidad_de_jugadores) {
             
             ComandoNuevaPartida nueva_partida(nombre,cantidad_de_jugadores);
-            protocolo.enviar_comando_partida(nueva_partida);
+            if(protocolo.enviar_comando_partida(nueva_partida)){
+                QApplication::quit;
+            }
             ventanaNuevaPartida.hide();
             ventanaEsperando.show();
     });

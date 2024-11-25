@@ -13,14 +13,46 @@ std::vector<uint8_t> Serializador::serializar_enum(std::bitset<8> bits){
     return buffer;
 }
 
+
+
 std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
     std::bitset<8> bits(accion);  
     return serializar_enum(bits);
 }
 
-std::vector<uint8_t> Serializador::serializar_partida(ComandoPartida &partida){
-    std::bitset<8> bits(partida);  
-    return serializar_enum(bits);
+std::vector<uint8_t> Serializador::serializar_tipo_comando_partida(ComandoPartida &partida){
+
+    std::vector<uint8_t> buffer(8);  
+    uint8_t tipo = static_cast<uint8_t>(partida.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        buffer[i] = (tipo >> (7 - i)) & 1;
+    }
+
+    return buffer;
+}
+
+std::vector<uint8_t> Serializador::serializar_string(const std::string& string){
+    std::vector<uint8_t> str_bits(string.begin(),string.end());
+    return str_bits;
+}
+
+std::vector<uint8_t> Serializador::serializar_numero_natural(unsigned int numero){
+    std::vector<uint8_t> binary_bits;
+
+    uint32_t numero_bits = static_cast<uint32_t>(numero);
+    for (int i = 0; i < 32; ++i) {
+        binary_bits.push_back((numero_bits >> (31 - i)) & 1);
+    }
+
+    return binary_bits;
+}
+
+ComandoPartida::TipoComandoPartida Serializador::deserializar_tipo_comando_partida(const uint8_t* tipo_partida_data){
+    uint8_t tipo_partida_bits = 0;
+    for (int i = 0; i < 8; ++i) {
+        tipo_partida_bits |= (tipo_partida_data[i] << (7 - i));  
+    }
+    return static_cast<ComandoPartida::TipoComandoPartida>(tipo_partida_bits);
 }
 
 uint8_t Serializador::deserializar_enum(const uint8_t* data){
@@ -37,11 +69,6 @@ uint8_t Serializador::deserializar_enum(const uint8_t* data){
 ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
     ComandoAccion accion = static_cast<ComandoAccion>(deserializar_enum(data));
     return accion;
-}
-
-ComandoPartida Serializador::deserializar_partida(const uint8_t* data){
-    ComandoPartida partida = static_cast<ComandoPartida>(deserializar_enum(data));
-    return partida;
 }
 
 std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {

@@ -23,7 +23,12 @@ private:
 public:
 
     std::vector<uint8_t> serializar_accion(ComandoAccion &accion);
-    std::vector<uint8_t> serializar_partida(ComandoPartida &partida);
+
+    std::vector<uint8_t> serializar_tipo_comando_partida(ComandoPartida &partida);
+    std::vector<uint8_t> serializar_string(const std::string& string);
+    std::vector<uint8_t> serializar_numero_natural(unsigned int numero);
+
+    ComandoPartida::TipoComandoPartida deserializar_tipo_comando_partida(const uint8_t* tipo_partida_data);
 
     ComandoAccion deserializar_accion(const uint8_t* data);
     ComandoPartida deserializar_partida(const uint8_t* data);

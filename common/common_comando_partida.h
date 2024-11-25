@@ -28,4 +28,11 @@ class ComandoNuevaPartida : public ComandoPartida{
         }
 };
 
+class ComandoNonePartida : public ComandoPartida{
+    public:
+        TipoComandoPartida get_tipo() const override{
+            return TipoComandoPartida::NONE_PARTIDA;
+        }
+};
+
 #endif

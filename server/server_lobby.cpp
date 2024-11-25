@@ -15,9 +15,9 @@ void ServerLobby::run(){
             int id_jugador = std::get<0>(tupla_partida);
             JugadorEsperando *jugador = jugadores_esperando[id_jugador];
             Socket skt = jugador->get_socket();
-            ComandoPartida partida = std::get<1>(tupla_partida);
+            std::unique_ptr<ComandoPartida> partida = std::move(std::get<1>(tupla_partida));
 
-            if(partida == NONE_PARTIDA){
+            /*if(partida->get_tipo() == ComandoPartida::TipoComandoPartida::NONE_PARTIDA){
                 skt.shutdown(2);
                 skt.close();
                 jugadores_esperando.erase(id_jugador);
@@ -25,7 +25,7 @@ void ServerLobby::run(){
                 jugador->join();
                 delete jugador;
 
-            }else if(partida == NUEVA_PARTIDA){
+            }else if(partida->get_tipo() == ComandoPartida::TipoComandoPartida::NUEVA_PARTIDA){
                 Gameloop *gameloop = new Gameloop(skt,2);
                 partidas.push_back(gameloop);
                 jugadores_esperando.erase(id_jugador);
@@ -33,7 +33,7 @@ void ServerLobby::run(){
                 jugador->join();
                 delete jugador;
             
-            }else if(partida == CARGAR_PARTIDA){
+            }else if(partida->get_tipo() == ComandoPartida::TipoComandoPartida::CARGAR_PARTIDA){
                 Gameloop *gameloop = obtener_partida_en_espera();
                 
                 if(gameloop != nullptr){
@@ -44,7 +44,7 @@ void ServerLobby::run(){
                     delete jugador;
                 }
 
-            }
+            }*/
 
        } catch (std::exception& e) {
             if (_keep_running)

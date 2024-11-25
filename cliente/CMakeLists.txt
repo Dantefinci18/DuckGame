@@ -6,7 +6,6 @@ target_sources(taller_client
     cliente.cpp
     cliente_sender.cpp
     cliente_receiver.cpp
-    lobby.cpp
     enemigo.cpp
     mapa.cpp
     duck.cpp
@@ -18,7 +17,6 @@ target_sources(taller_client
     cliente.h
     cliente_sender.h
     cliente_receiver.h
-    lobby.h
     enemigo.h
     mapa.h
     duck.h
