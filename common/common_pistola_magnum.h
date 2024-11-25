@@ -8,7 +8,7 @@
 
 class PistolaMagnum : public Weapon {
 public:
-    PistolaMagnum() : Weapon(6, WeaponType::PistolaMagnum, 200), retroceso(true) {}
+    PistolaMagnum() : Weapon(6, WeaponType::PistolaMagnum, 200), retroceso(true), dispersion(4.0f) {}
 
     void reload() override {
         ammo = 6;
@@ -52,11 +52,11 @@ public:
 
 private:
     bool retroceso;
-
+    float dispersion;
     float get_random_dispersion() {
         static std::random_device rd; 
         static std::mt19937 generator(rd());
-        static std::uniform_real_distribution<float> distribution(-4.0f, 4.0f); // dispersión
+        static std::uniform_real_distribution<float> distribution(-dispersion, dispersion); // dispersión
         return distribution(generator);
     }
 };
