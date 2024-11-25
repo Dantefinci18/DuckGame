@@ -6,6 +6,7 @@
 #include "../server/Collidable.h"
 #include "../server/Platform.h"
 #include "../server/SpawnPlace.h"
+#include "../server/SpawnWeaponBox.h"
 #include "../server/Box.h"
 
 Mapa::Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collidable*> collidables)
@@ -37,6 +38,10 @@ void Mapa::eliminar_caja(float x, float y) {
     }
     
     
+}
+
+void Mapa::agregar_collidable(Collidable* nuevo_collidable) {
+    collidables_plataformas.push_back(nuevo_collidable);
 }
 
 void Mapa::renderizar_mapa() {
@@ -79,6 +84,20 @@ void Mapa::renderizar_mapa() {
             Area boxSrcArea(0, 0, 28, 28);  
             Area boxDestArea(box_x, box_y, box_width, box_height); 
             boxes.render(boxSrcArea, boxDestArea, SDL_FLIP_NONE);
+        }
+
+        if (collidable->getType() == CollidableType::SpawnWeaponBox) {
+            SpawnWeaponBox* spawnWeaponBox = static_cast<SpawnWeaponBox*>(collidable);
+            //idem SpawnPlace
+
+            float plat_x = spawnWeaponBox->position.x;
+            float plat_y = ALTO_VENTANA - spawnWeaponBox->position.y - spawnWeaponBox->height * FACTOR_ESCALA;
+            float plat_width = spawnWeaponBox->width * FACTOR_ESCALA;
+            float plat_height = spawnWeaponBox->height * FACTOR_ESCALA;
+
+            Area armaSrcArea(0, 0, 38, 38);
+            Area armaDestArea(plat_x, plat_y, plat_width, plat_height);
+            armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
         }
         if (esta_explotando) {
             float box_x = x_expl;

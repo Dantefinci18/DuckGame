@@ -3,6 +3,10 @@
 
 #include "Player.h"
 #include "Collidable.h"
+#include "Platform.h"
+#include "SpawnPlace.h"
+#include "Box.h"
+#include "SpawnWeaponBox.h"
 #include "server_jugador.h"
 #include "bala.h"
 #include "../common/common_evento.h"
@@ -94,11 +98,10 @@ public:
 
                             EventoCajaDestruida evento_caja_destruida(caja_x, caja_y);
                             eventos.push_back(std::make_shared<EventoCajaDestruida>(evento_caja_destruida));
-                            collidables_a_agregar.push_back(new SpawnPlace(Vector(caja_x,caja_y), 20,20));
-                            auto it = std::find(collidables.begin(), collidables.end(), caja_impactada);
-                            if (it != collidables.end()) {
-                                collidables.erase(it);
-                            }
+                            SpawnWeaponBox* recompensa = new SpawnWeaponBox(Vector(caja_x, caja_y), 20, 20);
+                            EventoSpawnArmaBox evento_spawn_arma(caja_x,caja_y,recompensa->get_weapon_type());
+                            eventos.push_back(std::make_shared<EventoSpawnArmaBox>(evento_spawn_arma));
+                            collidables_a_agregar.push_back(recompensa);
                         } else {
                             std::cerr << "Error: dynamic_cast a Box falló." << std::endl;
                         }

@@ -21,7 +21,8 @@ public:
         EventoAgacharse,
         EventoLevantarse,
         EventoBala,
-        EventoCajaDestruida
+        EventoCajaDestruida,
+        EventoSpawnArmaBox
     };
 
     virtual ~Evento() = default;
@@ -222,6 +223,24 @@ class EventoCajaDestruida : public Evento {
         }
         EventoCajaDestruida(float x, float y) : x(x), y(y){}
         TipoEvento get_tipo() const override { return TipoEvento::EventoCajaDestruida; }
+};
+
+class EventoSpawnArmaBox : public Evento {
+    public:
+        float x;
+        float y;
+        WeaponType weapon_type;
+        void print() const override {
+            std::ostringstream oss;
+            oss << "{ \"type\": \"EventoSpawnArmaBox\", "
+                << "\"x\": " << x << ", "
+                << "\"y\": " << y << ", "
+                << "\"weapon_type\": " << static_cast<int>(weapon_type)
+                << " }";
+            std::cout << oss.str() << std::endl;
+        }
+        EventoSpawnArmaBox(float x, float y, WeaponType weapon_type) : x(x), y(y), weapon_type(weapon_type){}
+        TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnArmaBox; }
 };
 
 #endif

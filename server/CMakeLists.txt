@@ -6,6 +6,7 @@ target_sources(taller_server
     Platform.h
     Collidable.h
     SpawnPlace.h
+    SpawnWeaponBox.h
     Box.h
     server_aceptador.h
     server_gameloop.h

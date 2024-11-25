@@ -230,6 +230,19 @@ public:
             }
         }
 
+        if (other.getType() == CollidableType::SpawnWeaponBox) {
+            SpawnPlace& spawnPlace = static_cast<SpawnPlace&>(other);
+            CollidableSide side = getCollisionSide(spawnPlace);
+            if (side == CollidableSide::None) {
+                return false;
+            }
+            std::optional<std::unique_ptr<Weapon>> new_weapon = spawnPlace.get_weapon();
+            if (new_weapon) {
+                weapon = std::move(new_weapon.value());
+                eventos.push_back(std::make_shared<EventoPickup>(id, spawnPlace.position.x, spawnPlace.position.y, weapon->get_type()));
+            }
+        }
+
         return false;
     }
 

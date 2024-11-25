@@ -24,6 +24,12 @@ public:
     Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collidable*> collidables);
     
     /*
+     * Funcion que agrega un collidable al mapa
+     * Recibe un puntero a un collidable
+     */
+    void agregar_collidable(Collidable* nuevo_collidable);
+
+    /*
      * Funcion que elimina una caja
      * Recibe un float con la posicion x y un float con la posicion y
      */

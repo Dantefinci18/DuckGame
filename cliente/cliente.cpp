@@ -3,10 +3,12 @@
 #include "../common/common_evento.h"
 #include "../common/common_queue.h"
 #include "../common/common_weapon_utils.h"
+
 #include "enemigo.h"
 #include <iostream>
 #include <memory>
 #include "../server/Platform.h"  
+#include "../server/SpawnWeaponBox.h"
 
 Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, float x_inicial, float y_inicial)
     : id(id),
@@ -99,6 +101,13 @@ void Cliente::procesar_eventos_recibidos() {
                     eliminar_caja(*evento_caja_destruida);
                     break;
                 }
+
+                case Evento::EventoSpawnArmaBox: {
+                    auto evento_spawn_arma_box = static_cast<EventoSpawnArmaBox*>(evento_recibido.get());
+                    agregar_collidable(*evento_spawn_arma_box);
+
+                    break;
+                }
                 default: {
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
@@ -107,6 +116,10 @@ void Cliente::procesar_eventos_recibidos() {
         }
     }
 }
+
+void Cliente::agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box) {
+    mapa.agregar_collidable(new SpawnWeaponBox(Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 20, 20));
+    }
 
 void Cliente::eliminar_caja(const EventoCajaDestruida& evento_caja_destruida) {
     mapa.eliminar_caja(evento_caja_destruida.x, evento_caja_destruida.y);
