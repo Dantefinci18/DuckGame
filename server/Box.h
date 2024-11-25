@@ -25,6 +25,10 @@ class Box : public Collidable {
     
     }
 
+    Vector get_position() const {
+    return position; 
+}
+
     void print_position() const override {
         std::cout << "Box position" << "(" << position.x << ", " << position.y << ")\n";
     }

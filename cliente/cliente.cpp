@@ -183,6 +183,8 @@ void Cliente::manejar_muerte(const EventoMuerte& evento_muerte) {
 }
 
 void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collidable*> collidables) {
+    
+
     for (auto& collidable : collidables) {
         if (collidable->getType() == CollidableType::SpawnPlace 
             && collidable->position.x == evento_spawn.x
@@ -190,6 +192,8 @@ void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collid
             SpawnPlace* sPlace = static_cast<SpawnPlace*>(collidable);
             sPlace->set_weapon(WeaponUtils::create_weapon(evento_spawn.weapon_type));
         }
+
+
     }
 }
 

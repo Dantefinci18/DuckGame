@@ -8,11 +8,13 @@
 #include "../common/common_evento.h"
 #include <vector>
 #include <memory>
+#include <unordered_map>
 #include <limits>
+#include <iostream>
 
 class DisparoManager {
 public:
-    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores, std::vector<Bala>& balas, std::vector<std::shared_ptr<Evento>>& eventos) {
+    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores, std::vector<Bala>& balas, std::vector<std::shared_ptr<Evento>>& eventos,std::vector<Collidable*>& collidables_a_agregar) {
         
         if (!player.has_weapon()) {
             return;
@@ -35,9 +37,9 @@ public:
 
                         float distancia = (*interseccion - origen).magnitude();
                         if (distancia < menor_distancia) {
-                        menor_distancia = distancia;
-                        primer_impacto = collidable;
-                        punto_impacto = interseccion;
+                            menor_distancia = distancia;
+                            primer_impacto = collidable;
+                            punto_impacto = interseccion;
                         }
                     }  
                 }
@@ -77,17 +79,29 @@ public:
                         std::cout << "Le pegaste a una plataforma en (" 
                         << punto_impacto->x << ", " 
                         << punto_impacto->y << ")" << std::endl;
-
                         // Lógica de rebote o algo similar aquí
                         break;
 
                     case CollidableType::Box: {
-                        std::cout << "Le pegaste a una caja en (" 
-                        << punto_impacto->x << ", " 
-                        << punto_impacto->y << ")" << std::endl;
+                        Box* caja_impactada = dynamic_cast<Box*>(primer_impacto);
+                        if (caja_impactada) {
+                            float caja_x = caja_impactada->get_position().x;
+                            float caja_y = caja_impactada->get_position().y;
 
-                        EventoCajaDestruida evento_caja_destruida(punto_impacto->x, punto_impacto->y);
-                        eventos.push_back(std::make_shared<EventoCajaDestruida>(evento_caja_destruida));
+                            std::cout << "Le pegaste a una caja en (" 
+                                      << caja_x << ", " 
+                                      << caja_y << ")" << std::endl;
+
+                            EventoCajaDestruida evento_caja_destruida(caja_x, caja_y);
+                            eventos.push_back(std::make_shared<EventoCajaDestruida>(evento_caja_destruida));
+                            collidables_a_agregar.push_back(new SpawnPlace(Vector(caja_x,caja_y), 20,20));
+                            auto it = std::find(collidables.begin(), collidables.end(), caja_impactada);
+                            if (it != collidables.end()) {
+                                collidables.erase(it);
+                            }
+                        } else {
+                            std::cerr << "Error: dynamic_cast a Box falló." << std::endl;
+                        }
                         break;
                     }
 
@@ -105,6 +119,5 @@ public:
         }
     }
 };
-
 
 #endif // DISPARO_MANAGER_H

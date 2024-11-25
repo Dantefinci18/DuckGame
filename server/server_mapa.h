@@ -19,6 +19,8 @@ public:
 
     std::vector<Collidable*> getCollidables() const;
 
+    void agregar_collidables(std::vector<Collidable*> nuevos_collidables);
+
     Mapa(const Mapa&) = delete;
     Mapa& operator=(const Mapa&) = delete;
 

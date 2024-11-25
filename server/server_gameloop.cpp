@@ -87,8 +87,9 @@ void Gameloop::run() {
     cerrar_conexiones();
 }
 
-void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables){
+void Gameloop::procesar_acciones(std::vector<Accion> acciones, Mapa& mapa) {
     
+    std::vector<Collidable*> collidables = mapa.getCollidables();
     std::vector<std::shared_ptr<Evento>> eventos;
 
     for (auto& accion : acciones) {
@@ -116,7 +117,9 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         
         } else if (command == DISPARAR){
             if(player->has_weapon()){
-                DisparoManager::procesar_disparo(*player, collidables, jugadores,balas,eventos);
+                std::vector<Collidable*> collidables_a_agregar;
+                DisparoManager::procesar_disparo(*player, collidables, jugadores,balas,eventos,collidables_a_agregar);
+                mapa.agregar_collidables(collidables_a_agregar);
             }
         } else if (command == DEJAR_DISPARAR){
             std::cout << "Dejo de disparar" << std::endl;
@@ -185,7 +188,7 @@ void Gameloop::cargar_acciones() {
         tried = comandos_acciones.try_pop(accion);
     }
     
-    procesar_acciones(acciones, mapa.getCollidables());
+    procesar_acciones(acciones, mapa);
 }
 
 void Gameloop::sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(50)); }

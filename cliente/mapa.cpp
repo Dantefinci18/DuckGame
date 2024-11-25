@@ -21,9 +21,20 @@ Mapa::Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collida
     collidables_plataformas(collidables) {}
 
 void Mapa::eliminar_caja(float x, float y) {
-    x_expl = x;
-    y_expl = y;
-    esta_explotando = true;
+    for (auto& collidable: this->collidables_plataformas){
+        if (collidable->getType() == CollidableType::Box){
+            Box* box = static_cast<Box*>(collidable);
+            if (box->position.x == x && box->position.y == y){
+                auto it = std::find(collidables_plataformas.begin(), collidables_plataformas.end(), collidable);
+                if (it != collidables_plataformas.end()) {
+                    collidables_plataformas.erase(it); 
+                }
+                x_expl = x;
+                y_expl = y;
+                esta_explotando = true;
+            }
+        }
+    }
     
     
 }

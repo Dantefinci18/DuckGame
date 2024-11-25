@@ -36,7 +36,7 @@ private:
 
     void sleep();
     void cargar_acciones();
-    void procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables);
+    void procesar_acciones(std::vector<Accion> acciones, Mapa &mapa);
     void eliminar_jugador(std::unordered_map<int, Jugador*>::iterator it);
     void eliminar_desconectados();
 
