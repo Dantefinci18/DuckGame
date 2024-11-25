@@ -25,32 +25,42 @@ public:
         }
 
         auto destinos = player.disparar();
-
         Vector origen = player.get_posicion() + Vector(0, 15);
 
         for (const auto& destino : destinos) {
             Collidable* primer_impacto = nullptr;
             std::optional<Vector> punto_impacto = std::nullopt;
             float menor_distancia = std::numeric_limits<float>::max();
-            Vector punto_final = destino; 
+            Vector punto_final = destino;
 
             for (auto& collidable : collidables) {
-                if (collidable->getType() != CollidableType::SpawnPlace) {
+                if (collidable->getType() != CollidableType::SpawnPlace && collidable->getType() != CollidableType::SpawnWeaponBox) {
                     auto interseccion = collidable->intersection_point(origen, destino + Vector(0, 15)); 
                     if (interseccion) {
                         float distancia = (*interseccion - origen).magnitude();
+
+                        if (collidable->getType() == CollidableType::Box) {
+                            Box* caja = dynamic_cast<Box*>(collidable);
+                            if (caja && !caja->esta_activa()) {
+                                continue;
+                            }
+                        }
+
                         if (distancia < menor_distancia) {
                             menor_distancia = distancia;
                             primer_impacto = collidable;
                             punto_impacto = interseccion;
-                            punto_final = *interseccion; 
+                            punto_final = *interseccion;
                         }
                     }
                 }
             }
 
             for (auto& jugador : jugadores) {
-                if (jugador.second->get_fisicas() != &player && !jugador.second->get_fisicas()->is_duck_dead() && !jugador.second->get_fisicas()->is_agachado()) {
+                if (jugador.second->get_fisicas() != &player && 
+                    !jugador.second->get_fisicas()->is_duck_dead() && 
+                    !jugador.second->get_fisicas()->is_agachado()) {
+
                     auto interseccion = jugador.second->get_fisicas()->intersection_point(origen, destino);
                     if (interseccion) {
                         float distancia = (*interseccion - origen).magnitude();
@@ -58,7 +68,7 @@ public:
                             menor_distancia = distancia;
                             primer_impacto = jugador.second->get_fisicas();
                             punto_impacto = interseccion;
-                            punto_final = *interseccion; 
+                            punto_final = *interseccion;
                         }
                     }
                 }
@@ -83,8 +93,8 @@ public:
 
                     case CollidableType::Platform:
                         std::cout << "Le pegaste a una plataforma en (" 
-                        << punto_impacto->x << ", " 
-                        << punto_impacto->y << ")" << std::endl;
+                                  << punto_impacto->x << ", " 
+                                  << punto_impacto->y << ")" << std::endl;
                         break;
 
                     case CollidableType::Box: {
@@ -100,7 +110,7 @@ public:
                             EventoCajaDestruida evento_caja_destruida(caja_x, caja_y);
                             eventos.push_back(std::make_shared<EventoCajaDestruida>(evento_caja_destruida));
                             SpawnWeaponBox* recompensa = new SpawnWeaponBox(Vector(caja_x, caja_y), 20, 20);
-                            EventoSpawnArmaBox evento_spawn_arma(caja_x,caja_y,recompensa->get_weapon_type());
+                            EventoSpawnArmaBox evento_spawn_arma(caja_x, caja_y, recompensa->get_weapon_type());
                             eventos.push_back(std::make_shared<EventoSpawnArmaBox>(evento_spawn_arma));
                             collidables_a_agregar.push_back(recompensa);
                         } else {
@@ -111,14 +121,14 @@ public:
 
                     default:
                         std::cout << "Impacto desconocido en (" 
-                        << punto_impacto->x << ", " 
-                        << punto_impacto->y << ")" << std::endl;
+                                  << punto_impacto->x << ", " 
+                                  << punto_impacto->y << ")" << std::endl;
                         break;
                 }
                 break; 
             } else {
                 std::cout << "No hubo impacto en la dirección (" 
-                          << destino.x << ", " << destino.y + 1 << ")" << std::endl; // ARREGLO PARA LEVANTAR LA LINEA DE TIRO
+                          << destino.x << ", " << destino.y + 1 << ")" << std::endl;
             }
         }
     }
