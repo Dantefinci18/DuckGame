@@ -101,6 +101,19 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
     
         }
 
+        case Evento::EventoApuntar: {
+            const EventoApuntar& evento_apuntar = static_cast<const EventoApuntar&>(evento);
+            evento_ptr = std::make_unique<EventoApuntar>(evento_apuntar.id, evento_apuntar.direccion);
+            break;
+        }
+
+        case Evento::EventoBala: {
+            const EventoBala& evento_bala = static_cast<const EventoBala&>(evento);
+            evento_ptr = std::make_unique<EventoBala>(evento_bala.x, evento_bala.y);
+            break;
+    
+        }
+
         default: {
             std::cerr << "Error: Tipo de evento desconocido" << std::endl;
             break;

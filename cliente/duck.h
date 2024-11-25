@@ -28,6 +28,15 @@ public:
     void render_bala();
 
     /* 
+     * Funcion que setea la bala del pato
+     * Recibe un float con la posicion x y un float con la posicion y
+     */
+    void setear_bala(float x, float y);
+    
+
+    void render_bala();
+
+    /* 
      * Funcion que renderiza al pato
      */
     void render();
@@ -44,6 +53,11 @@ public:
      * Recibe un booleano para saber si resetear la textura del pato.
      */ 
     void mover_a(float nueva_x, float nueva_y, bool is_flapping, bool reset);
+
+    /*
+     * Funcion que debe recibir una direccion valida 
+     */
+    void apuntar_arma(DireccionApuntada direccion);
 
     /*
      * Funcion que debe recibir una direccion valida 
