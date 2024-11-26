@@ -213,8 +213,32 @@ void Duck::render_movimiento_salto(Area& srcArea, Area& destArea) {
 }
 
 void Duck::render_arma(int y_renderizado) {
-    int arma_index = static_cast<int>(weapon.value());
-    Area armaSrcArea(arma_index * 38, 0, 38, 38);
+    int arma_index = 0;
+    int cuadrado = 38;
+    switch (weapon.value()){
+        case WeaponType::PistolaCowboy:
+            arma_index = 0;
+            break;
+        case WeaponType::PistolaMagnum:
+            arma_index = 1;
+            break;
+        case WeaponType::PistolaDuelos:
+            arma_index = 2;
+            break;
+        case WeaponType::RifleAK47:
+            arma_index = 3;
+            break;
+        case WeaponType::None:
+            std::cout << "\033[41;37mSPAWNEO NADA\033[0m" << std::endl;
+            arma_index = 0;
+            cuadrado = 0;
+            break;
+        default:
+            arma_index = 0;
+            cuadrado = 0;
+    }
+
+    Area armaSrcArea(arma_index * cuadrado, 0, cuadrado, cuadrado);
     
     int pos_arma_x = 0;
     int pos_arma_y = 0;

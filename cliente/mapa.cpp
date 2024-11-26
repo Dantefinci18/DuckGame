@@ -113,9 +113,32 @@ void Mapa::renderizar_mapa() {
             float plat_width = spawnWeaponBox->width * FACTOR_ESCALA_ARMA;
             float plat_height = spawnWeaponBox->height * FACTOR_ESCALA_ARMA;
 
-            int arma_index = static_cast<int>(spawnWeaponBox->get_weapon_type());
+            int arma_index = 0;
+            int cuadrado = 38;
+            switch (spawnWeaponBox->get_weapon_type()){
+                case WeaponType::PistolaCowboy:
+                    arma_index = 0;
+                    break;
+                case WeaponType::PistolaMagnum:
+                    arma_index = 1;
+                    break;
+                case WeaponType::PistolaDuelos:
+                    arma_index = 2;
+                    break;
+                case WeaponType::RifleAK47:
+                    arma_index = 3;
+                    break;
+                case WeaponType::None:
+                    std::cout << "\033[41;37mSPAWNEO NADA\033[0m" << std::endl;
+                    arma_index = 0;
+                    cuadrado = 0;
+                    break;
+                default:
+                    arma_index = 0;
+                    cuadrado = 0;
+            }
 
-            Area armaSrcArea(arma_index * 38, 0, 38, 38);
+            Area armaSrcArea(arma_index * cuadrado, 0, cuadrado, cuadrado);
             Area armaDestArea(plat_x, plat_y, plat_width, plat_height);
             armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
         }
