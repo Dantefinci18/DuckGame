@@ -6,6 +6,7 @@ target_sources(taller_server
     Platform.h
     Collidable.h
     SpawnPlace.h
+    SpawnWeaponBox.h
     Box.h
     server_aceptador.h
     server_gameloop.h
@@ -17,6 +18,7 @@ target_sources(taller_server
     server_servidor.h
     server_mapa.h
     server_lobby.h
+    server_leaderboard.h
     jugador_esperando.h
     bala.h
 
@@ -32,6 +34,7 @@ target_sources(taller_server
     server_servidor.cpp
     server_mapa.cpp
     server_lobby.cpp
+    server_leaderboard.cpp
     jugador_esperando.cpp
     bala.cpp
 )

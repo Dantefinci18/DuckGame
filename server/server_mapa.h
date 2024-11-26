@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include "Platform.h"
 #include "SpawnPlace.h"
+#include "SpawnWeaponBox.h"
+#include "Box.h"
 
 class Mapa {
 private:
@@ -17,6 +19,8 @@ public:
     explicit Mapa(int id_mapa);
 
     std::vector<Collidable*> getCollidables() const;
+
+    void agregar_collidables(std::vector<Collidable*> nuevos_collidables);
 
     Mapa(const Mapa&) = delete;
     Mapa& operator=(const Mapa&) = delete;

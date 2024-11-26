@@ -7,8 +7,10 @@
 #include "../common/common_serializador.h"
 #include "../server/Collidable.h"
 #include "../common/common_comando_partida.h"
+#include "../server/server_leaderboard.h"
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 class ClienteProtocolo{
     public:

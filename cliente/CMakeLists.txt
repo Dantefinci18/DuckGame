@@ -6,6 +6,7 @@ target_sources(taller_client
     cliente.cpp
     cliente_sender.cpp
     cliente_receiver.cpp
+    cliente_leaderboard.cpp
     enemigo.cpp
     mapa.cpp
     duck.cpp
@@ -17,6 +18,7 @@ target_sources(taller_client
     cliente.h
     cliente_sender.h
     cliente_receiver.h
+    cliente_leaderboard.h
     enemigo.h
     mapa.h
     duck.h
@@ -28,6 +30,7 @@ add_library(sdldemo
   Sdl/SdlTexture.cpp
   Sdl/SdlException.cpp
   Sdl/SdlWindow.cpp
+  Sdl/SdlFullscreenMessage.cpp
+  Sdl/SdlText.cpp
 )
-
 

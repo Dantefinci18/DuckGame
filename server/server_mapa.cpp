@@ -3,6 +3,8 @@
 Mapa::Mapa(int id_mapa) {
     std::map<int, std::string> map_files = {
         {1, "../server/mapas/mapa_1.yaml"},
+        {2, "../server/mapas/mapa_2.yaml"},
+        {3, "../server/mapas/mapa_3.yaml"},
     };
     YAML::Node config = YAML::LoadFile(map_files[id_mapa]);
 
@@ -19,6 +21,11 @@ Mapa::Mapa(int id_mapa) {
         if (tipo == "SpawnPlace") {
             collidables.push_back(std::make_unique<SpawnPlace>(posicion, width, height));
         }
+
+        if (tipo == "Box") {
+            collidables.push_back(std::make_unique<Box>(posicion, width, height));
+        }
+
     }
 }
 
@@ -29,4 +36,21 @@ std::vector<Collidable*> Mapa::getCollidables() const {
         raw_collidables.push_back(collidable.get()); 
     }
     return raw_collidables;
+}
+
+void Mapa::agregar_collidables(std::vector<Collidable*> nuevos_collidables) {
+    for (auto& collidable : nuevos_collidables) {
+        collidables.push_back(std::unique_ptr<Collidable>(collidable));
+        for (auto& collidable_viejo : collidables) {
+        if (collidable_viejo->getType() == CollidableType::Box) {
+            Box* box = static_cast<Box*>(collidable_viejo.get());
+            if (box->get_position().x == collidable->position.x && box->get_position().y == collidable->position.y){
+                box->desactivar();
+            }
+        }
+    }
+    }
+
+    
+    
 }

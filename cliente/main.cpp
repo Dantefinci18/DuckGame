@@ -8,7 +8,9 @@
 #include <QApplication>
 #include "interfaz_lobby/mainwindow.h"
 #include "../server/Collidable.h"
-#include "../server/Platform.h"  
+#include "../server/Platform.h"
+#include "../server/server_leaderboard.h"  
+#include "cliente_leaderboard.h"
 #include "../common/common_color.h"
 #include "../common/common_comando_partida.h"
 
@@ -34,7 +36,8 @@ int main(int argc, char* argv[]) {
     VentanaNuevaPartida ventanaNuevaPartida;             
     VentanaEsperando ventanaEsperando;
 
-    std::vector<Collidable*> collidables; 
+    std::vector<Collidable*> collidables;
+    Leaderboard leaderboard; 
     float x_inicial = 0;
     float y_inicial = 0;
     ColorDuck color = ColorDuck::MAX_COLOR;
@@ -54,6 +57,7 @@ int main(int argc, char* argv[]) {
             }else if(evento->get_tipo() == Evento::EventoMapa){
                 auto evento_mapa = static_cast<EventoMapa*>(evento.get());
                 collidables = evento_mapa->collidables;
+                leaderboard = evento_mapa->leaderboard;
             
             }else if (evento->get_tipo() == Evento::EventoMovimiento) {
                 auto evento_mov = static_cast<EventoMovimiento*>(evento.get());
@@ -99,6 +103,7 @@ int main(int argc, char* argv[]) {
             }else if(evento->get_tipo() == Evento::EventoMapa){
                 auto evento_mapa = static_cast<EventoMapa*>(evento.get());
                 collidables = evento_mapa->collidables;
+                leaderboard = evento_mapa->leaderboard;
             
             }else if (evento->get_tipo() == Evento::EventoMovimiento) {
                 auto evento_mov = static_cast<EventoMovimiento*>(evento.get());

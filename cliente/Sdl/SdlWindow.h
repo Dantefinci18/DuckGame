@@ -17,10 +17,11 @@ public:
     void render();
     void set_title(const char* titulo);
     SDL_Renderer* getRenderer() const;
-
-private:
     int width;
     int height;
+
+private:
+    
     SDL_Window* window;
     SDL_Renderer* renderer;
 };
