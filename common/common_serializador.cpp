@@ -774,7 +774,6 @@ Collidable* Serializador::deserializar_collidable(const uint8_t* collidable_data
     case CollidableType::SpawnPlace:
         return new SpawnPlace(Vector(x, y), width, height); 
     case CollidableType::Box:
-        std::cout << "Deserializando box" << std::endl;
         return new Box(Vector(x, y), width, height);
     default:
         return nullptr; 

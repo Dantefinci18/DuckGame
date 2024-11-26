@@ -6,6 +6,7 @@
 #include "../common/common_pistola_duelos.h"
 #include "../common/common_rifle_ak47.h"
 #include "../common/common_evento.h"
+#include "../common/common_weapon_utils.h"
 #include <optional>
 #include <random>
 #include <memory>
@@ -16,9 +17,11 @@ class SpawnPlace : public Collidable {
     public:
     std::vector<std::shared_ptr<Evento>> eventos;
     enum class State {Spawned, Respawning};
-    SpawnPlace(Vector position, float width, float height) : Collidable(position, width, height), 
-        min_server_ticks(50), countdown(50), state(State::Spawned), weapon(std::make_unique<RifleAK47>()) {}
-
+    SpawnPlace(Vector position, float width, float height) : 
+        Collidable(position, width, height), 
+        min_server_ticks(50), countdown(50), state(State::Spawned) {
+            weapon = std::make_unique<PistolaCowboy>();
+    }
     virtual CollidableType getType() const override {
         return CollidableType::SpawnPlace;
     }
@@ -50,10 +53,19 @@ class SpawnPlace : public Collidable {
                 std::cout << "Spawned weapon!" << std::endl;
                 state = State::Spawned;
                 countdown = min_server_ticks + get_random_number();
-                weapon = std::make_unique<RifleAK47>();
+                weapon = elegir_arma_aleatoria();
                 eventos.push_back(std::make_shared<EventoSpawnArma>(position.x, position.y, weapon.get()->get_type()));
             }
         }
+    }
+
+    virtual std::unique_ptr<Weapon> elegir_arma_aleatoria() {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, 3);
+
+        WeaponType tipo_arma = static_cast<WeaponType>(dist(gen));
+        return WeaponUtils::create_weapon(tipo_arma);
     }
 
     virtual std::optional<std::unique_ptr<Weapon>> get_weapon() {
@@ -87,13 +99,10 @@ class SpawnPlace : public Collidable {
     int get_random_number() {
         std::random_device rd; 
 
-        // Create a Mersenne Twister generator
         std::mt19937 generator(rd()); 
 
-        // Define a uniform integer distribution for the range [0, 100]
         std::uniform_int_distribution<int> distribution(0, 40); 
 
-        // Generate a random number in the range
         return distribution(generator);
     }
 

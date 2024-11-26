@@ -205,7 +205,6 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
         if (collidable->getType() == CollidableType::SpawnPlace 
             && collidable->position.x == evento_pickup.x
             && collidable->position.y == evento_pickup.y) {
-                std::cout << "toy acaaaaaaaaaaaaaaaaaaaaaaaa" << std::endl;
             SpawnPlace* sPlace = static_cast<SpawnPlace*>(collidable);
             sPlace->clear_weapon();
 
@@ -250,6 +249,7 @@ void Cliente::spawn_arma(const EventoSpawnArma& evento_spawn, std::vector<Collid
             SpawnPlace* sPlace = static_cast<SpawnPlace*>(collidable);
             sPlace->set_weapon(WeaponUtils::create_weapon(evento_spawn.weapon_type));
         }
+        
 
 
     }
