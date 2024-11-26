@@ -26,7 +26,7 @@ option(TALLER_EDITOR "Enable / disable editor program." ON)
 option(TALLER_MAKE_WARNINGS_AS_ERRORS "Enable / disable warnings as errors." OFF)
 
 message(CMAKE_CXX_COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")
-
+message(STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
 # Define target: lib common between client, server and editor programs
 # HEY TODO XXX: change the name to something that you like
 add_library(taller_common STATIC)
@@ -48,46 +48,62 @@ target_include_directories(taller_common PUBLIC .)
 # HEY!! TODO XXX: add more dependendies (either for client, server or editor)
 if(TALLER_CLIENT OR TALLER_EDITOR)
     include(FetchContent)
-
     FetchContent_Declare(
-        libSDL2pp
-        URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
+        SDL2
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+        GIT_TAG release-2.30.8
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+        OVERRIDE_FIND_PACKAGE
     )
 
-    FetchContent_MakeAvailable(libSDL2pp)
+    FetchContent_Declare(
+        SDL2_image
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
+        GIT_TAG release-2.8.2
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+        OVERRIDE_FIND_PACKAGE
+    )
+
+    FetchContent_Declare(
+        SDL2_mixer
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+        GIT_TAG release-2.8.0
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+        OVERRIDE_FIND_PACKAGE
+    )
+
+    FetchContent_Declare(
+        SDL2_ttf
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
+        GIT_TAG release-2.22.0
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+        OVERRIDE_FIND_PACKAGE
+    )
+
+    FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf)
 endif()
 
 # Program section
 # ---------------
 # Client
 if(TALLER_CLIENT)
-    find_package(SDL2 REQUIRED)
-    find_package(SDL2_ttf REQUIRED)
-    find_package(SDL2_image REQUIRED)
-
-    set(SDL2_INCLUDE_DIRS "/usr/include/SDL2")
-    set(SDL2_LIBRARIES "-lSDL2")
-
-    set(SDL2_TTF_INCLUDE_DIRS "/usr/include/SDL2")
-    set(SDL2_TTF_LIBRARIES "-lSDL2_ttf")
-
-    set(SDL2_IMAGE_INCLUDE_DIRS "/usr/include/SDL2")
-    set(SDL2_IMAGE_LIBRARIES "-lSDL2_image")
     add_executable(taller_client)
     
     # Make them depend on taller_common lib
-    add_dependencies(taller_client taller_common SDL2pp::SDL2pp)
+    add_dependencies(taller_client taller_common)
 
     # Add source files and enable warnings
     add_subdirectory(cliente)
 
     set_project_warnings(taller_client ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
-    # add libSDL2pp's headers
-    target_include_directories(taller_client PRIVATE ${libSDL2pp_SOURCE_DIR} ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
-
     # Link the taller_common lib target
-    target_link_libraries(taller_client taller_common sdldemo ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+    target_link_libraries(sdldemo SDL2 SDL2_ttf SDL2_image SDL2_mixer)
+    target_link_libraries( taller_client taller_common  sdldemo)
 
     # Qt5 configuration for client
     find_package(Qt5 REQUIRED COMPONENTS Widgets)
