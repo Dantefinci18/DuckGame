@@ -25,7 +25,8 @@ public:
         }
 
         auto destinos = player.disparar();
-        Vector origen = player.get_posicion() + Vector(0, 15);
+
+        Vector origen = player.get_posicion_arma();
 
         for (const auto& destino : destinos) {
             Collidable* primer_impacto = nullptr;
@@ -34,8 +35,8 @@ public:
             Vector punto_final = destino;
 
             for (auto& collidable : collidables) {
-                if (collidable->getType() != CollidableType::SpawnPlace && collidable->getType() != CollidableType::SpawnWeaponBox) {
-                    auto interseccion = collidable->intersection_point(origen, destino + Vector(0, 15)); 
+                if(collidable->getType() != CollidableType::SpawnPlace && collidable->getType() != CollidableType::SpawnWeaponBox){
+                    auto interseccion = collidable->intersection_point(origen, destino);
                     if (interseccion) {
                         float distancia = (*interseccion - origen).magnitude();
 
@@ -128,7 +129,7 @@ public:
                 break; 
             } else {
                 std::cout << "No hubo impacto en la dirección (" 
-                          << destino.x << ", " << destino.y + 1 << ")" << std::endl;
+                          << destino.x << ", " << destino.y << ")" << std::endl;
             }
         }
     }

@@ -1,6 +1,7 @@
 #include "server_gameloop.h"
 #include "../common/common_evento.h"
 #include "../common/common_color.h"
+#include "DisparoManager.h"
 
 Gameloop::Gameloop(Socket& skt, unsigned int capacidad_minima)
     : capacidad_minima(capacidad_minima), mapa(std::make_unique<Mapa>(1)), color(0), ticks_round_win_screen(60), should_reset_round(false), leaderboard() {
@@ -102,13 +103,14 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             player->jump();
         } else if (command == QUIETO) {
             player->set_x_direction(0.0f);
-        } else if (command == DISPARAR) {
-            if (player->has_weapon()) {
-                std::vector<Collidable*> collidables_a_agregar;
-                DisparoManager::procesar_disparo(*player, collidables, jugadores, balas,eventos, collidables_a_agregar);
-                mapa->agregar_collidables(collidables_a_agregar);
-            }
-        } else if (command == DEJAR_DISPARAR) {
+        
+        } else if (command == DISPARAR){
+            player->iniciar_disparo();
+            /*std::vector<std::shared_ptr<Evento>> eventos;
+            if(player->has_weapon()){
+                DisparoManager::procesar_disparo(*player, collidables, jugadores);
+            }*/
+        } else if (command == DEJAR_DISPARAR){
             std::cout << "Dejo de disparar" << std::endl;
             player->dejar_disparar();
         } else if (command == RECARGAR) {
@@ -147,17 +149,25 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         }
     }
 
-    for (auto& evento : eventos) {
-        monitor.enviar_evento(*evento);
-    }
+    
 
     for (auto& player : jugadores) {
         player.second->update_fisicas(collidables);
+
+        if(player.second->get_fisicas()->esta_disparando()){
+            std::vector<Collidable*> collidables_a_agregar;
+            DisparoManager::procesar_disparo(*player.second->get_fisicas(), collidables, jugadores, balas,eventos, collidables_a_agregar);
+            mapa->agregar_collidables(collidables_a_agregar);
+        }
 
         for (auto& evento : player.second->get_fisicas()->eventos) {
             monitor.enviar_evento(*evento);
         }
         player.second->get_fisicas()->eventos.clear();
+    }
+
+    for (auto& evento : eventos) {
+        monitor.enviar_evento(*evento);
     }
 }
 

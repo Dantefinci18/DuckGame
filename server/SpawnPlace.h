@@ -2,6 +2,9 @@
 #define SPAWN_PLACE_H
 #include "Collidable.h"
 #include "../common/common_pistola_cowboy.h"
+#include "../common/common_pistola_magnum.h"
+#include "../common/common_pistola_duelos.h"
+#include "../common/common_rifle_ak47.h"
 #include "../common/common_evento.h"
 #include <optional>
 #include <random>
@@ -14,7 +17,7 @@ class SpawnPlace : public Collidable {
     std::vector<std::shared_ptr<Evento>> eventos;
     enum class State {Spawned, Respawning};
     SpawnPlace(Vector position, float width, float height) : Collidable(position, width, height), 
-        min_server_ticks(50), countdown(50), state(State::Spawned), weapon(std::make_unique<PistolaCowboy>()) {}
+        min_server_ticks(50), countdown(50), state(State::Spawned), weapon(std::make_unique<RifleAK47>()) {}
 
     virtual CollidableType getType() const override {
         return CollidableType::SpawnPlace;
@@ -47,7 +50,7 @@ class SpawnPlace : public Collidable {
                 std::cout << "Spawned weapon!" << std::endl;
                 state = State::Spawned;
                 countdown = min_server_ticks + get_random_number();
-                weapon = std::make_unique<PistolaCowboy>();
+                weapon = std::make_unique<RifleAK47>();
                 eventos.push_back(std::make_shared<EventoSpawnArma>(position.x, position.y, weapon.get()->get_type()));
             }
         }

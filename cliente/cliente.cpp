@@ -2,7 +2,6 @@
 #include "cliente.h"
 #include "../common/common_evento.h"
 #include "../common/common_queue.h"
-#include "../common/common_weapon_utils.h"
 
 #include "enemigo.h"
 #include <iostream>
@@ -138,10 +137,20 @@ void Cliente::procesar_eventos_recibidos() {
 }
 
 void Cliente::agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box) {
-    collidables.push_back(new SpawnWeaponBox(Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 20, 20));
+    auto* spawnWeaponBox = new SpawnWeaponBox(
+        Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 
+        20, 
+        20
+    );
 
-    mapa->agregar_collidable(new SpawnWeaponBox(Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 20, 20));
-    }
+    std::unique_ptr<Weapon> weapon = WeaponUtils::create_weapon(evento_spawn_arma_box.weapon_type);
+    
+    spawnWeaponBox->set_weapon(std::move(weapon));
+
+    collidables.push_back(spawnWeaponBox);
+    mapa->agregar_collidable(spawnWeaponBox);
+}
+
 
 void Cliente::eliminar_caja(const EventoCajaDestruida& evento_caja_destruida) {
     mapa->eliminar_caja(evento_caja_destruida.x, evento_caja_destruida.y);
