@@ -1,6 +1,5 @@
 #ifndef SPAWN_PLACE_H
 #define SPAWN_PLACE_H
-
 #include "Collidable.h"
 #include "../common/common_pistola_cowboy.h"
 #include "../common/common_pistola_magnum.h"
@@ -11,39 +10,34 @@
 #include <random>
 #include <memory>
 #include <iostream>
-
+#include <memory>
 class SpawnPlace : public Collidable {
-public:
+    
+    public:
     std::vector<std::shared_ptr<Evento>> eventos;
-    enum class State { Spawned, Respawning };
-
-    SpawnPlace(Vector position, float width, float height)
-        : Collidable(position, width, height),
-          min_server_ticks(50),
-          countdown(50),
-          state(State::Spawned),
-          weapon(crear_arma_aleatoria()) {}
+    enum class State {Spawned, Respawning};
+    SpawnPlace(Vector position, float width, float height) : Collidable(position, width, height), 
+        min_server_ticks(50), countdown(50), state(State::Spawned), weapon(std::make_unique<RifleAK47>()) {}
 
     virtual CollidableType getType() const override {
         return CollidableType::SpawnPlace;
     }
 
-    virtual bool onCollision([[maybe_unused]] Collidable& other) override {
+    virtual bool onCollision([[maybe_unused]]Collidable& other) override {
         return false;
     }
 
     virtual ~SpawnPlace() {}
-
     void print_bounding_box() const override {
-        std::cout << "SpawnPlace box: ("
-                  << "left: " << std::to_string(left()) << ", "
-                  << "right: " << std::to_string(right()) << ", "
-                  << "top: " << std::to_string(top()) << ", "
-                  << "bottom: " << std::to_string(bottom()) << ")\n";
+        std::cout << "SpawnPlace box: (" 
+            << "left: " <<  std::to_string(left()) << ", "
+            << "right: " <<  std::to_string(right()) << ", "
+            << "top: " <<  std::to_string(top()) << ", "
+            << "bottom: " <<  std::to_string(bottom()) << std::endl;
     }
 
     void print_position() const override {
-        std::cout << "SpawnPlace position (" << position.x << ", " << position.y << ")\n";
+        std::cout << "SpawnPlace position" << "(" << position.x << ", " << position.y << ")\n";
     }
 
     virtual void update([[maybe_unused]] std::vector<Collidable*> others) override {
@@ -56,22 +50,19 @@ public:
                 std::cout << "Spawned weapon!" << std::endl;
                 state = State::Spawned;
                 countdown = min_server_ticks + get_random_number();
-
-                weapon = crear_arma_aleatoria();
-
-                eventos.push_back(std::make_shared<EventoSpawnArma>(
-                    position.x, position.y, weapon->get_type()));
+                weapon = std::make_unique<RifleAK47>();
+                eventos.push_back(std::make_shared<EventoSpawnArma>(position.x, position.y, weapon.get()->get_type()));
             }
         }
     }
 
     virtual std::optional<std::unique_ptr<Weapon>> get_weapon() {
         if (state == State::Spawned && weapon) {
-            state = State::Respawning;
+            state = State::Respawning; // Mark as respawning
             countdown = min_server_ticks + get_random_number();
-            return std::move(weapon);
+            return std::move(weapon); // Transfer ownership of the weapon
         }
-        return std::nullopt;
+        return std::nullopt; // Return empty optional if no weapon is present
     }
 
     virtual void set_weapon(std::unique_ptr<Weapon> set_weapon) {
@@ -83,38 +74,33 @@ public:
     }
 
     virtual WeaponType get_weapon_type() {
-        return weapon->get_type();
+        return weapon.get()->get_type();
     }
 
     virtual bool has_weapon() {
-        return static_cast<bool>(weapon);
+        if (weapon) {
+            return true;
+        }
+        return false;
     }
 
-private:
+    int get_random_number() {
+        std::random_device rd; 
+
+        // Create a Mersenne Twister generator
+        std::mt19937 generator(rd()); 
+
+        // Define a uniform integer distribution for the range [0, 100]
+        std::uniform_int_distribution<int> distribution(0, 40); 
+
+        // Generate a random number in the range
+        return distribution(generator);
+    }
+
+    private:
     int min_server_ticks;
     int countdown;
     State state;
     std::unique_ptr<Weapon> weapon;
-
-    int get_random_number() {
-        std::random_device rd;
-        std::mt19937 generator(rd());
-        std::uniform_int_distribution<int> distribution(0, 40);
-        return distribution(generator);
-    }
-
-    std::unique_ptr<Weapon> crear_arma_aleatoria() {
-        std::random_device rd;
-        std::mt19937 generator(rd());
-        std::uniform_int_distribution<int> distribution(0, 3); // agregar rango cuando agregue armas
-        int random_index = distribution(generator);
-        switch (random_index) {
-            case 0: return std::make_unique<PistolaCowboy>();
-            case 1: return std::make_unique<PistolaMagnum>();
-            case 2: return std::make_unique<PistolaDuelos>();
-            case 3: return std::make_unique<RifleAK47>();
-            default: return std::make_unique<PistolaDuelos>(); 
-        }
-    }
 };
 #endif
