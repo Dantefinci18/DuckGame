@@ -149,9 +149,7 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         }
     }
 
-    for (auto& evento : eventos) {
-        monitor.enviar_evento(*evento);
-    }
+    
 
     for (auto& player : jugadores) {
         player.second->update_fisicas(collidables);
@@ -166,6 +164,10 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             monitor.enviar_evento(*evento);
         }
         player.second->get_fisicas()->eventos.clear();
+    }
+
+    for (auto& evento : eventos) {
+        monitor.enviar_evento(*evento);
     }
 }
 
