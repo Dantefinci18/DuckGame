@@ -41,18 +41,21 @@ void Mapa::eliminar_caja(float x, float y) {
 }
 
 void Mapa::clear_weapon(SpawnWeaponBox* sWeaponBox) {
-    for (auto& collidable : this-> collidables_plataformas) {
+    for (auto& collidable : this->collidables_plataformas) {
         if (collidable->getType() == CollidableType::SpawnWeaponBox) {
-            SpawnWeaponBox* sWeaponBox = static_cast<SpawnWeaponBox*>(collidable);
-            if (sWeaponBox->position.x == sWeaponBox->position.x && sWeaponBox->position.y == sWeaponBox->position.y) {
+            SpawnWeaponBox* spawnBox = static_cast<SpawnWeaponBox*>(collidable);
+            if (spawnBox->position.x == sWeaponBox->position.x && 
+                spawnBox->position.y == sWeaponBox->position.y) {
                 auto it = std::find(collidables_plataformas.begin(), collidables_plataformas.end(), collidable);
                 if (it != collidables_plataformas.end()) {
                     collidables_plataformas.erase(it);
                 }
+                return; 
             }
         }
     }
 }
+
 
 void Mapa::agregar_collidable(Collidable* nuevo_collidable) {
     collidables_plataformas.push_back(nuevo_collidable);
