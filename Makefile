@@ -17,20 +17,7 @@ compile-debug:
 
 # Install dependencies, including yaml-cpp
 install-deps:
-	if [ -d "deps/yaml-cpp" ]; then \
-		echo "yaml-cpp ya está instalado."; \
-	else \
-		echo "yaml-cpp no encontrado. Instalando..."; \
-		mkdir -p deps && cd deps && \
-		git clone https://github.com/jbeder/yaml-cpp.git && \
-		cd yaml-cpp && \
-		mkdir build && cd build && \
-		cmake .. && \
-		make && \
-		sudo make install; \
-	fi
-
-
+	sudo apt-get install libopus-dev libopusfile-dev libxmp-dev libfluidsynth-dev fluidsynth libwavpack1 libwavpack-dev libfreetype-dev wavpack
 
 # Clean the build directory
 clean:
