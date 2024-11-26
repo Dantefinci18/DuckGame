@@ -1,3 +1,6 @@
+#ifndef COMMON_WEAPON_UTILS_H
+#define COMMON_WEAPON_UTILS_H
+
 #include "common_weapon.h"
 #include <memory>
 #include "common_pistola_cowboy.h"
@@ -25,3 +28,5 @@ public:
         }
     }
 };
+
+#endif // COMMON_WEAPON_UTILS_H
