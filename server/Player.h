@@ -72,7 +72,7 @@ public:
     }
 
     Vector get_posicion_arma() const {
-        return position + Vector(0,5);
+        return position + Vector(0,15);
     }
 
     std::vector<Vector> disparar() {
