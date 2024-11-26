@@ -14,7 +14,7 @@ public:
     /* 
      * Constructor de la clase Enemigo, recibe un id, un string con el color, un float con la posicion x, un float con la posicion y y una ventana
      */
-    Enemigo(int id,std::string,float x, float y, SdlWindow& window);
+    Enemigo(int id, ColorDuck color,float x, float y, SdlWindow& window);
 
     /* 
      * Funcion que retorna el id del enemigo
@@ -24,9 +24,10 @@ public:
     /* 
      * Funcion que mueve al enemigo a una posicion x y y
      * Recibe un float con la nueva posicion x y un float con la nueva posicion y
-     * Tambien recibe un booleano para saber si el pato esta aleteando.
+     * Recibe un booleano para saber si el pato esta aleteando.
+     * Recibe un booleano para saber si resetear la textura del pato.
      */
-    void mover_a(float nueva_x, float nueva_y, bool is_flapping);
+    void mover_a(float nueva_x, float nueva_y, bool is_flapping, bool reset);
     
     /* 
      * Funcion que renderiza al enemigo
@@ -60,6 +61,9 @@ public:
      */
 
     void levantarse();
+
+    /* Funcion que devuelve el color del enemigo*/
+    ColorDuck get_color();
     
     /* 
      * Destructor de la clase Enemigo

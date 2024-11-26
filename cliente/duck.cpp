@@ -9,11 +9,13 @@
 #define ANCHO_IMG_DUCK 32
 #define ALTO_IMG_DUCK 38
 
-Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string color)
-    : movimientos_en_x("../Imagenes/duck_x" + color + ".png", window),
-      movimiento_en_y("../Imagenes/movimiento_y" + color + ".png", window),
+Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial,ColorDuck color)
+    : movimientos_en_x("../Imagenes/duck_x" + procesar_color(color) + ".png", window),
+      movimiento_en_y("../Imagenes/movimiento_y" + procesar_color(color) + ".png", window),
       armas("../Imagenes/guns.png", window),
-      death("../Imagenes/duckDead" + color + ".png", window),
+      death("../Imagenes/duckDead" + procesar_color(color) + ".png", window),
+      color(color),
+      bala("../Imagenes/balas_magnum.png", window),
       quieto(false),                
       weapon(std::nullopt),          
       direccion_arma(DireccionApuntada::APUNTADO_DERECHA),
@@ -23,24 +25,69 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial, std::string colo
       y_actual(y_inicial),          
       is_dead(false),               
       x_des(x_inicial),              
-      y_des(static_cast<int>(y_inicial)), 
+      y_des(static_cast<int>(y_inicial)),
+      x_bala(0),
+      y_bala(0),
+      esta_disparando(false),
       is_flapping(false),            
-      esta_agachado(false),         
+      esta_agachado(false),    
+      reset(false),     
       flip(SDL_FLIP_NONE)         
 {}
 
+
+void Duck::setear_bala(float x, float y) {
+    x_bala = x;
+    y_bala = y;
+    esta_disparando = true;
+}
+
+void Duck::render_bala() {
+
+    const int ANCHO_BALA = 12;  
+    const int ALTO_BALA = 16; 
+    const int FACTOR_ESCALA_BALA = 4; 
+    SDL_RendererFlip flip = (direccion_arma == DireccionApuntada::APUNTADO_IZQUIERDA) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+            
+    Area srcArea(0, 0, ANCHO_BALA, ALTO_BALA);
+
+    
+    int x_renderizado = x_bala;
+    int y_renderizado = ALTO_VENTANA - y_bala - ALTO_BALA * FACTOR_ESCALA_BALA;
+    Area destArea(x_renderizado, y_renderizado, ANCHO_BALA * FACTOR_ESCALA_BALA, ALTO_BALA * FACTOR_ESCALA_BALA);
+
+    bala.render(srcArea, destArea, flip);
+    esta_disparando = false;
+    
+}
 
 
 void Duck::render() {
     bool en_movimiento_x = (x_actual != x_des);
     bool en_movimiento_y = (y_actual != y_des);
-
+    //std::cout << "render_duck" << std::endl;
+    if (reset) {
+        std::cout << "reset" << std::endl;
+        weapon = std::nullopt;
+        is_dead = false;
+        esta_agachado = false;
+        is_flapping = false;
+        y_actual = y_des;
+        x_actual = x_des;
+        x_img = 0;
+        y_img = 0;
+        return;
+    }
     if (is_dead) {
         Area srcArea(0, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
         int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA;
         Area destArea(x_actual, y_renderizado, ANCHO_IMG_DUCK * FACTOR_ESCALA, ALTO_IMG_DUCK * FACTOR_ESCALA);
         death.render(srcArea, destArea, flip);
         return;
+    }
+
+    if (esta_disparando) {
+        render_bala();
     }
 
     if (esta_agachado) {
@@ -85,12 +132,13 @@ void Duck::kill() {
     is_dead = true;
 }
 
-void Duck::mover_a(float x, float y, bool is_flapping) {
+void Duck::mover_a(float x, float y, bool is_flapping, bool reset) {
     if (x != x_des || y != y_des) {
         quieto = false;
     }
     x_des = x;
     this->is_flapping = is_flapping;
+    this->reset = reset;
     y_des = y;
 }
 
@@ -191,4 +239,35 @@ void Duck::render_arma(int y_renderizado) {
     }
     Area armaDestArea(x_actual + pos_arma_x, y_renderizado + pos_arma_y, 38, 38);
     armas.render(armaSrcArea, armaDestArea, flip, angle);
+}
+
+std::string Duck::procesar_color(ColorDuck color){
+    switch (color){
+        case ColorDuck::AZUL:
+            return "_azul";
+        case ColorDuck::ROJO:
+            return "_rojo";
+        case ColorDuck::VERDE:
+            return "_verde";
+        case ColorDuck::AMARILLO:
+            return "_amarillo";
+        case ColorDuck::ROSA:
+            return "_rosa";
+        case ColorDuck::NARANJA:
+            return "_naranja";
+        case ColorDuck::CELESTE:
+            return "_celeste";
+        case ColorDuck::NEGRO:
+            return "_negro";
+        case ColorDuck::BLANCO:
+            return "_blanco";
+        case ColorDuck::MAX_COLOR:
+            return "Max";
+        default:
+            return "";
+    }
+}
+
+ColorDuck Duck::get_color() {
+    return color;
 }

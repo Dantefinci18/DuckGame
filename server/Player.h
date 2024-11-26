@@ -5,6 +5,8 @@
 #include "Collidable.h"
 #include "Platform.h"
 #include "SpawnPlace.h"
+#include "SpawnWeaponBox.h"
+#include "Box.h"
 #include <iostream>
 #include <optional>
 #include <memory>
@@ -209,7 +211,7 @@ public:
         }
 
         if (x_before != position.x || y_before != position.y) {
-            eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping()));
+            eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping(), false));
         }
 
         if (top() < 0) {
@@ -241,6 +243,27 @@ public:
             return false;
         }
 
+        if (other.getType() == CollidableType::Box) {
+            Box& box = static_cast<Box&>(other);
+            if (box.esta_activa()) {
+                CollidableSide side = getCollisionSide(box);
+                if (side == CollidableSide::Top) {
+                    position.y = box.top();
+                    velocity.y = 0;
+                    is_standing_on_something = true;
+                    return true;
+                } else if (side == CollidableSide::Bottom) {
+                    position.y = box.bottom() - height;
+                    velocity.y = gravity;
+                    return true;
+                } else if (side == CollidableSide::Left || side == CollidableSide::Right) {
+                    velocity.x = 0;
+                    return true;
+                }
+            }
+            
+        }
+
         if (other.getType() == CollidableType::SpawnPlace) {
             SpawnPlace& spawnPlace = static_cast<SpawnPlace&>(other);
             CollidableSide side = getCollisionSide(spawnPlace);
@@ -252,6 +275,20 @@ public:
                 weapon = std::move(new_weapon.value());
                 eventos.push_back(std::make_shared<EventoPickup>(id, spawnPlace.position.x, spawnPlace.position.y, weapon->get_type()));
             }
+        }
+
+        if (other.getType() == CollidableType::SpawnWeaponBox) {
+            SpawnWeaponBox& spawnWeaponBox = static_cast<SpawnWeaponBox&>(other);
+            CollidableSide side = getCollisionSide(spawnWeaponBox);
+            if (side == CollidableSide::None) {
+                return false;
+            }
+            std::optional<std::unique_ptr<Weapon>> new_weapon = spawnWeaponBox.get_weapon();
+            if (new_weapon) {
+                weapon = std::move(new_weapon.value());
+                eventos.push_back(std::make_shared<EventoPickup>(id, spawnWeaponBox.position.x, spawnWeaponBox.position.y, weapon->get_type()));
+            }
+
         }
 
         return false;
@@ -282,7 +319,11 @@ public:
             esta_agachado = true;
             eventos.push_back(std::make_shared<EventoAgacharse>(id));
     }
-}
+    }   
+
+    bool is_agachado() {
+        return esta_agachado;
+    }
 
 
     void levantarse() {
@@ -292,6 +333,21 @@ public:
         }
     }
 
+    void reset() {
+        gravity = -8;
+        velocity = Vector(0,0);
+        is_on_ground = false;
+        is_standing_on_something = false;
+        jump_force = 0;
+        is_dead = false; 
+        esta_agachado = false;
+        weapon = nullptr;
+        ticks_to_reset_gravity = 0;
+        shooting = false;
+        position = {200.0f, 300.0f};
+        eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping(), true));
+        
+    }
     bool has_weapon() const {
         return weapon != nullptr;
     }
@@ -310,15 +366,15 @@ public:
 
     virtual ~Player() {}
 
-    Player(Vector initialPosition, int id, ColorDuck color)
-        : Collidable(initialPosition, 32.0f, 64.0f),
-          velocity(Vector(0, 0)),
-          speed(6.0f),
-          is_on_ground(false),
-          is_standing_on_something(false),
-          shooting(false),
-          jump_force(0),
-          id(id),
+    Player(int id, ColorDuck color)
+        : Collidable({200.0f,300.0f}, 32.0f, 64.0f), 
+          velocity(Vector(0, 0)), 
+          speed(6.0f), 
+          is_on_ground(false), 
+          is_standing_on_something(false), 
+          shooting(false), 
+          jump_force(0), 
+          id(id), 
           gravity(-8),
           ticks_to_reset_gravity(0),
           color(color),

@@ -6,8 +6,10 @@
 #include "../common/common_accion.h"
 #include "../common/common_serializador.h"
 #include "../server/Collidable.h"
+#include "../server/server_leaderboard.h"
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 class ClienteProtocolo{
     public:

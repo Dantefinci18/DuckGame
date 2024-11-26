@@ -1,20 +1,34 @@
+#ifndef SERVER_MAPA_H
+#define SERVER_MAPA_H
+
 #include <vector>
 #include <memory>
-#include "Platform.h"
-#include "SpawnPlace.h"
 #include <string>
 #include <yaml-cpp/yaml.h>
 #include <unordered_map>
-#include <iostream>
-#include <filesystem>
+#include "Platform.h"
+#include "SpawnPlace.h"
+#include "SpawnWeaponBox.h"
+#include "Box.h"
+
 class Mapa {
 private:
-    std::vector<Collidable*> collidables;
+    std::vector<std::unique_ptr<Collidable>> collidables;
 
 public:
     explicit Mapa(int id_mapa);
 
-    const std::vector<Collidable*> getCollidables() const {
-        return collidables;
-    }
+    std::vector<Collidable*> getCollidables() const;
+
+    void agregar_collidables(std::vector<Collidable*> nuevos_collidables);
+
+    Mapa(const Mapa&) = delete;
+    Mapa& operator=(const Mapa&) = delete;
+
+    Mapa(Mapa&&) noexcept = default;
+    Mapa& operator=(Mapa&&) noexcept = default;
+
+    ~Mapa() = default; 
 };
+
+#endif // SERVER_MAPA_H

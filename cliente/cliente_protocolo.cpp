@@ -72,7 +72,13 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             if (was_closed) {
                 return nullptr;
             }
-            return serializador.deserializar_movimiento(id, color, x, y, is_flapping);
+
+            char reset;
+            socket.recvall(&reset, sizeof(reset), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+            return serializador.deserializar_movimiento(id,color,x, y, is_flapping, reset);
         }
         case Evento::EventoMapa: {
             uint8_t cantidad[32];
@@ -94,7 +100,34 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
                 Collidable* collidable = serializador.deserializar_collidable(collidable_data);
                 collidables.push_back(collidable);
             }
-            return std::make_unique<EventoMapa>(collidables);
+
+            uint8_t basic_leaderboard_fields[64];
+            socket.recvall(basic_leaderboard_fields, sizeof(basic_leaderboard_fields), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            auto [round, set_of_rounds] = serializador.deserializar_tuple64(basic_leaderboard_fields);
+            uint8_t cantidad_map[32];
+            socket.recvall(cantidad_map, sizeof(cantidad_map), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            int cantidad_leaderboard = serializador.deserializar_cantidad(cantidad_map);
+            std::unordered_map<int,int> leaderboard;
+            for (int i = 0; i < cantidad_leaderboard; i++) {
+                uint8_t leaderboard_tuple[64];
+                socket.recvall(leaderboard_tuple, sizeof(leaderboard_tuple), &was_closed);
+                if (was_closed) {
+                    return nullptr;
+                }
+
+                auto [player, rounds_won] = serializador.deserializar_tuple64(leaderboard_tuple);
+                leaderboard[player] = rounds_won;
+            }
+            Leaderboard lb(round, set_of_rounds, leaderboard);
+            return std::make_unique<EventoMapa>(collidables, lb);
         }
         case Evento::EventoPickup: {
             uint8_t x[32];
@@ -124,7 +157,6 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             return serializador.deserializar_pickup(id, x, y, weapon_type);
         }
         case Evento::EventoSpawnArma: {
-            std::cout << "found spawn event" << std::endl;
             uint8_t x[32];
             socket.recvall(x, sizeof(x), &was_closed);
             if (was_closed) {
@@ -197,6 +229,81 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
 
             int id_deserializado = serializador.deserializar_id(id);
             return std::make_unique<EventoLevantarse>(id_deserializado);
+        }
+
+        case Evento::EventoWinRound: {
+            uint8_t id[32];
+            socket.recvall(id, sizeof(id), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+            int id_deserializado = serializador.deserializar_id(id);
+            return std::make_unique<EventoWinRound>(id_deserializado);
+        }
+
+        case Evento::EventoWinMatch: {
+            uint8_t id[32];
+            socket.recvall(id, sizeof(id), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+            int id_deserializado = serializador.deserializar_id(id);
+            return std::make_unique<EventoWinMatch>(id_deserializado);
+        }
+
+        case Evento::EventoBala: {
+            uint8_t x[32];
+            socket.recvall(x, sizeof(x), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+            
+
+            uint8_t y[32];
+            socket.recvall(y, sizeof(y), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+            return serializador.deserializar_bala(x, y);
+        }
+
+        case Evento::EventoCajaDestruida: {
+            uint8_t x[32];
+            socket.recvall(x, sizeof(x), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t y[32];
+            socket.recvall(y, sizeof(y), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            return serializador.deserializar_caja_destruida(x, y);
+        }
+
+        case Evento::EventoSpawnArmaBox: {
+            uint8_t x[32];
+            socket.recvall(x, sizeof(x), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t y[32];
+            socket.recvall(y, sizeof(y), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t weapon_type[32];
+            socket.recvall(weapon_type, sizeof(weapon_type), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            return serializador.deserializar_spawn_arma_box(x, y, weapon_type);
+
         }
         default:
             return nullptr; 
