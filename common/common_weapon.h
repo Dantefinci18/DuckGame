@@ -3,9 +3,13 @@
 #include "../server/Vector.h"
 #include <vector>
 #include <cmath>
+
+//Listar las armas como aparecen de izquierda a derecha en la imagen guns
 enum class WeaponType {
     PistolaCowboy,
-    PistolaMagnum
+    PistolaMagnum,
+    PistolaDuelos,
+    RifleAK47
     // Future types can be added here
 };
 

@@ -161,7 +161,8 @@ void Duck::render_movimiento_salto(Area& srcArea, Area& destArea) {
 }
 
 void Duck::render_arma(int y_renderizado) {
-    Area armaSrcArea(0, 0, 38, 38);
+    int arma_index = static_cast<int>(weapon.value());
+    Area armaSrcArea(arma_index * 38, 0, 38, 38);
     
     int pos_arma_x = 0;
     int pos_arma_y = 0;

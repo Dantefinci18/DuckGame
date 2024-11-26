@@ -36,8 +36,8 @@ void Mapa::renderizar_mapa(){
                 float plat_y = ALTO_VENTANA - spawnPlace->position.y - spawnPlace->height * FACTOR_ESCALA; 
                 float plat_width = spawnPlace->width * FACTOR_ESCALA;   
                 float plat_height = spawnPlace->height * FACTOR_ESCALA; 
-
-                Area armaSrcArea(0, 0, 38,38);  
+                int arma_index = static_cast<int>(spawnPlace->get_weapon_type());
+                Area armaSrcArea(arma_index * 38, 0, 38,38);  
                 Area armaDestArea(plat_x, plat_y, plat_width, plat_height); 
                 armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
             }
