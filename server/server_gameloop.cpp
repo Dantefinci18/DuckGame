@@ -1,6 +1,7 @@
 #include "server_gameloop.h"
 #include "../common/common_evento.h"
 #include "../common/common_color.h"
+#include "DisparoManager.h"
 
 Gameloop::Gameloop(Socket& skt, unsigned int capacidad_minima)
     : capacidad_minima(capacidad_minima), mapa(std::make_unique<Mapa>(1)), color(0), ticks_round_win_screen(60), should_reset_round(false), leaderboard() {
@@ -156,7 +157,9 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         player.second->update_fisicas(collidables);
 
         if(player.second->get_fisicas()->esta_disparando()){
-            DisparoManager::procesar_disparo(*player.second->get_fisicas(), collidables, jugadores);
+            std::vector<Collidable*> collidables_a_agregar;
+            DisparoManager::procesar_disparo(*player.second->get_fisicas(), collidables, jugadores, balas,eventos, collidables_a_agregar);
+            mapa->agregar_collidables(collidables_a_agregar);
         }
 
         for (auto& evento : player.second->get_fisicas()->eventos) {

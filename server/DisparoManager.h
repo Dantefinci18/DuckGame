@@ -99,6 +99,7 @@ public:
                         break;
 
                     case CollidableType::Box: {
+                        std::cout << "\033[97;42mLE PEGASTE A UNA BOX\033[0m" << std::endl;
                         Box* caja_impactada = dynamic_cast<Box*>(primer_impacto);
                         if (caja_impactada && caja_impactada->esta_activa()) {
                             float caja_x = caja_impactada->get_position().x;

@@ -17,7 +17,7 @@ class SpawnPlace : public Collidable {
     std::vector<std::shared_ptr<Evento>> eventos;
     enum class State {Spawned, Respawning};
     SpawnPlace(Vector position, float width, float height) : Collidable(position, width, height), 
-        min_server_ticks(50), countdown(50), state(State::Spawned), weapon(std::make_unique<RifleAK47>()) {}
+        min_server_ticks(50), countdown(50), state(State::Spawned), weapon(std::make_unique<PistolaCowboy>()) {}
 
     virtual CollidableType getType() const override {
         return CollidableType::SpawnPlace;
@@ -50,7 +50,7 @@ class SpawnPlace : public Collidable {
                 std::cout << "Spawned weapon!" << std::endl;
                 state = State::Spawned;
                 countdown = min_server_ticks + get_random_number();
-                weapon = std::make_unique<RifleAK47>();
+                weapon = std::make_unique<PistolaCowboy>();
                 eventos.push_back(std::make_shared<EventoSpawnArma>(position.x, position.y, weapon.get()->get_type()));
             }
         }
