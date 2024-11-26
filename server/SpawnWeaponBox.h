@@ -25,13 +25,19 @@ public:
     Weapon* elegir_arma_aleatoria() {
         std::random_device rd;
         std::mt19937 gen(rd()); 
-        std::uniform_int_distribution<> dist(0, 0); 
+        std::uniform_int_distribution<> dist(0, 3); 
 
         int tipo_arma = dist(gen); 
 
         switch (tipo_arma) {
             case 0:
                 return new PistolaCowboy(); 
+            case 1:
+                return new PistolaDuelos();
+            case 2: 
+                return new RifleAK47();
+            case 3:
+                return new PistolaMagnum();
             default:
                 return nullptr; 
         }
