@@ -2,8 +2,8 @@
 #define SPAWN_WEAPON_BOX_H
 
 #include "Collidable.h"
-#include "../common/common_pistola_cowboy.h" 
 #include "../common/common_evento.h"
+#include "../common/common_weapon_utils.h"
 #include <optional>
 #include <memory>
 #include <iostream>
@@ -22,19 +22,13 @@ public:
         weapon = std::unique_ptr<Weapon>(elegir_arma_aleatoria());
     }
 
-    Weapon* elegir_arma_aleatoria() {
+    std::unique_ptr<Weapon> elegir_arma_aleatoria() {
         std::random_device rd;
-        std::mt19937 gen(rd()); 
-        std::uniform_int_distribution<> dist(0, 0); 
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, 3);
 
-        int tipo_arma = dist(gen); 
-
-        switch (tipo_arma) {
-            case 0:
-                return new PistolaCowboy(); 
-            default:
-                return nullptr; 
-        }
+        WeaponType tipo_arma = static_cast<WeaponType>(dist(gen));
+        return WeaponUtils::create_weapon(tipo_arma);
     }
 
     virtual CollidableType getType() const override {

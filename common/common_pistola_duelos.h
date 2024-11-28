@@ -1,42 +1,46 @@
-#ifndef COMMON_PISTOLA_MAGNUM_H
-#define COMMON_PISTOLA_MAGNUM_H
+#ifndef COMMON_PISTOLA_DUELOS_H
+#define COMMON_PISTOLA_DUELOS_H
 
 #include "common_weapon.h"
-#include <cmath>
+#include <chrono>
 #include <random>
 #include <vector>
 
-class PistolaMagnum : public Weapon {
+class PistolaDuelos : public Weapon {
 public:
-    PistolaMagnum() : Weapon(6, WeaponType::PistolaMagnum, 200), retroceso(true), dispersion(4.0f) {}
+    PistolaDuelos()
+        : Weapon(1, WeaponType::PistolaDuelos, 50),
+          retroceso(false),
+          dispersion(7.0f) {}
 
     void reload() override {
-        ammo = 6;
+        ammo = 1;
         std::cout << "Municion: " << ammo << std::endl;
     }
 
     bool es_automatica() override {
-        return false; 
+        return false;
     }
 
     std::vector<Vector> shoot(Vector from, Vector direction, bool& tiene_retroceso) override {
         std::vector<Vector> destinations;
 
         if (ammo <= 0) {
-            return destinations;
+            return destinations; 
         }
 
-        ammo--;
+        ammo--; 
         tiene_retroceso = retroceso;
+
         float dispersion_value = get_random_dispersion();
-        
+
         Vector orthogonalDirection = direction;
         if (direction.x == 0 && direction.y == 1) { 
             std::cout << "tira para arriba, dispersion en x" << std::endl;
-            orthogonalDirection = Vector(dispersion_value, 0); // Dispersión en x
+            orthogonalDirection = Vector(dispersion_value, 0);
         } else {
             std::cout << "tira para los costados, dispersion en y" << std::endl;
-            orthogonalDirection = Vector(0, dispersion_value); // Dispersión en y
+            orthogonalDirection = Vector(0, dispersion_value);
         }
 
         float magnitude = direction.magnitude();
@@ -48,17 +52,18 @@ public:
         return destinations;
     }
 
-    virtual ~PistolaMagnum() {}
+    virtual ~PistolaDuelos() {}
 
 private:
     bool retroceso;
     float dispersion;
+
     float get_random_dispersion() {
-        static std::random_device rd; 
+        static std::random_device rd;
         static std::mt19937 generator(rd());
-        static std::uniform_real_distribution<float> distribution(-dispersion, dispersion); // dispersión
+        static std::uniform_real_distribution<float> distribution(-dispersion, dispersion);
         return distribution(generator);
     }
 };
 
-#endif
+#endif // COMMON_PISTOLA_DUELOS_H

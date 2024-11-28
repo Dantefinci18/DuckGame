@@ -48,6 +48,10 @@ void Duck::render_bala() {
     const int ALTO_BALA = 16; 
     const int FACTOR_ESCALA_BALA = 4; 
     SDL_RendererFlip flip = (direccion_arma == DireccionApuntada::APUNTADO_IZQUIERDA) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    double angle = 0.0;
+    if (direccion_arma == DireccionApuntada::APUNTADO_ARRIBA) {
+        angle = -90.0;
+    }
             
     Area srcArea(0, 0, ANCHO_BALA, ALTO_BALA);
 
@@ -56,7 +60,7 @@ void Duck::render_bala() {
     int y_renderizado = ALTO_VENTANA - y_bala - ALTO_BALA * FACTOR_ESCALA_BALA;
     Area destArea(x_renderizado, y_renderizado, ANCHO_BALA * FACTOR_ESCALA_BALA, ALTO_BALA * FACTOR_ESCALA_BALA);
 
-    bala.render(srcArea, destArea, flip);
+    bala.render(srcArea, destArea, flip, angle);
     esta_disparando = false;
     
 }
@@ -209,7 +213,8 @@ void Duck::render_movimiento_salto(Area& srcArea, Area& destArea) {
 }
 
 void Duck::render_arma(int y_renderizado) {
-    Area armaSrcArea(0, 0, 38, 38);
+    int arma_index = static_cast<int>(weapon.value());
+    Area armaSrcArea(arma_index * 38, 0, 38, 38);
     
     int pos_arma_x = 0;
     int pos_arma_y = 0;
