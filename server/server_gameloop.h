@@ -10,23 +10,15 @@
 #include "../common/common_thread.h"
 #include "../common/common_accion.h"
 #include "server_monitor.h"
-#include "server_jugador.h"
 #include "server_mapa.h"
 #include "server_leaderboard.h"
 #include "bala.h"
-
-enum EstadoGameloop{
-    EN_ESPERA,
-    COMENZADA,
-    TERMINADA
-};
 
 class Gameloop: public Thread {
 private:
     Queue<Accion> comandos_acciones;
     PlayerMonitor monitor;
-    std::unordered_map<int, Jugador*> jugadores;
-    EstadoGameloop estado = EN_ESPERA;
+    std::unordered_map<int, std::shared_ptr<Player>> jugadores;
     unsigned int capacidad_minima;
     unsigned int cantidad_de_jugadores = 0;
     std::mutex mtx;
@@ -41,21 +33,21 @@ private:
     void sleep();
     void cargar_acciones();
     void procesar_acciones(std::vector<Accion> acciones, Mapa &mapa);
-    Jugador* get_winner();
-    void handle_winner(Jugador* winner);
+    Player* get_winner();
+    void handle_winner(Player* winner);
     void reset_jugadores(); 
     void procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables);
 
-    void eliminar_jugador(std::unordered_map<int, Jugador*>::iterator it);
-    void eliminar_desconectados();
-
 public:
-    explicit Gameloop(Socket& skt,unsigned int capacidad_minima);
+    explicit Gameloop(int id_jugador, unsigned int capacidad_minima, Queue<std::unique_ptr<Evento>>& cola_eventos);
 
-    void agregar_jugador(Socket& skt);
+    void agregar_jugador(int id_jugador,Queue<std::unique_ptr<Evento>>& cola_eventos);
+    std::vector<int> get_ids();
+    void eliminar_jugador(int id_jugador,Queue<std::unique_ptr<Evento>>& cola_eventos);
     void run() override;
-    EstadoGameloop get_estado();
-    void cerrar_conexiones();
+    Queue<Accion>& get_cola_acciones();
+    bool esta_llena();
+    bool esta_vacia();
 };
 
 #endif

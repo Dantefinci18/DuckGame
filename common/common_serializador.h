@@ -15,7 +15,6 @@
 #include "../server/SpawnPlace.h"
 #include "../server/Box.h"
 #include "../server/server_leaderboard.h"
-#include "common_partida.h"
 
 class Serializador {
 private:
@@ -25,10 +24,8 @@ private:
 public:
 
     std::vector<uint8_t> serializar_accion(ComandoAccion &accion);
-    std::vector<uint8_t> serializar_partida(ComandoPartida &partida);
 
     ComandoAccion deserializar_accion(const uint8_t* data);
-    ComandoPartida deserializar_partida(const uint8_t* data);
 
     std::vector<uint8_t> serializar_evento(const Evento& evento);
     std::vector<uint8_t> serializar_pickup(const Evento& evento);
