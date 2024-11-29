@@ -34,6 +34,7 @@ void Gameloop::agregar_jugador(int id_jugador, Queue<std::unique_ptr<Evento>>& c
 void Gameloop::run() {
 
     EventoMapa eventoMapa(mapa->getCollidables(), leaderboard);
+    std::cout << "se envia el evento mapa\n";
     monitor.enviar_evento(eventoMapa);
     
     while (_keep_running) {

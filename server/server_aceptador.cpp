@@ -15,6 +15,7 @@ void Aceptador::run() {
         try {
 
             Socket conexion = skt.accept();
+            std::cout << "acepto una conexion\n";
             lobby.agregar_jugador(conexion);
 
         } catch (const LibError& e) {}

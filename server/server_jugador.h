@@ -20,14 +20,14 @@ class Jugador {
 private:
     ProtocoloServidor protocolo;
     int id;
-    Queue<std::unique_ptr<Evento>>& cola_eventos;
+    Queue<std::unique_ptr<Evento>> cola_eventos;
     Sender sender;
     std::mutex mtx;
     Receiver receiver;
     int generar_id();
 
 public:
-    explicit Jugador(Queue<Accion> &comandos,Queue<std::unique_ptr<Evento>>& cola_eventos,Socket&& conexion);
+    explicit Jugador(Queue<Accion> &comandos,Socket&& conexion);
 
     void run();
 

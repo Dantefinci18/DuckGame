@@ -13,7 +13,7 @@ class ServerLobby : public Thread {
     private:
         std::list<Gameloop*> partidas;
         Queue<Accion> cola_comando_partidas;
-        std::unordered_map<int, std::shared_ptr<Jugador>> jugadores_esperando;
+        std::unordered_map<int, Jugador*> jugadores_esperando;
         std::mutex mtx;
 
         Gameloop *obtener_partida_en_espera();

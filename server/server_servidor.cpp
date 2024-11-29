@@ -11,8 +11,8 @@ void Servidor::run() {
 
     while (std::cin >> entrada, entrada != "q") {}
 
+    aceptador.stop();
     skt.shutdown(2);
     skt.close();
-    aceptador.stop();
     aceptador.join();
 }

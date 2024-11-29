@@ -1,11 +1,12 @@
 #include "server_lobby.h"
 
 void ServerLobby::agregar_jugador(Socket& skt){
-    std::lock_guard<std::mutex> lock(mtx);
-    Queue<std::unique_ptr<Evento>> cola_eventos;
-    std::shared_ptr<Jugador> jugador = std::make_shared<Jugador>(cola_comando_partidas,cola_eventos,std::move(skt));
+    std::cout << "voy a crar un jugador\n";
+    Jugador *jugador = new Jugador(cola_comando_partidas,std::move(skt));
+    std::cout << "jugador creado\n";
     jugador->run();
     jugadores_esperando[jugador->get_id()] = jugador;
+    std::cout << "se aniade el jugador al lobby\n";
 }
 
 void ServerLobby::run(){
@@ -13,9 +14,8 @@ void ServerLobby::run(){
         try{
             auto accion_partida = cola_comando_partidas.pop();
             eliminar_terminadas();
-            std::lock_guard<std::mutex> lock(mtx);
             int id_jugador = accion_partida.get_player_id();
-            std::shared_ptr<Jugador> jugador = jugadores_esperando[accion_partida.get_player_id()];
+            Jugador *jugador = jugadores_esperando[accion_partida.get_player_id()];
             ComandoAccion partida = accion_partida.get_command();
 
             if(partida == NONE_ACCION){
@@ -31,7 +31,6 @@ void ServerLobby::run(){
             }else if(partida == CARGAR_PARTIDA){
                 std::cout << "Cargar partida" << std::endl;
                 Gameloop *gameloop = obtener_partida_en_espera();
-                
                 if(gameloop != nullptr){
                     gameloop->agregar_jugador(id_jugador,jugador->get_cola_eventos());
                     
@@ -91,8 +90,9 @@ void ServerLobby::eliminar_jugadores_de_una_partida(Gameloop *partida){
 
     for(int id_jugador : partida->get_ids()){
         std::cout << "elimino jugador: " << id_jugador << std::endl;
-        auto& cola_eventos = jugadores_esperando[id_jugador]->get_cola_eventos();
-        partida->eliminar_jugador(id_jugador,cola_eventos);
+        Jugador *jugador = jugadores_esperando[id_jugador];
+        partida->eliminar_jugador(id_jugador,jugador->get_cola_eventos());
+        delete jugador;
     }
 }
 
