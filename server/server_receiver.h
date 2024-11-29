@@ -15,7 +15,7 @@
 class Receiver: public Thread {
 private:
     ProtocoloServidor& protocolo;
-    Queue<Accion>& acciones;
+    Queue<Accion> *acciones;
     int id;
     std::mutex mtx;
 
@@ -25,6 +25,8 @@ public:
     void run() override;
 
     bool se_cerro();
+
+    void reset_cola(Queue<Accion>& comandos);
 };
 
 #endif

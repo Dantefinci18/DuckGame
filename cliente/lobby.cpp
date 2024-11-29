@@ -2,15 +2,14 @@
 #include <utility>
 #include <stdexcept>
 #include "cliente_protocolo.h"
-#include "../common/common_partida.h"
 
 Lobby::Lobby(const char* hostname, const char* servname) : socket(hostname, servname) {}
 
 void Lobby::crear_partida(const std::string& mapa_seleccionado) {
     (void)mapa_seleccionado;
     bool was_closed = false;
-    ComandoPartida comando = NUEVA_PARTIDA;
-    std::vector<uint8_t> partida_serializada = serializador.serializar_partida(comando);
+    ComandoAccion comando = NUEVA_PARTIDA;
+    std::vector<uint8_t> partida_serializada = serializador.serializar_accion(comando);
     socket.sendall(partida_serializada.data(), partida_serializada.size(), &was_closed);
     if (was_closed) {
         throw std::runtime_error("Error al enviar comando de nueva partida");
@@ -20,8 +19,8 @@ void Lobby::crear_partida(const std::string& mapa_seleccionado) {
 
 void Lobby::cargar_partida(){
     bool was_closed = false;
-    ComandoPartida comando = CARGAR_PARTIDA;
-    std::vector<uint8_t> accion_serializada = serializador.serializar_partida(comando);
+    ComandoAccion comando = CARGAR_PARTIDA;
+    std::vector<uint8_t> accion_serializada = serializador.serializar_accion(comando);
     socket.sendall(accion_serializada.data(), accion_serializada.size(), &was_closed);
     if (was_closed) {
         throw std::runtime_error("Error al enviar comando de cargar partida");

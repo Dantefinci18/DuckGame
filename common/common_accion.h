@@ -18,6 +18,8 @@ enum ComandoAccion : uint8_t{
     NUEVA_PARTIDA_ACCION,
     APUNTAR_ARRIBA,
     DEJAR_APUNTAR_ARRIBA,
+    NUEVA_PARTIDA,
+    CARGAR_PARTIDA,
     NONE_ACCION
 };
 

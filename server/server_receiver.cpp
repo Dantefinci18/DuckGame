@@ -5,7 +5,7 @@
 #include <string>
 
 Receiver::Receiver(ProtocoloServidor& protocolo, Queue<Accion>& acciones, int id):
-        protocolo(protocolo), acciones(acciones), id(id) {}
+        protocolo(protocolo), acciones(&acciones), id(id) {}
 
 void Receiver::run() {
     try {
@@ -17,7 +17,8 @@ void Receiver::run() {
                 break;
             }
             Accion accion(id, command);
-            acciones.push(std::move(accion));
+            std::lock_guard<std::mutex> lock(mtx);
+            acciones->push(std::move(accion));
         }
 
     } catch (std::exception& e) {
@@ -27,3 +28,8 @@ void Receiver::run() {
 }
 
 bool Receiver::se_cerro() { return !_keep_running; }
+
+void Receiver::reset_cola(Queue<Accion>& comandos){
+    std::lock_guard<std::mutex> lock(mtx);
+    acciones = &comandos;
+}
