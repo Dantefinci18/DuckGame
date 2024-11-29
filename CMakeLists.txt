@@ -139,6 +139,53 @@ if(TALLER_CLIENT)
     )
 endif()
 
+if(TALLER_EDITOR)
+    add_executable(taller_editor)
+    
+    # Make them depend on taller_common lib
+    add_dependencies(taller_editor taller_common)
+
+    # Add source files and enable warnings
+    add_subdirectory(editor)
+
+    set_project_warnings(taller_editor ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
+
+    target_link_libraries( taller_editor taller_common )
+
+    # Qt5 configuration for client
+    find_package(Qt5 REQUIRED COMPONENTS Widgets)
+    
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
+    set(CMAKE_AUTOUIC ON)
+
+    file(GLOB EDITOR_UISOURCES editor/*.ui)
+
+    qt5_wrap_ui(EDITOR_UIS_HEADERS ${EDITOR_UISOURCES})
+
+    qt5_wrap_cpp(EDITOR_MOC_HEADERS editor/map_editor.h)
+
+    target_include_directories(taller_editor
+        PRIVATE
+            ${CMAKE_BINARY_DIR}  
+    )
+
+    qt5_add_resources(EDITOR_RESOURCES ${CMAKE_SOURCE_DIR}/editor/editor_resources.qrc)
+
+    target_sources(taller_editor PRIVATE ${EDITOR_RESOURCES})
+
+    target_sources(taller_editor
+        PRIVATE
+            ${EDITOR_UIS_HEADERS}       
+            ${EDITOR_MOC_HEADERS}      
+    )
+
+    target_link_libraries(taller_editor
+        Qt5::Widgets
+    )
+endif()
+
+
 
 if(TALLER_SERVER)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!

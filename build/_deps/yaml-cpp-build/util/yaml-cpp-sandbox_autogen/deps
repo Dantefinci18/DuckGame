@@ -1,0 +1,4 @@
+yaml-cpp-sandbox_autogen/timestamp: \
+	/home/echitosto/Documents/GitHub/DuckGame/build/_deps/yaml-cpp-src/util/CMakeLists.txt \
+	/home/echitosto/Documents/GitHub/DuckGame/build/_deps/yaml-cpp-src/util/sandbox.cpp \
+	/usr/bin/cmake
