@@ -53,43 +53,8 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
 
     switch (tipo) {
         case Evento::EventoMovimiento: {
-            uint8_t x[32];
-            socket.recvall(x, sizeof(x), &was_closed);
-            if (was_closed) {
-                throw std::runtime_error("Error al recibir coordenada X en evento de movimiento: conexión cerrada");
-            }
-
-            uint8_t y[32];
-            socket.recvall(y, sizeof(y), &was_closed);
-            if (was_closed) {
-                throw std::runtime_error("Error al recibir coordenada Y en evento de movimiento: conexión cerrada");
-            }
-
-            uint8_t id[32];
-            socket.recvall(id, sizeof(id), &was_closed);
-            if (was_closed) {
-                throw std::runtime_error("Error al recibir ID en evento de movimiento: conexión cerrada");
-            }
-
-            uint8_t color[8];
-            socket.recvall(color, sizeof(color), &was_closed);
-            if (was_closed) {
-                throw std::runtime_error("Error al recibir color en evento de movimiento: conexión cerrada");
-            }
-
-            char is_flapping;
-            socket.recvall(&is_flapping, sizeof(is_flapping), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            char reset;
-            socket.recvall(&reset, sizeof(reset), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            return serializador.deserializar_movimiento(id,color,x, y, is_flapping, reset);
+            uint8_t bits_movimiento[66];
+            return serializador.deserializar_movimiento(bits_movimiento);
         }
         case Evento::EventoMapa: {
             uint8_t cantidad[32];

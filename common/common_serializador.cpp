@@ -113,44 +113,43 @@ std::vector<uint8_t> Serializador::serializar_espera(const Evento::TipoEvento& t
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
-    std::vector<uint8_t> bits(114); 
+    std::vector<uint8_t> bits(74); 
+
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
     for (int i = 0; i < 8; ++i) {
         bits[i] = (tipo_evento >> (7 - i)) & 1;
     }
 
     uint32_t x_bits;
-    memcpy(&x_bits, &static_cast<const EventoMovimiento&>(evento).x, sizeof(float));
-    for (int i = 0; i < 32; ++i) {
-        bits[8 + i] = (x_bits >> (31 - i)) & 1;
+    memcpy(&x_bits, &static_cast<const EventoMovimiento&>(evento).x, sizeof(int));
+    for (int i = 0; i < 12; i++) {
+        bits[8 + i] = (x_bits >> (11 - i)) & 1;
     }
 
-    // Serializar y
     uint32_t y_bits;
-    memcpy(&y_bits, &static_cast<const EventoMovimiento&>(evento).y, sizeof(float));
-    for (int i = 0; i < 32; ++i) {
-        bits[40 + i] = (y_bits >> (31 - i)) & 1;
+    memcpy(&y_bits, &static_cast<const EventoMovimiento&>(evento).y, sizeof(int));
+    for (int i = 0; i < 12; i++) {
+        bits[20 + i] = (y_bits >> (11 - i)) & 1;
     }
 
-    // Serializar id
     uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoMovimiento&>(evento).id);
     for (int i = 0; i < 32; ++i) {
-        bits[72 + i] = (id_bits >> (31 - i)) & 1;
+        bits[32 + i] = (id_bits >> (31 - i)) & 1;
     }
 
-    // Serializar color 
     uint8_t color_bits = static_cast<uint8_t>(static_cast<const EventoMovimiento&>(evento).color);
     for (int i = 0; i < 8; ++i) {
-        bits[104 + i] = (color_bits >> (7 - i)) & 1;
+        bits[64 + i] = (color_bits >> (7 - i)) & 1;
     }
 
-    char is_flapping = static_cast<char>(static_cast<const EventoMovimiento&>(evento).is_flapping);
-    bits[112] = is_flapping; 
+    uint8_t is_flapping_bits = static_cast<uint8_t>(static_cast<const EventoMovimiento&>(evento).is_flapping);
+    bits[72] = is_flapping_bits;
 
-    char reset = static_cast<char>(static_cast<const EventoMovimiento&>(evento).reset);
-    bits[113] = reset; 
+    uint8_t reset_bits = static_cast<uint8_t>(static_cast<const EventoMovimiento&>(evento).reset);
+    bits[73] = reset_bits;
     return bits;
 }
+
 
 std::vector<uint8_t> Serializador::serializar_pickup(const Evento& evento) {
     std::vector<uint8_t> bits(136); 
@@ -407,34 +406,39 @@ Evento::TipoEvento Serializador::deserializar_tipo_evento(const uint8_t* tipo_ev
 }
 
 
-std::unique_ptr<Evento> Serializador::deserializar_movimiento(
-    const uint8_t* id_data, const uint8_t* color_data, const uint8_t* x_data, const uint8_t* y_data, char is_flapping, char reset) {
-    int id;
-    float x, y;
+std::unique_ptr<Evento> Serializador::deserializar_movimiento(const uint8_t* bits_movimiento) {
+
+    uint32_t x_bits = 0;   
+    
+    for (int i = 0; i < 12; ++i) {
+        x_bits |= (bits_movimiento[0 + i] << (11 - i));
+        std::cout << x_bits << std::endl;
+    }
+    int x = static_cast<int>(x_bits);
+
+    uint32_t y_bits = 0;
+    for (int i = 0; i < 12; ++i) {
+        y_bits |= (bits_movimiento[12 + i] << (11 - i));
+    }
+    
+    int y = static_cast<int>(y_bits);
 
     uint32_t id_bits = 0;
     for (int i = 0; i < 32; ++i) {
-        id_bits |= (id_data[i] << (31 - i));
+        id_bits |= (bits_movimiento[24 + i] << (31 - i));
     }
-    id = static_cast<int>(id_bits);
+    int id = static_cast<int>(id_bits);
 
-    uint8_t color_bits = 0;
+    uint8_t bits_color = 0;
     for (int i = 0; i < 8; ++i) {
-        color_bits |= (color_data[i] << (7 - i));
+        bits_color |= (bits_movimiento[56 + i] << (7 - i));
     }
-    ColorDuck color_asignado = static_cast<ColorDuck>(color_bits);
+    ColorDuck color_asignado = static_cast<ColorDuck>(bits_color);
 
-    uint32_t x_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        x_bits |= (x_data[i] << (31 - i));
-    }
-    memcpy(&x, &x_bits, sizeof(float));
+    bool is_flapping = bits_movimiento[64];
+    bool reset = bits_movimiento[65];
 
-    uint32_t y_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        y_bits |= (y_data[i] << (31 - i));
-    }
-    memcpy(&y, &y_bits, sizeof(float));
+
 
     return std::make_unique<EventoMovimiento>(id, color_asignado, x, y, is_flapping, reset);
 }

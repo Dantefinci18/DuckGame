@@ -9,7 +9,7 @@
 #define ANCHO_IMG_DUCK 32
 #define ALTO_IMG_DUCK 38
 
-Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial,ColorDuck color)
+Duck::Duck(SdlWindow& window, int x_inicial, int y_inicial,ColorDuck color)
     : movimientos_en_x("../Imagenes/duck_x" + procesar_color(color) + ".png", window),
       movimiento_en_y("../Imagenes/movimiento_y" + procesar_color(color) + ".png", window),
       armas("../Imagenes/guns.png", window),
@@ -136,7 +136,7 @@ void Duck::kill() {
     is_dead = true;
 }
 
-void Duck::mover_a(float x, float y, bool is_flapping, bool reset) {
+void Duck::mover_a(int x, int y, bool is_flapping, bool reset) {
     if (x != x_des || y != y_des) {
         quieto = false;
     }

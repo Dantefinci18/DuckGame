@@ -43,42 +43,8 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
 
     switch (tipo) {
         case Evento::EventoMovimiento: {
-            uint8_t x[32];
-            socket.recvall(x, sizeof(x), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            uint8_t y[32];
-            socket.recvall(y, sizeof(y), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            uint8_t id[32];
-            socket.recvall(id, sizeof(id), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            uint8_t color[8];
-            socket.recvall(color, sizeof(color), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            char is_flapping;
-            socket.recvall(&is_flapping, sizeof(is_flapping), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            char reset;
-            socket.recvall(&reset, sizeof(reset), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-            return serializador.deserializar_movimiento(id,color,x, y, is_flapping, reset);
+            uint8_t bits_movimiento[66];
+            return serializador.deserializar_movimiento(bits_movimiento);
         }
         case Evento::EventoMapa: {
             uint8_t cantidad[32];

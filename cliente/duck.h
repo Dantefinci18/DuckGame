@@ -16,7 +16,7 @@ public:
     /*
      * Constructor de la clase Duck, recibe una ventana, un float con la posicion x inicial, un float con la posicion y inicial y un string con el color
      */
-    Duck(SdlWindow& window, float x_inicial, float y_inicial, ColorDuck color);
+    Duck(SdlWindow& window, int x_inicial, int y_inicial, ColorDuck color);
 
     /* 
      * Funcion que setea la bala del pato
@@ -43,7 +43,7 @@ public:
      * Recibe si en esta nueva posicion el pato esta aleteando
      * Recibe un booleano para saber si resetear la textura del pato.
      */ 
-    void mover_a(float nueva_x, float nueva_y, bool is_flapping, bool reset);
+    void mover_a(int nueva_x, int nueva_y, bool is_flapping, bool reset);
 
     /*
      * Funcion que debe recibir una direccion valida 
@@ -125,8 +125,8 @@ private:
     DireccionApuntada direccion_arma;
     int x_img = 0;
     int y_img = 0;
-    float x_actual;
-    float y_actual;
+    int x_actual;
+    int y_actual;
     bool is_dead;
     float x_des;
     int y_des;
