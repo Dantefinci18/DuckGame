@@ -17,11 +17,6 @@
 #include <random>
 
 namespace fs = std::filesystem;
-enum EstadoGameloop{
-    EN_ESPERA,
-    COMENZADA,
-    TERMINADA
-};
 class Gameloop: public Thread {
 private:
     Queue<Accion> comandos_acciones;
@@ -53,8 +48,6 @@ public:
     std::vector<int> get_ids();
     void eliminar_jugador(int id_jugador,Queue<std::unique_ptr<Evento>>& cola_eventos);
     void run() override;
-    EstadoGameloop get_estado();
-    void cerrar_conexiones();
     int getRandomMapIndex();
     Queue<Accion>& get_cola_acciones();
     bool esta_llena();
