@@ -232,17 +232,17 @@ void Duck::render_arma(int y_renderizado) {
         case DireccionApuntada::APUNTADO_ARRIBA:
             if(flip == SDL_FLIP_NONE){
                 angle = -90.0;
-                pos_arma_x = ANCHO_DUCK/2;
+                pos_arma_x = ANCHO_DUCK/4;
             } else {
-                pos_arma_x = -ANCHO_DUCK/2;
+                pos_arma_x = -ANCHO_DUCK/4;
                 angle = 90.0;
             }
             break;
         case DireccionApuntada::APUNTADO_DERECHA:
-            pos_arma_x = ANCHO_DUCK/2;
+            pos_arma_x = ANCHO_DUCK/4;
             break;
         case DireccionApuntada::APUNTADO_IZQUIERDA:
-            pos_arma_x = -ANCHO_DUCK/2;
+            pos_arma_x = -ANCHO_DUCK/4;
             flip = SDL_FLIP_HORIZONTAL;
             break;
     }
