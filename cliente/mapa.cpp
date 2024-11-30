@@ -89,7 +89,7 @@ void Mapa::renderizar_mapa() {
             SpawnPlace* spawnPlace = static_cast<SpawnPlace*>(collidable);
             if (spawnPlace->has_weapon()) {
                 float plat_x = spawnPlace->position.x;  
-                float plat_y = ALTO_VENTANA - spawnPlace->position.y - spawnPlace->height; 
+                float plat_y = ScreenUtils::get_y_for_screen(spawnPlace->position.y, spawnPlace->height);
                 float plat_width = spawnPlace->width;   
                 float plat_height = spawnPlace->height; 
                 int arma_index = static_cast<int>(spawnPlace->get_weapon_type());
