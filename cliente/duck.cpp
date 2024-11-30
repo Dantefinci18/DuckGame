@@ -207,10 +207,7 @@ void Duck::render_movimiento_vertical() {
     else if (distancia_vertical > 0) {
         x_img = 3 * ANCHO_DUCK_IMG;
     } else if (distancia_vertical < 0) {
-        std::cout << "x_img falling before: " << x_img << std::endl;
         x_img = (x_img < ANCHO_DUCK_IMG_TOTAL - ANCHO_DUCK_IMG) ? 4 * ANCHO_DUCK_IMG : 0;
-        std::cout << "x_img falling after: " << x_img << std::endl;
-        std::cout << "--------------------------------- " << x_img << std::endl;
     }
 }
 

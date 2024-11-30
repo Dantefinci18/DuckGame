@@ -85,32 +85,32 @@ bool try_pop(T& val) {
  void push(T&& value) {
     std::unique_lock<std::mutex> lck(mtx);
     
-    std::cout << "veo si puedo pushear\n";
+    //std::cout << "veo si puedo pushear\n";
     
     if (closed) {
-        std::cout << "cola cerrada\n";
+        //std::cout << "cola cerrada\n";
         throw ClosedQueue();
     }
     while (q.size() == this->max_size) {
-        std::cout << "cola llena\n";
+        //std::cout << "cola llena\n";
         is_not_full.wait(lck);
     }
     if (q.empty()) {
         is_not_empty.notify_all();
     }
 
-    std::cout << "voy a pushear algo\n";
+    //std::cout << "voy a pushear algo\n";
     q.push(std::move(value));
-    std::cout << "algo pusheado\n";
+    //std::cout << "algo pusheado\n";
 }
 
 
 T pop() {
     std::unique_lock<std::mutex> lck(mtx);
-    std::cout << "veo si puedo popear\n";
+    //std::cout << "veo si puedo popear\n";
     while (q.empty()) {
         if (closed) {
-            std::cout << "cola cerrada\n";
+            //std::cout << "cola cerrada\n";
             throw ClosedQueue();
         }
 
@@ -118,14 +118,14 @@ T pop() {
     }
 
     if (q.size() == this->max_size) {
-        std::cout << "tamanio maximo\n";
+        //std::cout << "tamanio maximo\n";
         is_not_full.notify_all();
     }
 
     T val = std::move(q.front());
-    std::cout << "voy a popear\n";
+    //std::cout << "voy a popear\n";
     q.pop();
-    std::cout << "algo popeado\n";
+    //std::cout << "algo popeado\n";
 
     return val;
 }
@@ -204,10 +204,10 @@ public:
     void push(void* const& val) {
         std::unique_lock<std::mutex> lck(mtx);
 
-        std::cout << "voy a pushear el evento\n";
+        //std::cout << "voy a pushear el evento\n";
 
         if (closed) {
-            std::cout << "cola cerrada\n";
+            //std::cout << "cola cerrada\n";
             throw ClosedQueue();
         }
 
@@ -220,7 +220,7 @@ public:
         }
 
         q.push(val);
-        std::cout << "evento pusheado\n";
+        //std::cout << "evento pusheado\n";
     }
 
 
