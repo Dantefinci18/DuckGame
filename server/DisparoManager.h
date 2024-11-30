@@ -7,7 +7,6 @@
 #include "SpawnPlace.h"
 #include "Box.h"
 #include "SpawnWeaponBox.h"
-#include "server_jugador.h"
 #include "bala.h"
 #include "../common/common_evento.h"
 #include <vector>
@@ -18,7 +17,7 @@
 
 class DisparoManager {
 public:
-    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, Jugador*> jugadores, std::vector<Bala>& balas, std::vector<std::shared_ptr<Evento>>& eventos, std::vector<Collidable*>& collidables_a_agregar) {
+    static void procesar_disparo(Player& player, std::vector<Collidable*>& collidables, std::unordered_map<int, std::shared_ptr<Player>>jugadores, std::vector<Bala>& balas, std::vector<std::shared_ptr<Evento>>& eventos, std::vector<Collidable*>& collidables_a_agregar) {
         
         if (!player.has_weapon()) {
             return;
@@ -58,16 +57,16 @@ public:
             }
 
             for (auto& jugador : jugadores) {
-                if (jugador.second->get_fisicas() != &player && 
-                    !jugador.second->get_fisicas()->is_duck_dead() && 
-                    !jugador.second->get_fisicas()->is_agachado()) {
+                if (jugador.second.get() != &player && 
+                    !jugador.second->is_duck_dead() && 
+                    !jugador.second->is_agachado()) {
 
-                    auto interseccion = jugador.second->get_fisicas()->intersection_point(origen, destino);
+                    auto interseccion = jugador.second->intersection_point(origen, destino);
                     if (interseccion) {
                         float distancia = (*interseccion - origen).magnitude();
                         if (distancia < menor_distancia) {
                             menor_distancia = distancia;
-                            primer_impacto = jugador.second->get_fisicas();
+                            primer_impacto = dynamic_cast<Collidable*>(jugador.second.get());
                             punto_impacto = interseccion;
                             punto_final = *interseccion;
                         }

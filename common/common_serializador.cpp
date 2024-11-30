@@ -18,11 +18,6 @@ std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
     return serializar_enum(bits);
 }
 
-std::vector<uint8_t> Serializador::serializar_partida(ComandoPartida &partida){
-    std::bitset<8> bits(partida);  
-    return serializar_enum(bits);
-}
-
 uint8_t Serializador::deserializar_enum(const uint8_t* data){
     uint8_t valor = 0;
     
@@ -37,11 +32,6 @@ uint8_t Serializador::deserializar_enum(const uint8_t* data){
 ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
     ComandoAccion accion = static_cast<ComandoAccion>(deserializar_enum(data));
     return accion;
-}
-
-ComandoPartida Serializador::deserializar_partida(const uint8_t* data){
-    ComandoPartida partida = static_cast<ComandoPartida>(deserializar_enum(data));
-    return partida;
 }
 
 std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {

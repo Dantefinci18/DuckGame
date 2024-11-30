@@ -25,20 +25,6 @@ ComandoAccion ProtocoloServidor::recibir_accion() {
 }
 
 
-ComandoPartida ProtocoloServidor::recibir_partida() {
-    bool was_closed = false;
-
-    uint8_t data[8];
-    conexion.recvall(data, sizeof(data), &was_closed);
-
-    if (was_closed) {
-        return NONE_PARTIDA;
-    }
-
-    return serializador.deserializar_partida(data);
-}
-
-
 bool ProtocoloServidor::enviar_id(int id) {
     bool was_closed = false;
     std::vector<uint8_t> buffer= serializador.serializar_id(id);
@@ -49,6 +35,9 @@ bool ProtocoloServidor::enviar_id(int id) {
 }
 void ProtocoloServidor::enviar_estado(const Evento& evento) {
     bool was_closed = false;
+    if(evento.get_tipo() == Evento::EventoEspera){
+        std::cout << "protocolo: evento espera\n";
+    }
     
     std::vector<uint8_t> bits = serializador.serializar_evento(evento);
     

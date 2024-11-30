@@ -5,6 +5,7 @@
 #include <tuple>
 #include <random>
 #include <cstdint>
+#include <mutex>
 #include "../common/common_socket.h"
 #include "../common/common_color.h"
 #include "../common/common_queue.h"
@@ -19,13 +20,14 @@ class Jugador {
 private:
     ProtocoloServidor protocolo;
     int id;
+    Queue<std::unique_ptr<Evento>> cola_eventos;
     Sender sender;
+    std::mutex mtx;
     Receiver receiver;
-    Player playerPhysics;
     int generar_id();
 
 public:
-    explicit Jugador(Queue<Accion> &comandos,PlayerMonitor& monitor ,Socket&& conexion, ColorDuck color);
+    explicit Jugador(Queue<Accion> &comandos,Socket&& conexion);
 
     void run();
 
@@ -36,11 +38,12 @@ public:
     void cerrar_conexion();
 
     int get_id();
-    Player* get_fisicas();
-    void update_fisicas(std::vector<Collidable*> collidables);
 
+    void reset(Queue<Accion> &comandos);
 
-    ~Jugador();
+    Queue<std::unique_ptr<Evento>>& get_cola_eventos();
+
+    void enviar_evento(const Evento& evento);
 };
 
 #endif
