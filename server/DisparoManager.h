@@ -110,8 +110,8 @@ public:
 
                             EventoCajaDestruida evento_caja_destruida(caja_x, caja_y);
                             eventos.push_back(std::make_shared<EventoCajaDestruida>(evento_caja_destruida));
-                            SpawnWeaponBox* recompensa = new SpawnWeaponBox(Vector(caja_x, caja_y), 20, 20);
-                            EventoSpawnArmaBox evento_spawn_arma(caja_x, caja_y, recompensa->get_weapon_type());
+                            SpawnWeaponBox* recompensa = new SpawnWeaponBox(Vector(caja_x, caja_y), caja_impactada->width, caja_impactada->height);
+                            EventoSpawnArmaBox evento_spawn_arma(caja_x, caja_y, caja_impactada->width, caja_impactada->height, recompensa->get_weapon_type());
                             eventos.push_back(std::make_shared<EventoSpawnArmaBox>(evento_spawn_arma));
                             collidables_a_agregar.push_back(recompensa);
                         } else {

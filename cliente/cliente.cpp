@@ -139,8 +139,8 @@ void Cliente::procesar_eventos_recibidos() {
 void Cliente::agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box) {
     auto* spawnWeaponBox = new SpawnWeaponBox(
         Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 
-        20, 
-        20
+        evento_spawn_arma_box.width, 
+        evento_spawn_arma_box.height
     );
 
     std::unique_ptr<Weapon> weapon = WeaponUtils::create_weapon(evento_spawn_arma_box.weapon_type);

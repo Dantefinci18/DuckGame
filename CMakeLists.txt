@@ -140,6 +140,13 @@ if(TALLER_CLIENT)
 endif()
 
 if(TALLER_EDITOR)
+    include(FetchContent)
+    FetchContent_Declare(
+        yaml-cpp
+        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+        GIT_TAG master # Puedes cambiar a una versión específica si lo prefieres
+    )
+    FetchContent_MakeAvailable(yaml-cpp)
     add_executable(taller_editor)
     
     # Make them depend on taller_common lib
@@ -163,7 +170,7 @@ if(TALLER_EDITOR)
 
     qt5_wrap_ui(EDITOR_UIS_HEADERS ${EDITOR_UISOURCES})
 
-    qt5_wrap_cpp(EDITOR_MOC_HEADERS editor/map_editor.h)
+    qt5_wrap_cpp(EDITOR_MOC_HEADERS editor/map_editor.h editor/canva.h)
 
     target_include_directories(taller_editor
         PRIVATE
@@ -182,6 +189,7 @@ if(TALLER_EDITOR)
 
     target_link_libraries(taller_editor
         Qt5::Widgets
+        yaml-cpp
     )
 endif()
 

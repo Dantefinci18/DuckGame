@@ -185,7 +185,7 @@ void Gameloop::cargar_acciones() {
         --ticks_round_win_screen;
         if (ticks_round_win_screen == 0) {
             std::cout << "reseting!" << std::endl;
-            mapa = std::make_unique<Mapa>(3);
+            mapa = std::make_unique<Mapa>(getRandomMapIndex());
             ticks_round_win_screen = 60;
             should_reset_round = false;
             EventoMapa eventoMapa(mapa->getCollidables(), leaderboard);
@@ -254,4 +254,26 @@ void Gameloop::cerrar_conexiones() {
         eliminar_jugador(it);
         ++it;
     }
+}
+
+int Gameloop::getRandomMapIndex() {
+    std::vector<fs::directory_entry> files;
+
+    for (const auto& entry : fs::directory_iterator("../server/mapas")) {
+        if (fs::is_regular_file(entry)) { 
+            files.push_back(entry);
+        }
+    }
+
+    size_t numFiles = files.size();
+    if (numFiles == 0) {
+        std::cerr << "No files in the directory." << std::endl;
+        return -1;
+    }
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(0, numFiles - 1);
+
+    return dist(gen) + 1; 
 }

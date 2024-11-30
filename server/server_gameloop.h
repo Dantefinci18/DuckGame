@@ -14,7 +14,10 @@
 #include "server_mapa.h"
 #include "server_leaderboard.h"
 #include "bala.h"
+#include <filesystem>
+#include <random>
 
+namespace fs = std::filesystem;
 enum EstadoGameloop{
     EN_ESPERA,
     COMENZADA,
@@ -56,6 +59,7 @@ public:
     void run() override;
     EstadoGameloop get_estado();
     void cerrar_conexiones();
+    int getRandomMapIndex();
 };
 
 #endif

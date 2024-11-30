@@ -1,7 +1,10 @@
 <RCC>
     <qresource prefix="images_editor">
         <file>images_editor/forest.png</file>
-        <file>images_editor/background_duckgame.jpg</file>
         <file>images_editor/forest.jpg</file>
+        <file>images_editor/box.png</file>
+        <file>images_editor/gun.png</file>
+        <file>images_editor/platform.png</file>
+        <file>images_editor/debug.png</file>
     </qresource>
 </RCC>

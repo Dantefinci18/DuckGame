@@ -229,7 +229,7 @@ std::vector<uint8_t> Serializador::serializar_spawn_arma(const Evento& evento) {
 }
 
 std::vector<uint8_t> Serializador::serializar_spawn_arma_box(const Evento& evento) {
-    std::vector<uint8_t> bits(104); 
+    std::vector<uint8_t> bits(168); 
 
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
     for (int i = 0; i < 8; ++i) {
@@ -249,10 +249,22 @@ std::vector<uint8_t> Serializador::serializar_spawn_arma_box(const Evento& event
         bits[40 + i] = (y_bits >> (31 - i)) & 1;
     }
 
+    // Serializar width
+    uint32_t width_bits = static_cast<uint32_t>(static_cast<const EventoSpawnArmaBox&>(evento).width);
+    for (int i = 0; i < 32; ++i) {
+        bits[72 + i] = (width_bits >> (31 - i)) & 1;
+    }
+
+    // Serializar height
+    uint32_t height_bits = static_cast<uint32_t>(static_cast<const EventoSpawnArmaBox&>(evento).height);
+    for (int i = 0; i < 32; ++i) {
+        bits[104 + i] = (height_bits >> (31 - i)) & 1;
+    }
+
     //Serializar weaponType
     uint32_t tipo_bits = static_cast<uint32_t>(static_cast<const EventoSpawnArmaBox&>(evento).weapon_type);
     for (int i = 0; i < 32; ++i) {
-        bits[72 + i] = (tipo_bits >> (31 - i)) & 1;
+        bits[136 + i] = (tipo_bits >> (31 - i)) & 1;
     }
     //imprimir_uint8_t_array(bits.data(), 104);
     return bits;
@@ -503,7 +515,8 @@ std::unique_ptr<Evento> Serializador::deserializar_spawn_arma(const uint8_t* x_d
     return std::make_unique<EventoSpawnArma>(x, y, tipo);
 }
 
-std::unique_ptr<Evento> Serializador::deserializar_spawn_arma_box(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data) {
+std::unique_ptr<Evento> Serializador::deserializar_spawn_arma_box(const uint8_t* x_data, const uint8_t* y_data, 
+    const uint8_t* width_data, const uint8_t* height_data, const uint8_t* weapon_type_data) {
     float x, y;
 
     uint32_t x_bits = 0;
@@ -522,8 +535,18 @@ std::unique_ptr<Evento> Serializador::deserializar_spawn_arma_box(const uint8_t*
     for (int i = 0; i < 32; ++i) {
         tipo_bits |= (weapon_type_data[i] << (31 - i));
     }
+
+    uint32_t width = 0;
+    for (int i = 0; i < 32; ++i) {
+        width |= (width_data[i] << (31 - i));
+    }
+
+    uint32_t height = 0;
+    for (int i = 0; i < 32; ++i) {
+        height |= (height_data[i] << (31 - i));
+    }
     WeaponType tipo = static_cast<WeaponType>(tipo_bits);
-    return std::make_unique<EventoSpawnArmaBox>(x, y, tipo);
+    return std::make_unique<EventoSpawnArmaBox>(x, y, width, height, tipo);
 }
 
 std::unique_ptr<Evento> Serializador::deserializar_disparo(const uint8_t* id_data) {

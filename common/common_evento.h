@@ -288,9 +288,11 @@ class EventoSpawnArmaBox : public Evento {
 public:
     float x;
     float y;
+    int width;
+    int height;
     WeaponType weapon_type; 
-    EventoSpawnArmaBox(float x, float y, WeaponType weapon_type) 
-        : x(x), y(y), weapon_type(weapon_type) {}
+    EventoSpawnArmaBox(float x, float y, int width, int height, WeaponType weapon_type) 
+        : x(x), y(y), width(width), height(height), weapon_type(weapon_type) {}
 
     void print() const override {
         std::ostringstream oss;
