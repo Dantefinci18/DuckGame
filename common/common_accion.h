@@ -35,7 +35,26 @@ class Accion {
         int get_player_id() {
             return player_id;
         }
-        explicit Accion(int player_id, ComandoAccion command) : player_id(player_id), command(command) {}
+
+        void set_player_id(int id){
+            player_id = id;
+        }
+
+        explicit Accion(ComandoAccion command) : player_id(-1), command(command) {}
         explicit Accion() : player_id(-1), command(ComandoAccion::NONE_ACCION) {}
 };
+
+class AccionNuevaParida : public Accion {
+    public:
+        const unsigned int cantidad_de_jugadores;
+        const unsigned int mapa;
+
+        explicit AccionNuevaParida(const unsigned int cantidad_de_jugadores,const unsigned int mapa):
+            
+            Accion(ComandoAccion::NUEVA_PARTIDA),
+            cantidad_de_jugadores(cantidad_de_jugadores),
+            mapa(mapa){}
+};
+
+
 #endif // COMMON_ACCION_H

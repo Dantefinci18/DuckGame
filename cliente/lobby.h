@@ -21,7 +21,7 @@ public:
      * Funcion que crea una partida
      * Recibe un string con el mapa seleccionado
      */
-    void crear_partida(const std::string& mapa_seleccionado);
+    void crear_partida(const std::string& mapa_seleccionado, const unsigned int cantidad_de_jugadores);
 
     void cargar_partida();
 

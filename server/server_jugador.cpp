@@ -59,9 +59,10 @@ void Jugador::enviar_evento(const Evento& evento){
     std::unique_ptr<Evento> evento_ptr;
 
     if(evento.get_tipo() == Evento::EventoEspera){
-        std::cout<< "evento espera enviado\n";
+        std::cout<< "evento espera esta por enviarse\n";
         evento_ptr = std::make_unique<EventoEspera>();
     }
 
+    std::lock_guard<std::mutex> lock(mtx);
     protocolo.enviar_estado(*evento_ptr);;
 }

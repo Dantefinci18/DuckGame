@@ -7,15 +7,17 @@
 #include "../common/common_evento.h"
 #include "Collidable.h"
 #include "Vector.h"
+#include <mutex>
 
 class ProtocoloServidor{
     private:
         Socket conexion;
         Serializador serializador;
+        std::mutex mtx;
 
     public:
         explicit ProtocoloServidor(Socket&& conexion);
-        ComandoAccion recibir_accion();
+        Accion recibir_accion();
         
         bool enviar_id(int id);
         void enviar_estado(const Evento& evento); 

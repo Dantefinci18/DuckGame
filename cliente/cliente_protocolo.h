@@ -28,7 +28,9 @@ class ClienteProtocolo{
          * Funcion que envia una accion
          * Recibe un ComandoAccion
          */
-        bool enviar_accion(ComandoAccion &accion);
+        bool enviar_accion(ComandoAccion &comando_accion);
+
+        bool crear_partida(const std::string& mapa_seleccionado, const unsigned int cantidad_de_jugadores);
 
         /*
          * Funcion que recibe un id

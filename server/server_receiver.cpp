@@ -10,13 +10,14 @@ Receiver::Receiver(ProtocoloServidor& protocolo, Queue<Accion>& acciones, int id
 void Receiver::run() {
     try {
         while (_keep_running) {
-            ComandoAccion command = protocolo.recibir_accion();
+            Accion accion = protocolo.recibir_accion();
 
-            if(command == NONE_ACCION){
+            if(accion.get_command() == NONE_ACCION){
                 _keep_running = false;
                 break;
             }
-            Accion accion(id, command);
+            
+            accion.set_player_id(id);
             std::lock_guard<std::mutex> lock(mtx);
             acciones->push(std::move(accion));
         }

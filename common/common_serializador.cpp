@@ -1,21 +1,25 @@
+#define ACCION_NUEVA_PARTIDA_BITS_SIZE 72
+#define ACCION_BIT_SIZE 8
+
 #include "common_serializador.h"
 #include <bitset>
 #include <iostream>
 #include <cstring>
 #include <memory>
       
-std::vector<uint8_t> Serializador::serializar_enum(std::bitset<8> bits){
-    std::vector<uint8_t> buffer(8); 
-    for (int i = 0; i < 8; ++i) {
-        buffer[7 - i] = bits[i] ? 1 : 0;  
-    }
+void Serializador::serializar_enum(uint8_t tipo, std::vector<uint8_t>& buffer){
 
-    return buffer;
+    for (int i = 0; i < 8; ++i) {
+        buffer[i] = (tipo >> (7 - i)) & 1;
+    }
+    
 }
 
-std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
-    std::bitset<8> bits(accion);  
-    return serializar_enum(bits);
+void Serializador::serializar_numero_entero(int numero, std::vector<uint8_t>& buffer, int j){
+    uint32_t numero_bits = numero;
+    for (int i = 0; i < 32; ++i) {
+        buffer[j + i] = (numero_bits >> (31 - i)) & 1;
+    }
 }
 
 uint8_t Serializador::deserializar_enum(const uint8_t* data){
@@ -29,11 +33,61 @@ uint8_t Serializador::deserializar_enum(const uint8_t* data){
 }
 
 
-ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
-    ComandoAccion accion = static_cast<ComandoAccion>(deserializar_enum(data));
-    return accion;
+int Serializador::deserializar_numero_entero(const uint8_t* data){
+    int result = 0;
+    
+    for (size_t i = 0; i < 32; ++i) {
+        result = (result << 1) | data[i];
+    }
+
+    return result;
 }
 
+
+std::vector<uint8_t> Serializador::serializar_accion(Accion &accion) {
+    ComandoAccion tipo_accion = accion.get_command();
+    std::vector<uint8_t> buffer;
+
+    if(tipo_accion == NUEVA_PARTIDA){
+        AccionNuevaParida nuevaPartida = static_cast<AccionNuevaParida&>(accion);
+        buffer.resize(ACCION_NUEVA_PARTIDA_BITS_SIZE);
+        uint tipo_accion_uint8 = tipo_accion;
+        serializar_enum(tipo_accion_uint8, buffer);
+        
+        std::cout << "tipo accion:\n";
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+        
+        serializar_numero_entero(nuevaPartida.cantidad_de_jugadores,buffer,8);
+
+        std::cout << "cantidad de jugadores:\n";
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+
+        serializar_numero_entero(nuevaPartida.mapa,buffer,40);
+
+        std::cout << "mapa:\n"; 
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+    
+    }else{
+        buffer.resize(ACCION_BIT_SIZE);
+        serializar_enum(accion.get_command(), buffer);
+
+        std::cout << "tipo accion:\n";
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+    }
+
+    return buffer;
+}
+
+
+ComandoAccion Serializador::deserializar_tipo_accion(const uint8_t* data){
+    return static_cast<ComandoAccion>(deserializar_enum(data));
+}
+
+AccionNuevaParida Serializador::deserializar_nueva_partida(const uint8_t* data_jugadores, const uint8_t* data_mapa){
+    int cantidad_de_jugadores = deserializar_numero_entero(data_jugadores);
+    int mapa = deserializar_numero_entero(data_mapa);
+    return AccionNuevaParida(cantidad_de_jugadores,mapa);
+}
 std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoPickup) {
         return serializar_pickup(evento);
