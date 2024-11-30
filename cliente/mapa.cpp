@@ -77,7 +77,7 @@ void Mapa::renderizar_mapa() {
         if (collidable->getType() == CollidableType::Platform) {
             Platform* platform = static_cast<Platform*>(collidable);
             float plat_x = platform->position.x;  
-            float plat_y = ALTO_VENTANA - platform->position.y - platform->height; 
+            float plat_y = static_cast<float>(ScreenUtils::get_y_for_screen(platform->position.y, platform->height));
             float plat_width = platform->width;   
             float plat_height = platform->height; 
             Area platformSrcArea(5, 0, 38, 38);  
@@ -89,7 +89,7 @@ void Mapa::renderizar_mapa() {
             SpawnPlace* spawnPlace = static_cast<SpawnPlace*>(collidable);
             if (spawnPlace->has_weapon()) {
                 float plat_x = spawnPlace->position.x;  
-                float plat_y = ScreenUtils::get_y_for_screen(spawnPlace->position.y, spawnPlace->height);
+                float plat_y = static_cast<float>(ScreenUtils::get_y_for_screen(spawnPlace->position.y, spawnPlace->height));
                 float plat_width = spawnPlace->width;   
                 float plat_height = spawnPlace->height; 
                 int arma_index = static_cast<int>(spawnPlace->get_weapon_type());
@@ -127,7 +127,7 @@ void Mapa::renderizar_mapa() {
         }
         if (esta_explotando) {
             float box_x = x_expl;
-            float box_y = ALTO_VENTANA - y_expl - height_expl;
+            float box_y = static_cast<float>(ScreenUtils::get_y_for_screen(y_expl, height_expl));
 
             Area boxSrcArea(0, 0, 25, 22);
             Area boxDestArea(box_x, box_y, width_expl, height_expl);
