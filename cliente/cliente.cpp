@@ -55,10 +55,6 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
 
-                case Evento::EventoDisparo: {
-                    break;
-                }
-
                 case Evento::EventoMuerte: {
                     auto evento_muerte = static_cast<EventoMuerte*>(evento_recibido.get());
                     manejar_muerte(*evento_muerte);

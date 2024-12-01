@@ -53,13 +53,13 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
 
     switch (tipo) {
         case Evento::EventoMovimiento: {
-            uint8_t x[32];
+            uint8_t x[12];
             socket.recvall(x, sizeof(x), &was_closed);
             if (was_closed) {
                 throw std::runtime_error("Error al recibir coordenada X en evento de movimiento: conexión cerrada");
             }
 
-            uint8_t y[32];
+            uint8_t y[12];
             socket.recvall(y, sizeof(y), &was_closed);
             if (was_closed) {
                 throw std::runtime_error("Error al recibir coordenada Y en evento de movimiento: conexión cerrada");

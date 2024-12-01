@@ -42,13 +42,6 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             break;
         }
 
-        case Evento::EventoDisparo: {
-            
-            const EventoDisparo& evento_disparo = static_cast<const EventoDisparo&>(evento);
-            evento_ptr = std::make_unique<EventoDisparo>(evento_disparo.id);
-            break;
-        }
-
         case Evento::EventoMuerte: {
             
             const EventoMuerte& evento_muerte = static_cast<const EventoMuerte&>(evento);
@@ -109,15 +102,15 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
 
         case Evento::EventoSpawnArmaBox: {
             const EventoSpawnArmaBox& evento_spawn_arma_box = static_cast<const EventoSpawnArmaBox&>(evento);
-            evento_ptr = std::make_unique<EventoSpawnArmaBox>(evento_spawn_arma_box.x, evento_spawn_arma_box.y, 
-                evento_spawn_arma_box.width, evento_spawn_arma_box.height, evento_spawn_arma_box.weapon_type);
+            evento_ptr = std::make_unique<EventoSpawnArmaBox>(evento_spawn_arma_box.x, evento_spawn_arma_box.y, evento_spawn_arma_box.width, evento_spawn_arma_box.height,evento_spawn_arma_box.weapon_type);
             break;
         }
+        
 
         default: {
             std::cerr << "Error: Tipo de evento desconocido" << std::endl;
             break;
-        }
+        } 
 
     }
     return evento_ptr;

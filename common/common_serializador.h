@@ -32,7 +32,6 @@ public:
     std::vector<uint8_t> serializar_spawn_arma(const Evento& evento);
     std::vector<uint8_t> serializar_spawn_arma_box(const Evento& evento);
     std::vector<uint8_t> serializar_movimiento(const Evento& evento);
-    std::vector<uint8_t> serializar_disparo(const Evento& evento);
     std::vector<uint8_t> serializar_muerte(const Evento& evento);
     std::vector<uint8_t> serializar_apuntar(const Evento& evento);
     std::vector<uint8_t> serializar_espera(const Evento::TipoEvento& evento);
@@ -47,8 +46,7 @@ public:
     std::unique_ptr<Evento> deserializar_pickup(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
     std::unique_ptr<Evento> deserializar_spawn_arma(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
     std::unique_ptr<Evento> deserializar_spawn_arma_box(const uint8_t* x_data, const uint8_t* y_data, 
-        const uint8_t* width_data, const uint8_t* height_data, const uint8_t* weapon_type_data);
-    std::unique_ptr<Evento> deserializar_disparo(const uint8_t* id_data);
+    const uint8_t* width_data, const uint8_t* height_data, const uint8_t* weapon_type_data);
     std::unique_ptr<Evento> deserializar_muerte(const uint8_t* id_data);
     std::unique_ptr<Evento> deserializar_apuntar(const uint8_t* id_data, const uint8_t* direccion_data);
     std::unique_ptr<Evento> deserializar_caja_destruida(const uint8_t* x_data, const uint8_t* y_data);
@@ -68,6 +66,14 @@ public:
     
     Collidable* deserializar_collidable(const uint8_t* collidable_data);
     std::tuple<int, int> deserializar_tuple64(const uint8_t* tuple_data);
+
+    void serializar_tipo_evento(std::vector<uint8_t>& bits, uint8_t tipo_evento, size_t offset);
+
+    void serializar_coordenadas(std::vector<uint8_t>& bits, int x, int y, int offset_x, int offset_y);
+
+    void serializar_color(std::vector<uint8_t>& bits, uint8_t color, int offset);
+
+    void serializar_id_dos(std::vector<uint8_t>& bits, uint32_t id, size_t offset);
 
 };
 #endif //COMMON_SERIALIZADOR_H

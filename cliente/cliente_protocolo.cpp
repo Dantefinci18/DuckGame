@@ -43,13 +43,13 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
 
     switch (tipo) {
         case Evento::EventoMovimiento: {
-            uint8_t x[32];
+            uint8_t x[12];
             socket.recvall(x, sizeof(x), &was_closed);
             if (was_closed) {
                 return nullptr;
             }
 
-            uint8_t y[32];
+            uint8_t y[12];
             socket.recvall(y, sizeof(y), &was_closed);
             if (was_closed) {
                 return nullptr;
@@ -177,15 +177,7 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
 
             return serializador.deserializar_spawn_arma(x, y, weapon_type);
         }
-        case Evento::EventoDisparo: {
-            uint8_t id[32];
-            socket.recvall(id, sizeof(id), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
 
-            return serializador.deserializar_disparo(id);
-        }
         case Evento::EventoMuerte: {
             uint8_t id[32];
             socket.recvall(id, sizeof(id), &was_closed);

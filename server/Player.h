@@ -89,7 +89,6 @@ public:
 
         if(!destinos.empty()){
             std::cout << "Disparó el pato id " << id << std::endl;
-            eventos.push_back(std::make_shared<EventoDisparo>(id));
         }
         if(!weapon->es_automatica()){
             shooting = false;
