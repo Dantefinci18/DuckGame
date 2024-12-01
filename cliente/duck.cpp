@@ -171,13 +171,30 @@ void Duck::set_weapon(WeaponType weapon) {
 }
 
 void Duck::set_proteccion(ProteccionType proteccion) {
-    if(proteccion == ProteccionType::Casco){
-        casco_equipado = proteccion;
-    } else if (proteccion == ProteccionType::Armadura){
-        armadura_equipada = proteccion;
+    switch (proteccion) {
+        case ProteccionType::Casco: {
+            casco_equipado = proteccion;
+            break;
+        }
+        case ProteccionType::Armadura: {
+            armadura_equipada = proteccion;
+            break;
+        }
+        case ProteccionType::NoCasco: {
+            casco_equipado = std::nullopt;
+            break;
+        }
+        case ProteccionType::NoArmadura: {
+            armadura_equipada = std::nullopt;
+            break;
+        }
+        default: {
+            casco_equipado = std::nullopt;
+            armadura_equipada = std::nullopt;
+        }
     }
-    
 }
+
 
 Duck::~Duck() {}
 
@@ -272,16 +289,24 @@ void Duck::render_casco(int y_renderizado){
         if(flip == SDL_FLIP_NONE){
             aux_acomodo = 11;
         }
+        int aux_y = 8;
+        if(esta_agachado || is_flapping){
+            aux_y = 0;
+        }
         Area cascoSrcArea(0, 0, 128, 128);
-        Area cascoDestArea(x_actual + aux_acomodo, y_renderizado - 8, 38, 38);
+        Area cascoDestArea(x_actual + aux_acomodo, y_renderizado - aux_y, 38, 38);
         casco.render(cascoSrcArea, cascoDestArea, flip, 0.0);
     }
 }
 
 void Duck::render_armadura(int y_renderizado){
     if(armadura_equipada){
+        int aux_y = 10;
+        if(esta_agachado || is_flapping){
+            aux_y = 12;
+        }
         Area armaduraSrcArea(0, 0, 256, 196);
-        Area armaduraDestArea(x_actual, y_renderizado + 10, 65, 65);
+        Area armaduraDestArea(x_actual, y_renderizado + aux_y, 65, 65);
         armadura.render(armaduraSrcArea, armaduraDestArea, flip, 0.0); 
     }
 }

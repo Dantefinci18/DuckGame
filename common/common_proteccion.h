@@ -4,6 +4,8 @@
 enum class ProteccionType {
     Armadura,
     Casco,
+    NoArmadura,
+    NoCasco,
     None // ver esto 
 };
 

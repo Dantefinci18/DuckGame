@@ -264,9 +264,23 @@ void Cliente::manejar_proteccion(const EventoPickupProteccion& evento_pickup, st
             std::cout << "clearing proteccion" << std::endl;
             SpawnBox* sBox = static_cast<SpawnBox*>(collidable);
             sBox->limpiar_item();
-            mapa->clear_weapon(sBox);  //ojo
+            //mapa->clear_weapon(sBox);  //ojo
         }
     }
+
+
+    if(evento_pickup.proteccion_type == ProteccionType::NoArmadura || evento_pickup.proteccion_type == ProteccionType::NoCasco){
+        auto* spawnBox = new SpawnBox(
+        Vector(evento_pickup.x, evento_pickup.y), 20, 20);
+        std::cout << "\033[43;31m(CLEINTE -  AGREGAR-COLLIDABLE-PROTECCION) - TOCO PROTECCION\033[0m" << std::endl;
+        std::unique_ptr<Proteccion> proteccion = std::make_unique<Proteccion>(evento_pickup.proteccion_type);
+        
+        spawnBox->set_item(std::variant<std::unique_ptr<Weapon>, std::unique_ptr<Proteccion>>(std::move(proteccion)));
+
+        collidables.push_back(spawnBox);
+        mapa->agregar_collidable(spawnBox);
+    }
+    
     if (evento_pickup.id != id) {
         auto it = enemigos.find(evento_pickup.id);
         if (it != enemigos.end()) {

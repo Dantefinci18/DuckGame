@@ -137,6 +137,20 @@ void Mapa::renderizar_mapa() {
                         casco.render(cascoSrcArea, cascoDestArea, SDL_FLIP_NONE, 0.0);
                         break;
                     }
+                    case ProteccionType::NoArmadura: {
+                        std::cout << "\033[43;31m(MAPA) - NO ARMADURA\033[0m" << std::endl;
+                        Area armaduraSrcArea(0, 0, 256, 196);
+                        Area armaduraDestArea(plat_x, plat_y, 65, 65);
+                        armadura.render(armaduraSrcArea, armaduraDestArea, SDL_FLIP_VERTICAL, 0.0);
+                        break;
+                    }
+                    case ProteccionType::NoCasco: {
+                        std::cout << "\033[43;31m(MAPA) - NO CASCO\033[0m" << std::endl;
+                        Area cascoSrcArea(0, 0, 128, 128);
+                        Area cascoDestArea(plat_x, plat_y, 38, 38);
+                        casco.render(cascoSrcArea, cascoDestArea, SDL_FLIP_VERTICAL, 0.0);
+                        break;
+                    }
                     default:
                         break;
                 }

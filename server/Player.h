@@ -105,9 +105,11 @@ public:
         if(casco && casco->en_condiciones()){
             //falta sacarlo
             casco->impactar();
+            eventos.push_back(std::make_shared<EventoPickupProteccion>(id, position.x, position.y, ProteccionType::NoCasco));
         } else if(armadura && armadura->en_condiciones()){
             //falta sacarlo
             armadura->impactar();
+            eventos.push_back(std::make_shared<EventoPickupProteccion>(id, position.x, position.y, ProteccionType::NoArmadura));
         } else {
             morir();
         }
