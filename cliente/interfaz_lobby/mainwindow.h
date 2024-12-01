@@ -9,7 +9,14 @@
 #include <QDialog>
 #include <QVBoxLayout> 
 #include <QTextEdit>
-#include <string>  
+#include <string> 
+#include <QApplication>
+#include <QThread>
+#include "../cliente_protocolo.h"
+#include "../../common/common_socket.h"
+#include "../../server/Collidable.h"
+#include "../../server/Platform.h"
+#include "../../server/server_leaderboard.h" 
 
 class VentanaNuevaPartida: public QMainWindow {
     Q_OBJECT
@@ -67,6 +74,33 @@ private:
     QWidget *scrollContent;
     QVBoxLayout *scrollLayout;
 
+
+};
+
+
+class ClienteLobby : public QObject{
+    Q_OBJECT
+
+    private:
+        QApplication *app;
+        MainWindow mainWindow;
+        VentanaNuevaPartida ventanaNuevaPartida;
+        VentanaEsperando ventanaEsperando;
+        ClienteProtocolo protocolo;
+        std::vector<Collidable*> collidables;
+        Leaderboard leaderboard; 
+        QThread *receiver;
+        int id = 0;
+        float x_inicial = 0;
+        float y_inicial = 0;
+        ColorDuck color = ColorDuck::MAX_COLOR;
+
+        void recibir_eventos();
+
+    public:
+        explicit ClienteLobby(int argc, char* argv[], Socket&& skt);
+        int run();
+        ~ClienteLobby();
 
 };
 

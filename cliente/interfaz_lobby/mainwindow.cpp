@@ -9,6 +9,7 @@
 #include <QPixmap>
 #include <string> 
 #include <QTextEdit> 
+#include "../cliente.h"
 
 VentanaNuevaPartida::VentanaNuevaPartida(QWidget *parent):
     QMainWindow(parent),
@@ -98,7 +99,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(centralWidget);
 
     crear_partida_Button->setParent(centralWidget);
-    crear_partida_Button->setGeometry(10, 90, 200, 30); 
+    crear_partida_Button->setGeometry(10, 90, 200, 30);
+    cargar_partida_Button->setParent(centralWidget); 
     cargar_partida_Button->setGeometry(10, 130, 200, 30);
     
     scrollArea->setGeometry(10, 170, 400, 300);
@@ -147,4 +149,90 @@ void MainWindow::agregar_partida(std::string partida){
         rowWidget->setLayout(rowLayout);
 
         scrollLayout->insertWidget(0,rowWidget);
+}
+
+
+
+
+ClienteLobby::ClienteLobby(int argc, char* argv[], Socket&& skt): 
+    app(new QApplication(argc, argv)),
+    protocolo(std::move(skt)),
+    receiver(QThread::create([=]() {recibir_eventos();})){}
+
+void ClienteLobby::recibir_eventos(){
+    while(color == ColorDuck::MAX_COLOR){
+        auto evento = protocolo.recibir_evento();
+
+        if(evento->get_tipo() == Evento::EventoMapa){
+            auto evento_mapa = static_cast<EventoMapa*>(evento.get());
+            collidables = evento_mapa->collidables;
+            leaderboard = evento_mapa->leaderboard;
+                
+        }else if (evento->get_tipo() == Evento::EventoMovimiento) {
+            auto evento_mov = static_cast<EventoMovimiento*>(evento.get());
+                    
+            if(evento_mov->id == id){
+                x_inicial = evento_mov->x;
+                y_inicial = evento_mov->y;
+                color = evento_mov->color;
+                }
+        }
+    }
+
+    ventanaEsperando.hide();
+}
+
+int ClienteLobby::run(){
+    mainWindow.show();
+    connect(&mainWindow, &MainWindow::crear_partida, this,[&] () {
+        mainWindow.hide();
+        ventanaNuevaPartida.show();
+    });
+
+    connect(&mainWindow, &MainWindow::cargar_partida, this,[&] () {
+        mainWindow.hide();
+        ComandoAccion comando = CARGAR_PARTIDA;
+        if(!protocolo.enviar_accion(comando)){
+            QApplication::quit();
+        }
+
+        mainWindow.hide();
+        id = protocolo.recibir_id();
+        receiver->start();
+        ventanaEsperando.show();
+    });
+
+    
+    connect(&ventanaNuevaPartida, &VentanaNuevaPartida::volver, this,[&] () {
+        ventanaNuevaPartida.hide();
+        mainWindow.show();
+    });
+
+    connect(&ventanaNuevaPartida, &VentanaNuevaPartida::crear_partida,this, [&] (
+        const std::string& nombre, const std::string& mapaSeleccionado, const unsigned int cantidad_de_jugadores) {
+
+
+            if(!protocolo.crear_partida(mapaSeleccionado,cantidad_de_jugadores)){
+                QApplication::quit();
+            }
+
+            ventanaNuevaPartida.hide();
+            id = protocolo.recibir_id();
+            receiver->start();
+            ventanaEsperando.show();        
+    });
+
+    connect(receiver, &QThread::finished, receiver, [&](){
+        Cliente cliente(id,color,protocolo, collidables,leaderboard,x_inicial,y_inicial);
+        cliente.start();
+        //mainWindow.show();
+    });
+
+    return app->exec();
+}
+
+
+ClienteLobby:: ~ClienteLobby(){
+    app->exit();
+    delete app;
 }

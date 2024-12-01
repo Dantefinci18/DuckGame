@@ -30,7 +30,7 @@ private:
     Duck duck;
     std::unique_ptr<Mapa> mapa;
     ClientLeaderboard leaderboard;
-    ClienteProtocolo protocolo;
+    ClienteProtocolo &protocolo;
     ClienteReceiver receiver;
     ClienteSender sender;
     Queue<std::unique_ptr<Evento>> queue_eventos;

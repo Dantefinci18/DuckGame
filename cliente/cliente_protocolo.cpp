@@ -8,10 +8,24 @@
 
 ClienteProtocolo::ClienteProtocolo(Socket&& socket) : socket(std::move(socket)) {}
 
-
-bool ClienteProtocolo::enviar_accion(ComandoAccion &accion) {
+bool ClienteProtocolo::crear_partida(const std::string& mapa_seleccionado, const unsigned int cantidad_de_jugadores) {
+    
+    (void)mapa_seleccionado;
     bool was_closed = false;
+    AccionNuevaParida nuevaPartida(cantidad_de_jugadores,1);
+    std::vector<uint8_t> partida_serializada = serializador.serializar_accion(nuevaPartida);
+    socket.sendall(partida_serializada.data(), partida_serializada.size(), &was_closed);
+    if (was_closed) {
+        return false;
+    }
 
+    return true;
+    
+}
+
+bool ClienteProtocolo::enviar_accion(ComandoAccion &comando_accion) {
+    bool was_closed = false;
+    Accion accion(comando_accion);
     std::vector<uint8_t> buffer= serializador.serializar_accion(accion);
 
     socket.sendall(buffer.data(), buffer.size(), &was_closed);
@@ -289,7 +303,10 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
 
             return serializador.deserializar_spawn_arma_box(x, y, weapon_type);
 
+        }case Evento::EventoEspera: {
+            return std::make_unique<EventoEspera>();
         }
+
         default:
             return nullptr; 
     }
@@ -319,55 +336,6 @@ std::vector<Collidable*> ClienteProtocolo::recibir_mapa() {
     }
 
     return collidables;
-}
-
-bool ClienteProtocolo::enviar_comando_partida(ComandoPartida& comando_partida){
-    bool was_closed = false;
-    std::vector<uint8_t> buffer = serializador.serializar_tipo_comando_partida(comando_partida);
-
-    std::cout << "tipo partida:" << std::endl;
-    serializador.imprimir_uint8_t_array(buffer.data(),buffer.size());
-
-    int bytes_enviados = socket.sendall(buffer.data(),buffer.size(),&was_closed);
-
-    if(was_closed || bytes_enviados < buffer.size())
-        return false;
-    
-    if(comando_partida.get_tipo() == ComandoPartida::NUEVA_PARTIDA){
-        ComandoNuevaPartida & nueva_partida = static_cast<ComandoNuevaPartida&>(comando_partida);
-        buffer = serializador.serializar_numero_natural(nueva_partida.nombre.size());
-
-        std::cout << "tamanio nombre partida:" << std::endl;
-        serializador.imprimir_uint8_t_array(buffer.data(),buffer.size());
-
-        bytes_enviados = socket.sendall(buffer.data(),buffer.size(),&was_closed);
-
-        if(was_closed || bytes_enviados < buffer.size())
-            return false;
-        
-        buffer = serializador.serializar_string(nueva_partida.nombre);
-        
-        std::cout << "nombre partida:" << std::endl;
-        serializador.imprimir_uint8_t_array(buffer.data(),buffer.size());
-        
-        bytes_enviados = socket.sendall(buffer.data(),buffer.size(),&was_closed);
-
-        if(was_closed || bytes_enviados < buffer.size())
-            return false;
-        
-        buffer = serializador.serializar_numero_natural(nueva_partida.cantidad_de_jugadores);
-
-        std::cout << "cantidad de jugadores partida:" << std::endl;
-        serializador.imprimir_uint8_t_array(buffer.data(),buffer.size());
-
-        bytes_enviados = socket.sendall(buffer.data(),buffer.size(),&was_closed);
-
-        if(was_closed || bytes_enviados < buffer.size())
-            return false;
-    }
-
-    return true;
-
 }
 
 void ClienteProtocolo::cerrar_conexion() {

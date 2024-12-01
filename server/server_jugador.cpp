@@ -8,15 +8,15 @@
 #include "server_protocolo.h"
 
 
-Jugador::Jugador(Queue<Accion>& comandos, PlayerMonitor& monitor, Socket&& conexion, ColorDuck color):
+Jugador::Jugador(Queue<Accion>& comandos, Socket&& conexion):
         protocolo(std::move(conexion)), 
         id(generar_id()),
-        sender(protocolo, monitor, id), 
-        receiver(protocolo, comandos, id),
-        playerPhysics(id, color) {}
+        sender(protocolo, cola_eventos, id), 
+        receiver(protocolo, comandos, id){
+            protocolo.enviar_id(id);
+        }
 
 void Jugador::run() {
-    sender.start();
     receiver.start();
 }
 
@@ -35,15 +35,6 @@ int Jugador::get_id() {
     return id;
 }
 
-Player* Jugador::get_fisicas() {
-    return &playerPhysics;
-}
-
-void Jugador::update_fisicas(std::vector<Collidable*> collidables) {
-    //TODO: Refactor this so it receives all of the collidables.
-    playerPhysics.update(collidables);
-}
-
 int Jugador::generar_id() {
     std::random_device rd;
     std::mt19937 engine(rd());
@@ -54,9 +45,24 @@ int Jugador::generar_id() {
     return id;
 }
 
+void Jugador::reset(Queue<Accion> &comandos){
+    receiver.reset_cola(comandos);
+    sender.start();
+}
 
+Queue<std::unique_ptr<Evento>>& Jugador::get_cola_eventos(){
+    return cola_eventos;
+}
 
+void Jugador::enviar_evento(const Evento& evento){
 
+    std::unique_ptr<Evento> evento_ptr;
 
-Jugador::~Jugador() {}
+    if(evento.get_tipo() == Evento::EventoEspera){
+        std::cout<< "evento espera esta por enviarse\n";
+        evento_ptr = std::make_unique<EventoEspera>();
+    }
 
+    std::lock_guard<std::mutex> lock(mtx);
+    protocolo.enviar_estado(*evento_ptr);;
+}

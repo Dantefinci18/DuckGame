@@ -15,7 +15,7 @@ Cliente::Cliente(int id,ColorDuck color,ClienteProtocolo& protocolo, std::vector
     duck(window, x_inicial,y_inicial, color),
     mapa(std::make_unique<Mapa>(window, "../Imagenes/forest.png", collidables)),
     leaderboard(ClientLeaderboard(window, leaderboard.round, leaderboard.max_rounds, leaderboard.set_of_rounds, leaderboard.player_rounds_won)),
-    protocolo(std::move(protocolo)),
+    protocolo(protocolo),
     receiver(protocolo, queue_eventos, conectado),
     sender(protocolo, queue_acciones),
     collidables(collidables),

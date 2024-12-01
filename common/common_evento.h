@@ -12,7 +12,7 @@
 
 class Evento {
 public:
-    enum TipoEvento {
+    enum TipoEvento : uint8_t{
         EventoMovimiento,
         EventoMapa,
         EventoPickup,

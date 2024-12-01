@@ -7,8 +7,8 @@
 #include <memory>
 #include <bitset>
 #include <tuple>
-#include "../common/common_accion.h"
-#include "../common/common_evento.h"
+#include "common_accion.h"
+#include "common_evento.h"
 #include "../server/Collidable.h"
 #include "../server/Platform.h"
 #include "../server/Player.h"
@@ -16,26 +16,18 @@
 #include "common_comando_partida.h"
 #include "../server/Box.h"
 #include "../server/server_leaderboard.h"
-#include "common_partida.h"
 
 class Serializador {
-private:
-    std::vector<uint8_t> serializar_enum(std::bitset<8> bits);
-    uint8_t deserializar_enum(const uint8_t* data);
 
 public:
-
-    std::vector<uint8_t> serializar_accion(ComandoAccion &accion);
-
-    std::vector<uint8_t> serializar_tipo_comando_partida(ComandoPartida &partida);
+    void serializar_enum(uint8_t tipo, std::vector<uint8_t>& buffer);
+    void serializar_numero_entero(int numero, std::vector<uint8_t>& buffer,int j);
     std::vector<uint8_t> serializar_string(const std::string& string);
-    std::vector<uint8_t> serializar_numero_natural(unsigned int numero);
-
-    ComandoPartida::TipoComandoPartida deserializar_tipo_comando_partida(const uint8_t* tipo_partida_data);
-
-    ComandoAccion deserializar_accion(const uint8_t* data);
-    ComandoPartida deserializar_partida(const uint8_t* data);
-
+    uint8_t deserializar_enum(const uint8_t* data);
+    int deserializar_numero_entero(const uint8_t* data);
+    std::vector<uint8_t> serializar_accion(Accion &accion);
+    ComandoAccion deserializar_tipo_accion(const uint8_t* data);
+    AccionNuevaParida deserializar_nueva_partida(const uint8_t* data_jugadores, const uint8_t* mapa);
     std::vector<uint8_t> serializar_evento(const Evento& evento);
     std::vector<uint8_t> serializar_pickup(const Evento& evento);
     std::vector<uint8_t> serializar_spawn_arma(const Evento& evento);

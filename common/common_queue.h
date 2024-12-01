@@ -7,6 +7,8 @@
 #include <mutex>
 #include <queue>
 #include <utility>
+#include <iostream>
+
 struct ClosedQueue: public std::runtime_error {
     ClosedQueue(): std::runtime_error("The queue is closed") {}
 };
@@ -82,35 +84,48 @@ bool try_pop(T& val) {
 
  void push(T&& value) {
     std::unique_lock<std::mutex> lck(mtx);
+    
+    std::cout << "veo si puedo pushear\n";
+    
     if (closed) {
+        std::cout << "cola cerrada\n";
         throw ClosedQueue();
     }
     while (q.size() == this->max_size) {
+        std::cout << "cola llena\n";
         is_not_full.wait(lck);
     }
     if (q.empty()) {
         is_not_empty.notify_all();
     }
+
+    std::cout << "voy a pushear algo\n";
     q.push(std::move(value));
+    std::cout << "algo pusheado\n";
 }
 
 
 T pop() {
     std::unique_lock<std::mutex> lck(mtx);
-
+    std::cout << "veo si puedo popear\n";
     while (q.empty()) {
         if (closed) {
+            std::cout << "cola cerrada\n";
             throw ClosedQueue();
         }
+
         is_not_empty.wait(lck);
     }
 
     if (q.size() == this->max_size) {
+        std::cout << "tamanio maximo\n";
         is_not_full.notify_all();
     }
 
     T val = std::move(q.front());
+    std::cout << "voy a popear\n";
     q.pop();
+    std::cout << "algo popeado\n";
 
     return val;
 }
@@ -189,7 +204,10 @@ public:
     void push(void* const& val) {
         std::unique_lock<std::mutex> lck(mtx);
 
+        std::cout << "voy a pushear el evento\n";
+
         if (closed) {
+            std::cout << "cola cerrada\n";
             throw ClosedQueue();
         }
 
@@ -202,6 +220,7 @@ public:
         }
 
         q.push(val);
+        std::cout << "evento pusheado\n";
     }
 
 
