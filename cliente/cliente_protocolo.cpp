@@ -130,13 +130,13 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             return std::make_unique<EventoMapa>(collidables, lb);
         }
         case Evento::EventoPickup: {
-            uint8_t x[32];
+            uint8_t x[12];
             socket.recvall(x, sizeof(x), &was_closed);
             if (was_closed) {
                 return nullptr;
             }
 
-            uint8_t y[32];
+            uint8_t y[12];
             socket.recvall(y, sizeof(y), &was_closed);
             if (was_closed) {
                 return nullptr;
@@ -148,7 +148,7 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
                 return nullptr;
             }
 
-            uint8_t weapon_type[32];
+            uint8_t weapon_type[4];
             socket.recvall(weapon_type, sizeof(weapon_type), &was_closed);
             if (was_closed) {
                 return nullptr;
@@ -157,19 +157,19 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             return serializador.deserializar_pickup(id, x, y, weapon_type);
         }
         case Evento::EventoSpawnArma: {
-            uint8_t x[32];
+            uint8_t x[12];
             socket.recvall(x, sizeof(x), &was_closed);
             if (was_closed) {
                 return nullptr;
             }
 
-            uint8_t y[32];
+            uint8_t y[12];
             socket.recvall(y, sizeof(y), &was_closed);
             if (was_closed) {
                 return nullptr;
             }
 
-            uint8_t weapon_type[32];
+            uint8_t weapon_type[4];
             socket.recvall(weapon_type, sizeof(weapon_type), &was_closed);
             if (was_closed) {
                 return nullptr;
@@ -194,7 +194,7 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
                 return nullptr;
             }
 
-            uint8_t direccion[8];
+            uint8_t direccion[2];
             socket.recvall(direccion, sizeof(direccion), &was_closed);
             if (was_closed) {
                 return nullptr;
@@ -260,13 +260,13 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
         }
 
         case Evento::EventoCajaDestruida: {
-            uint8_t x[32];
+            uint8_t x[12];
             socket.recvall(x, sizeof(x), &was_closed);
             if (was_closed) {
                 return nullptr;
             }
 
-            uint8_t y[32];
+            uint8_t y[12];
             socket.recvall(y, sizeof(y), &was_closed);
             if (was_closed) {
                 return nullptr;
@@ -276,13 +276,13 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
         }
 
         case Evento::EventoSpawnArmaBox: {
-            uint8_t x[32];
+            uint8_t x[12];
             socket.recvall(x, sizeof(x), &was_closed);
             if (was_closed) {
                 return nullptr;
             }
 
-            uint8_t y[32];
+            uint8_t y[12];
             socket.recvall(y, sizeof(y), &was_closed);
             if (was_closed) {
                 return nullptr;
@@ -300,7 +300,7 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
                 return nullptr;
             }
 
-            uint8_t weapon_type[32];
+            uint8_t weapon_type[4];
             socket.recvall(weapon_type, sizeof(weapon_type), &was_closed);
             if (was_closed) {
                 return nullptr;

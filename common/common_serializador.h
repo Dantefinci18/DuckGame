@@ -74,6 +74,8 @@ public:
     void serializar_color(std::vector<uint8_t>& bits, uint8_t color, int offset);
 
     void serializar_id_dos(std::vector<uint8_t>& bits, uint32_t id, size_t offset);
+    
+    void serializar_weapon_type(std::vector<uint8_t>& bits, uint8_t weapon_type, size_t offset);
 
 };
 #endif //COMMON_SERIALIZADOR_H

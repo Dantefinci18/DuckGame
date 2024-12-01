@@ -259,10 +259,10 @@ public:
 
 class EventoCajaDestruida : public Evento {
 public:
-    float x;
-    float y;
+    int x;
+    int y;
 
-    EventoCajaDestruida(float x, float y) : x(x), y(y) {}
+    EventoCajaDestruida(int x, int y) : x(x), y(y) {}
 
     void print() const override {
         std::ostringstream oss;
