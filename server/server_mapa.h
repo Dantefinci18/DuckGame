@@ -9,6 +9,7 @@
 #include "Platform.h"
 #include "SpawnPlace.h"
 #include "SpawnWeaponBox.h"
+#include "SpawnBox.h"
 #include "Box.h"
 
 class Mapa {

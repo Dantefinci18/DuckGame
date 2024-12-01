@@ -7,6 +7,7 @@
 #include "../server/Collidable.h"
 #include "../common/common_weapon.h"
 #include "../common/common_direcciones.h"
+#include "../common/common_proteccion.h"
 
 class Enemigo {
 public:
@@ -39,6 +40,8 @@ public:
      * Recibe un WeaponType
      */
     void set_weapon(WeaponType weapon);
+
+    void set_proteccion(ProteccionType new_proteccion);
 
     /*
     * Debe recibir una dirección valida.

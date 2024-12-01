@@ -8,6 +8,8 @@
 #include "../common/common_color.h"
 #include "../common/common_direcciones.h"
 #include "../server/server_leaderboard.h"
+#include "common_proteccion.h"
+
 
 
 class Evento {
@@ -16,6 +18,7 @@ public:
         EventoMovimiento,
         EventoMapa,
         EventoPickup,
+        EventoPickupProteccion,
         EventoSpawnArma,
         EventoMuerte,
         EventoDisparo,
@@ -27,7 +30,8 @@ public:
         EventoWinMatch,
         EventoBala,
         EventoCajaDestruida,
-        EventoSpawnArmaBox
+        EventoSpawnArmaBox,
+        EventoSpawnProteccionBox
     };
 
     virtual ~Evento() = default;
@@ -118,6 +122,30 @@ public:
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoPickup; } 
+};
+
+class EventoPickupProteccion : public Evento {
+public:
+    int id;
+    float x;
+    float y;
+    ProteccionType proteccion_type;
+
+    EventoPickupProteccion(int id, float x, float y, ProteccionType proteccion_type) 
+        : id(id), x(x), y(y), proteccion_type(proteccion_type) {}
+
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoPickupProteccion\", "
+            << "\"id\": " << id << ", "
+            << "\"x\": " << x << ", "
+            << "\"y\": " << y << ", "
+            << "\"proteccion_type\": " << static_cast<int>(proteccion_type)
+            << " }";
+        std::cout << oss.str() << std::endl;
+    }
+
+    TipoEvento get_tipo() const override { return TipoEvento::EventoPickupProteccion; } 
 };
 
 class EventoMuerte : public Evento {
@@ -303,6 +331,27 @@ public:
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnArmaBox; } 
+};
+
+class EventoSpawnProteccionBox : public Evento {
+public:
+    float x;
+    float y;
+    ProteccionType proteccion_type; 
+    EventoSpawnProteccionBox(float x, float y, ProteccionType proteccion_type) 
+        : x(x), y(y), proteccion_type(proteccion_type) {}
+
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoSpawnProteccionBox\", "
+            << "\"x\": " << x << ", "
+            << "\"y\": " << y << ", "
+            << "\"proteccion_type\": " << static_cast<int>(proteccion_type)
+            << " }";
+        std::cout << oss.str() << std::endl;
+    }
+
+    TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnProteccionBox; } 
 };
 
 #endif // COMMON_EVENTO_H

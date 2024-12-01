@@ -57,6 +57,8 @@ private:
      */
     void agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box);
 
+    void agregar_collidable_proteccion(const EventoSpawnProteccionBox& evento_spawn_proteccion_box);
+
     void eliminar_caja(const EventoCajaDestruida& evento_caja_destruida);
 
     /*
@@ -89,6 +91,8 @@ private:
      * Recibe un evento de pickup y un vector de collidables
      */
     void manejar_arma(const EventoPickup& evento_pickup, std::vector<Collidable*> collidables);
+
+    void manejar_proteccion(const EventoPickupProteccion& evento_pickup, std::vector<Collidable*> collidables);
 
     /*
      * Funcion que maneja la muerte

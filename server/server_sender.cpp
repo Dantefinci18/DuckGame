@@ -8,12 +8,6 @@ void Sender::enviar_eventos() {
     while (_keep_running) {
         std::unique_ptr<Evento> estado = cola_eventos.pop();  
 
-        if(estado->get_tipo() == Evento::EventoEspera){
-            std::cout << "evento espera en sender" << std::endl;
-        }else{
-            std::cout << "se envia otra cosa en sender" << std::endl;
-        }
-
         if (estado) {
             protocolo.enviar_estado(*estado);
         }else{

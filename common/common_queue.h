@@ -85,7 +85,7 @@ bool try_pop(T& val) {
  void push(T&& value) {
     std::unique_lock<std::mutex> lck(mtx);
     
-    std::cout << "veo si puedo pushear\n";
+    //std::cout << "veo si puedo pushear\n";
     
     if (closed) {
         std::cout << "cola cerrada\n";
@@ -99,15 +99,15 @@ bool try_pop(T& val) {
         is_not_empty.notify_all();
     }
 
-    std::cout << "voy a pushear algo\n";
+    //std::cout << "voy a pushear algo\n";
     q.push(std::move(value));
-    std::cout << "algo pusheado\n";
+    //std::cout << "algo pusheado\n";
 }
 
 
 T pop() {
     std::unique_lock<std::mutex> lck(mtx);
-    std::cout << "veo si puedo popear\n";
+    //std::cout << "veo si puedo popear\n";
     while (q.empty()) {
         if (closed) {
             std::cout << "cola cerrada\n";
@@ -123,9 +123,9 @@ T pop() {
     }
 
     T val = std::move(q.front());
-    std::cout << "voy a popear\n";
+    //std::cout << "voy a popear\n";
     q.pop();
-    std::cout << "algo popeado\n";
+    //std::cout << "algo popeado\n";
 
     return val;
 }

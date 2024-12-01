@@ -13,11 +13,15 @@ Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial,ColorDuck color)
     : movimientos_en_x("../Imagenes/duck_x" + procesar_color(color) + ".png", window),
       movimiento_en_y("../Imagenes/movimiento_y" + procesar_color(color) + ".png", window),
       armas("../Imagenes/guns.png", window),
+      armadura("../Imagenes/Chestplate.png", window),
+      casco("../Imagenes/Spikehelm.png", window),
       death("../Imagenes/duckDead" + procesar_color(color) + ".png", window),
       color(color),
       bala("../Imagenes/balas_magnum.png", window),
       quieto(false),                
-      weapon(std::nullopt),          
+      weapon(std::nullopt),
+      casco_equipado(std::nullopt),
+      armadura_equipada(std::nullopt),          
       direccion_arma(DireccionApuntada::APUNTADO_DERECHA),
       x_img(0),                     
       y_img(0),                     
@@ -121,8 +125,16 @@ void Duck::render() {
         }
     }
 
+    if(armadura_equipada){
+        render_armadura(ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA);
+    }
+
     if (weapon) {
         render_arma(ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA);
+    }
+
+    if (casco_equipado) {
+        render_casco(ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA);
     }
 }
 
@@ -156,6 +168,15 @@ void Duck::levantarse() {
 
 void Duck::set_weapon(WeaponType weapon) {
     this->weapon = weapon;
+}
+
+void Duck::set_proteccion(ProteccionType proteccion) {
+    if(proteccion == ProteccionType::Casco){
+        casco_equipado = proteccion;
+    } else if (proteccion == ProteccionType::Armadura){
+        armadura_equipada = proteccion;
+    }
+    
 }
 
 Duck::~Duck() {}
@@ -243,6 +264,26 @@ void Duck::render_arma(int y_renderizado) {
     }
     Area armaDestArea(x_actual + pos_arma_x, y_renderizado + pos_arma_y, 38, 38);
     armas.render(armaSrcArea, armaDestArea, flip, angle);
+}
+
+void Duck::render_casco(int y_renderizado){
+    if(casco_equipado){
+        int aux_acomodo = 15;
+        if(flip == SDL_FLIP_NONE){
+            aux_acomodo = 11;
+        }
+        Area cascoSrcArea(0, 0, 128, 128);
+        Area cascoDestArea(x_actual + aux_acomodo, y_renderizado - 8, 38, 38);
+        casco.render(cascoSrcArea, cascoDestArea, flip, 0.0);
+    }
+}
+
+void Duck::render_armadura(int y_renderizado){
+    if(armadura_equipada){
+        Area armaduraSrcArea(0, 0, 256, 196);
+        Area armaduraDestArea(x_actual, y_renderizado + 10, 65, 65);
+        armadura.render(armaduraSrcArea, armaduraDestArea, flip, 0.0); 
+    }
 }
 
 std::string Duck::procesar_color(ColorDuck color){

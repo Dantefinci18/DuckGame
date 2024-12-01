@@ -7,6 +7,7 @@
 #include "../server/Platform.h"
 #include "../server/SpawnPlace.h"
 #include "../server/SpawnWeaponBox.h"
+#include "../server/SpawnBox.h"
 #include "../server/Box.h"
 
 Mapa::Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collidable*> collidables)
@@ -14,6 +15,8 @@ Mapa::Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collida
     fondo(ruta_fondo, window),
     plataformas("../Imagenes/Tileset_Surface.png", window),
     armas("../Imagenes/guns.png", window),
+    armadura("../Imagenes/Chestplate.png", window),
+    casco("../Imagenes/Spikehelm.png", window),
     boxes("../Imagenes/box.png", window),
     explosion("../Imagenes/explosion.png", window),
     x_expl(0),
@@ -40,10 +43,10 @@ void Mapa::eliminar_caja(float x, float y) {
     
 }
 
-void Mapa::clear_weapon(SpawnWeaponBox* sWeaponBox) {
+void Mapa::clear_weapon(SpawnBox* sWeaponBox) {
     for (auto& collidable : this->collidables_plataformas) {
-        if (collidable->getType() == CollidableType::SpawnWeaponBox) {
-            SpawnWeaponBox* spawnBox = static_cast<SpawnWeaponBox*>(collidable);
+        if (collidable->getType() == CollidableType::SpawnBox) {
+            SpawnBox* spawnBox = static_cast<SpawnBox*>(collidable);
             if (spawnBox->position.x == sWeaponBox->position.x && 
                 spawnBox->position.y == sWeaponBox->position.y) {
                 auto it = std::find(collidables_plataformas.begin(), collidables_plataformas.end(), collidable);
@@ -105,15 +108,23 @@ void Mapa::renderizar_mapa() {
             boxes.render(boxSrcArea, boxDestArea, SDL_FLIP_NONE);
         }
 
-        if (collidable->getType() == CollidableType::SpawnWeaponBox) {
-            SpawnWeaponBox* spawnWeaponBox = static_cast<SpawnWeaponBox*>(collidable);
+        if (collidable->getType() == CollidableType::SpawnBox) {
+            SpawnBox* spawnBox = static_cast<SpawnBox*>(collidable);
 
-            float plat_x = spawnWeaponBox->position.x;
-            float plat_y = ALTO_VENTANA - spawnWeaponBox->position.y - spawnWeaponBox->height * FACTOR_ESCALA_ARMA;
-            float plat_width = spawnWeaponBox->width * FACTOR_ESCALA_ARMA;
-            float plat_height = spawnWeaponBox->height * FACTOR_ESCALA_ARMA;
+            float plat_x = spawnBox->position.x;
+            float plat_y = ALTO_VENTANA - spawnBox->position.y - spawnBox->height * FACTOR_ESCALA_ARMA;
+            float plat_width = spawnBox->width * FACTOR_ESCALA_ARMA;
+            float plat_height = spawnBox->height * FACTOR_ESCALA_ARMA;
 
-            int arma_index = static_cast<int>(spawnWeaponBox->get_weapon_type());
+            SpawnBox::ItemType tipo_item = spawnBox->get_item_type();
+            int arma_index = 6; // ACA HAYQ UE ACOMODAR
+            if (tipo_item == SpawnBox::ItemType::Weapon) {
+                std::cout << "\033[43;31m(MAPA) - LLEGA WEAPON\033[0m" << std::endl;
+                arma_index = static_cast<int>(spawnBox->get_weapon_type());
+            } else {
+                std::cout << "\033[43;31m(MAPA) - UNA PROTECCION\033[0m" << std::endl;
+                arma_index = 6 + static_cast<int>(spawnBox->get_proteccion_type());
+            }
 
             Area armaSrcArea(arma_index * 38, 0, 38, 38);
             Area armaDestArea(plat_x, plat_y, plat_width, plat_height);
