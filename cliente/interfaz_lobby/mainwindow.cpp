@@ -9,7 +9,69 @@
 #include <QPixmap>
 #include <string> 
 #include <QTextEdit> 
+#include <QTimer>
 #include "../cliente.h"
+
+VentanaCargarPartida::VentanaCargarPartida(QWidget *parent):
+    restablecerPartidasButton(new QPushButton("Restablecer Partidas",this)),
+    volverButton(new QPushButton("Volver",this)),
+    scrollArea(new QScrollArea(this)),
+    scrollContent(new QWidget(scrollArea)),
+    scrollLayout(new QVBoxLayout(scrollContent)){
+
+        setWindowTitle("Cargar Partida");
+        setFixedSize(450, 350);
+
+        QWidget *centralWidget = new QWidget(this);
+        setCentralWidget(centralWidget);
+
+        restablecerPartidasButton->setParent(centralWidget);
+        restablecerPartidasButton->setGeometry(10, 20, 150, 30);;
+
+        scrollArea->setGeometry(10, 60, 300, 200);
+        scrollArea->setWidgetResizable(true);
+        scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        scrollContent->setLayout(scrollLayout);
+        scrollArea->setWidget(scrollContent);
+        QPalette palette = scrollArea->palette();
+        palette.setColor(QPalette::Background,Qt::white);
+        scrollArea->setParent(centralWidget);
+        scrollArea->setPalette(palette);
+
+        volverButton->setParent(centralWidget);
+        volverButton->setGeometry(10,280,100,30);
+
+        connect(restablecerPartidasButton, &QPushButton::clicked, this, &VentanaCargarPartida::restablecer_partidas_clicked);
+        connect(volverButton, &QPushButton::clicked, this, &VentanaCargarPartida::volver_clicked);
+    }
+
+void VentanaCargarPartida::restablecer_partidas_clicked(){
+    emit restablecer_partidas();
+}
+
+void VentanaCargarPartida::volver_clicked(){
+    emit volver();
+}
+
+void VentanaCargarPartida::agregar_partida(int id, std::string nombre_partida){
+            QWidget *rowWidget = new QWidget();
+        QHBoxLayout *rowLayout = new QHBoxLayout(rowWidget);
+        std::string partida = std::to_string(id) + " " +  nombre_partida;
+        QLabel *rowLabel = new QLabel(partida.data(), rowWidget);
+        QPushButton *joinButton = new QPushButton("Unirse", rowWidget);
+
+        rowLayout->addWidget(rowLabel);
+        rowLayout->addWidget(joinButton);
+        rowLayout->addStretch();
+        rowWidget->setLayout(rowLayout);
+
+        scrollLayout->insertWidget(0,rowWidget);
+        
+        connect(joinButton, &QPushButton::clicked, this, [=](){
+            emit unirse(id,nombre_partida);
+        });
+}
+
 
 VentanaNuevaPartida::VentanaNuevaPartida(QWidget *parent):
     QMainWindow(parent),
@@ -53,6 +115,8 @@ VentanaNuevaPartida::VentanaNuevaPartida(QWidget *parent):
     connect(volver_Button, &QPushButton::clicked, this, &VentanaNuevaPartida::volver_clicked);
 }
 
+
+
 void VentanaNuevaPartida::crear_clicked() {
     std::string nombre = nombrePartidaInput->toPlainText().toStdString();
     
@@ -70,9 +134,9 @@ void VentanaNuevaPartida::volver_clicked() {
 
 VentanaEsperando::VentanaEsperando(QWidget *parent) :
     QMainWindow(parent),
-    statusLabel(new QLabel("Esperando conexión...", this))
+    statusLabel(new QLabel("Esperando jugdores...", this))
 {
-    setFixedSize(200, 100);
+    setFixedSize(300, 100);
     statusLabel->setAlignment(Qt::AlignCenter);
     statusLabel->setGeometry(0, 50, 300, 50);
 }
@@ -81,11 +145,7 @@ VentanaEsperando::VentanaEsperando(QWidget *parent) :
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     crear_partida_Button(new QPushButton("Crear partida", this)),
-    cargar_partida_Button(new QPushButton("Cargar partida", this)),
-    scrollArea(new QScrollArea(this)),
-    scrollContent(new QWidget(scrollArea)),
-    scrollLayout(new QVBoxLayout(scrollContent))
-
+    cargar_partida_Button(new QPushButton("Cargar partida", this))
 {
     setWindowTitle("Lobby");
     setFixedSize(800, 600);
@@ -99,18 +159,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(centralWidget);
 
     crear_partida_Button->setParent(centralWidget);
-    crear_partida_Button->setGeometry(10, 90, 200, 30);
+    crear_partida_Button->setGeometry(10, 50, 200, 30);
     cargar_partida_Button->setParent(centralWidget); 
-    cargar_partida_Button->setGeometry(10, 130, 200, 30);
-    
-    scrollArea->setGeometry(10, 170, 400, 300);
-    scrollArea->setWidgetResizable(true);
-    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    scrollArea->setStyleSheet("background-color: rgba(0, 0, 0, 80%);");
-
-    scrollContent->setLayout(scrollLayout);
-    scrollContent->setStyleSheet("background: transparent;");
-    scrollArea->setWidget(scrollContent);
+    cargar_partida_Button->setGeometry(10, 90, 200, 30);
 
     connect(crear_partida_Button, &QPushButton::clicked, this, &MainWindow::crear_partida_clicked);
     connect(cargar_partida_Button, &QPushButton::clicked, this, &MainWindow::cargar_partida_clicked);
@@ -124,33 +175,6 @@ void MainWindow::crear_partida_clicked() {
 void MainWindow::cargar_partida_clicked(){
     emit cargar_partida();
 }
-
-void MainWindow::agregar_partida(std::string partida){
-        QWidget *rowWidget = new QWidget();
-        QHBoxLayout *rowLayout = new QHBoxLayout(rowWidget);
-
-        QLabel *rowLabel = new QLabel(partida.data(), rowWidget);
-        rowLabel->setStyleSheet("color: white; font-size: 14px;");
-
-        QPushButton *joinButton = new QPushButton("Unirse", rowWidget);
-         joinButton->setStyleSheet(
-        "background-color: white;"
-        "color: black;"
-        "border: 2px solid black;"
-        "padding: 5px 10px;"
-        "border-radius: 5px;"
-        "font-size: 12px;"
-        "font-weight: bold;"
-    );
-
-        rowLayout->addWidget(rowLabel);
-        rowLayout->addWidget(joinButton);
-        rowLayout->addStretch();
-        rowWidget->setLayout(rowLayout);
-
-        scrollLayout->insertWidget(0,rowWidget);
-}
-
 
 
 
@@ -178,19 +202,19 @@ void ClienteLobby::recibir_eventos(){
                 }
         }
     }
-
-    ventanaEsperando.hide();
 }
 
 int ClienteLobby::run(){
     mainWindow.show();
     connect(&mainWindow, &MainWindow::crear_partida, this,[&] () {
-        mainWindow.hide();
         ventanaNuevaPartida.show();
     });
 
     connect(&mainWindow, &MainWindow::cargar_partida, this,[&] () {
-        mainWindow.hide();
+        ventanaCargarPartida.show();
+        ventanaCargarPartida.agregar_partida(1,"Dante");
+
+/*
         ComandoAccion comando = CARGAR_PARTIDA;
         if(!protocolo.enviar_accion(comando)){
             QApplication::quit();
@@ -199,13 +223,20 @@ int ClienteLobby::run(){
         mainWindow.hide();
         id = protocolo.recibir_id();
         receiver->start();
-        ventanaEsperando.show();
+        ventanaEsperando.show();*/
     });
 
-    
+    connect(&ventanaCargarPartida,&VentanaCargarPartida::unirse,this,[&](int id, std::string nombre_partida){
+        std::cout << id << " " << nombre_partida << std::endl;
+    });
+
+
+    connect(&ventanaCargarPartida, &VentanaCargarPartida::volver, this,[&] () {
+        ventanaCargarPartida.hide();
+    });
+
     connect(&ventanaNuevaPartida, &VentanaNuevaPartida::volver, this,[&] () {
         ventanaNuevaPartida.hide();
-        mainWindow.show();
     });
 
     connect(&ventanaNuevaPartida, &VentanaNuevaPartida::crear_partida,this, [&] (
@@ -223,9 +254,14 @@ int ClienteLobby::run(){
     });
 
     connect(receiver, &QThread::finished, receiver, [&](){
-        Cliente cliente(id,color,protocolo, collidables,leaderboard,x_inicial,y_inicial);
-        cliente.start();
-        //mainWindow.show();
+        ventanaEsperando.hide();
+        mainWindow.hide();
+
+        QTimer::singleShot(0, [&]() {
+            Cliente cliente(id, color, protocolo, collidables, leaderboard, x_inicial, y_inicial);
+            cliente.start(); 
+            mainWindow.show();
+        });
     });
 
     return app->exec();

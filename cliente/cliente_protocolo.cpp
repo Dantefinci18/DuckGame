@@ -208,6 +208,23 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             }
 
             return serializador.deserializar_muerte(id);
+        
+        }
+        case Evento::EventoApuntar: {
+            uint8_t id[32];
+            socket.recvall(id, sizeof(id), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t direccion[8];
+            socket.recvall(direccion, sizeof(direccion), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            return serializador.deserializar_apuntar(id, direccion);
+        
         }
         case Evento::EventoAgacharse: {
             uint8_t id[32];
