@@ -1,12 +1,17 @@
 #include "server_mapa.h"
 
 Mapa::Mapa(int id_mapa) {
-    std::map<int, std::string> map_files = {
-        {1, "../server/mapas/mapa_1.yaml"},
-        {2, "../server/mapas/mapa_2.yaml"},
-        {3, "../server/mapas/mapa_3.yaml"},
-    };
-    YAML::Node config = YAML::LoadFile(map_files[id_mapa]);
+    std::string mapDirectory = "../server/mapas/";
+
+    std::string filename = mapDirectory + "mapa_" + std::to_string(id_mapa) + ".yaml";
+    
+    if (!fs::exists(filename)) {
+        std::cerr << "Map file " << filename << " does not exist!" << std::endl;
+        return;
+    }
+
+    // Load the YAML file
+    YAML::Node config = YAML::LoadFile(filename);
 
     for (const auto& item : config["collidables"]) {
         std::string tipo = item["type"].as<std::string>();

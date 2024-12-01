@@ -1,11 +1,51 @@
 collidables:
   - type: Platform
-    x: 50
-    y: 50
-    width: 700
-    height: 20
+    x: 548
+    y: 158
+    width: 40
+    height: 100
+  - type: Box
+    x: 392
+    y: 419
+    width: 40
+    height: 40
   - type: SpawnPlace
-    x: 600
-    y: 70
-    width: 20
+    x: 249
+    y: 539
+    width: 50
+    height: 50
+  - type: Platform
+    x: 33
+    y: 377
+    width: 70
     height: 20
+  - type: Platform
+    x: 230
+    y: 512
+    width: 70
+    height: 20
+  - type: Box
+    x: 545
+    y: 266
+    width: 40
+    height: 40
+  - type: Box
+    x: 214
+    y: 215
+    width: 40
+    height: 40
+  - type: SpawnPlace
+    x: 699
+    y: 407
+    width: 50
+    height: 50
+  - type: Platform
+    x: 682
+    y: 381
+    width: 70
+    height: 20
+  - type: Platform
+    x: 3
+    y: 4
+    width: 800
+    height: 150
