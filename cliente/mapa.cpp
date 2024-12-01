@@ -86,7 +86,7 @@ void Mapa::renderizar_mapa() {
                 float plat_y = ALTO_VENTANA - spawnPlace->position.y - spawnPlace->height * FACTOR_ESCALA_ARMA; 
                 float plat_width = spawnPlace->width * FACTOR_ESCALA_ARMA;   
                 float plat_height = spawnPlace->height * FACTOR_ESCALA_ARMA; 
-                int arma_index = static_cast<int>(spawnPlace->get_weapon_type());
+                int arma_index = static_cast<int>(spawnPlace->get_weapon_type()); //ojo switch aca
                 Area armaSrcArea(arma_index * 38, 0, 38,38);  
                 Area armaDestArea(plat_x, plat_y, plat_width, plat_height); 
                 armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
@@ -114,21 +114,35 @@ void Mapa::renderizar_mapa() {
             float plat_x = spawnBox->position.x;
             float plat_y = ALTO_VENTANA - spawnBox->position.y - spawnBox->height * FACTOR_ESCALA_ARMA;
             float plat_width = spawnBox->width * FACTOR_ESCALA_ARMA;
-            float plat_height = spawnBox->height * FACTOR_ESCALA_ARMA;
+            float plat_height = spawnBox->height * FACTOR_ESCALA_ARMA; //TODO: ACOMODAR Y CALCULAR CON ESCALA DE ARMADURA
 
             SpawnBox::ItemType tipo_item = spawnBox->get_item_type();
-            int arma_index = 6; // ACA HAYQ UE ACOMODAR
+
             if (tipo_item == SpawnBox::ItemType::Weapon) {
-                std::cout << "\033[43;31m(MAPA) - LLEGA WEAPON\033[0m" << std::endl;
-                arma_index = static_cast<int>(spawnBox->get_weapon_type());
+                int arma_index = static_cast<int>(spawnBox->get_weapon_type()); /// TODO: ACOMODAR CON SWITCH
+                Area armaSrcArea(arma_index * 38, 0, 38, 38);
+                Area armaDestArea(plat_x, plat_y, plat_width, plat_height);
+                armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
             } else {
-                std::cout << "\033[43;31m(MAPA) - UNA PROTECCION\033[0m" << std::endl;
-                arma_index = 6 + static_cast<int>(spawnBox->get_proteccion_type());
+                switch (spawnBox->get_proteccion_type()) {
+                    case ProteccionType::Armadura: {
+                        Area armaduraSrcArea(0, 0, 256, 196);
+                        Area armaduraDestArea(plat_x, plat_y, 65, 65);
+                        armadura.render(armaduraSrcArea, armaduraDestArea, SDL_FLIP_NONE, 0.0);
+                        break;
+                    }
+                    case ProteccionType::Casco: {
+                        Area cascoSrcArea(0, 0, 128, 128);
+                        Area cascoDestArea(plat_x, plat_y, 38, 38);
+                        casco.render(cascoSrcArea, cascoDestArea, SDL_FLIP_NONE, 0.0);
+                        break;
+                    }
+                    default:
+                        break;
+                }
             }
 
-            Area armaSrcArea(arma_index * 38, 0, 38, 38);
-            Area armaDestArea(plat_x, plat_y, plat_width, plat_height);
-            armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
+            
         }
         if (esta_explotando) {
             float box_x = x_expl;

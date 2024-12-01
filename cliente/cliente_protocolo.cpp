@@ -352,7 +352,7 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
                 return nullptr;
             }
 
-            return serializador.deserializar_spawn_arma_box(x, y, proteccion_type);
+            return serializador.deserializar_spawn_proteccion_box(x, y, proteccion_type);
 
         }
 

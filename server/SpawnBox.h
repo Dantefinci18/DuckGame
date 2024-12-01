@@ -55,8 +55,10 @@ public:
         std::uniform_int_distribution<> dist(0, 1); // 0: Weapon, 1: Proteccion
 
         if (dist(gen) == 0) {
+            std::cout << "\033[43;31m(SPAWNBOX) - se cargó con un arma\033[0m" << std::endl;
             item = generar_arma();
         } else {
+            std::cout << "\033[43;31m(SPAWNBOX) - se cargó con una protección\033[0m" << std::endl;
             item = generar_proteccion();
         }
     }
@@ -94,8 +96,10 @@ public:
         }
 
         if (std::holds_alternative<std::unique_ptr<Weapon>>(item.value())) {
+            std::cout << "\033[43;31m(SPAWNBOX - GETTYPE) - se cargó con un arma\033[0m" << std::endl;
             return ItemType::Weapon; // Contiene un arma
         } else if (std::holds_alternative<std::unique_ptr<Proteccion>>(item.value())) {
+            std::cout << "\033[43;31m(SPAWNBOX - GETTYPE) - se cargó con una protección\033[0m" << std::endl;
             return ItemType::Proteccion; // Contiene una protección
         }
 
@@ -123,20 +127,20 @@ public:
     // Imprime el estado de la caja (para debugging)
     void imprimir_estado() const {
         if (!tiene_item()) {
-            std::cout << "La caja está vacía" << std::endl;
+            std::cout << "\033[43;31m(SPAWNBOX) - La caja está vacía\033[0m" << std::endl;
             return;
         }
 
         auto tipo = get_item_type();
         switch (tipo) {
             case ItemType::Weapon:
-                std::cout << "La caja contiene un arma.\n";
+                std::cout << "\033[43;31m(SPAWNBOX) - La caja tiene un arma\033[0m" << std::endl;
                 break;
             case ItemType::Proteccion:
-                std::cout << "La caja contiene una protección.\n";
+                std::cout << "\033[43;31m(SPAWNBOX) - La caja tiene una protección\033[0m" << std::endl;
                 break;
             case ItemType::None:
-                std::cout << "Error: Caja en estado inesperado.\n";
+                std::cout << "\033[43;31m(SPAWNBOX) - La caja está vacía por caso None\033[0m" << std::endl;
                 break;
         }
     }

@@ -136,6 +136,7 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
                 case Evento::EventoSpawnProteccionBox: {
+                    std::cout << "\033[43;31m(CLIENTE - CASOS) - TOCO PROTECCION BOX\033[0m" << std::endl;
                     auto evento_spawn_proteccion_box = static_cast<EventoSpawnProteccionBox*>(evento_recibido.get());
                     agregar_collidable_proteccion(*evento_spawn_proteccion_box);
                     break;
@@ -170,7 +171,7 @@ void Cliente::agregar_collidable_proteccion(const EventoSpawnProteccionBox& even
         20, 
         20
     );
-
+    std::cout << "\033[43;31m(CLEINTE -  AGREGAR-COLLIDABLE-PROTECCION) - TOCO PROTECCION\033[0m" << std::endl;
     std::unique_ptr<Proteccion> proteccion = std::make_unique<Proteccion>(evento_spawn_proteccion_box.proteccion_type);
     
     spawnBox->set_item(std::variant<std::unique_ptr<Weapon>, std::unique_ptr<Proteccion>>(std::move(proteccion)));
@@ -260,10 +261,10 @@ void Cliente::manejar_proteccion(const EventoPickupProteccion& evento_pickup, st
         if (collidable->getType() == CollidableType::SpawnBox 
             && collidable->position.x == evento_pickup.x
             && collidable->position.y == evento_pickup.y) {
-            std::cout << "clearing weapon" << std::endl;
+            std::cout << "clearing proteccion" << std::endl;
             SpawnBox* sBox = static_cast<SpawnBox*>(collidable);
             sBox->limpiar_item();
-            mapa->clear_weapon(sBox);
+            mapa->clear_weapon(sBox);  //ojo
         }
     }
     if (evento_pickup.id != id) {
