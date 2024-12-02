@@ -324,18 +324,13 @@ public:
                     // Obtener y asignar el arma al jugador
                     WeaponType weapon_type = spawnBox.get_weapon_type();
                     auto new_item = spawnBox.recoger_item();
-                    std::cout << "\033[43;31m(PLAYER) - TOCO UN WEAPON\033[0m" << std::endl; 
                     if (new_item && std::holds_alternative<std::unique_ptr<Weapon>>(new_item.value())) {
-                        std::cout << "\033[43;31m(PLAYER) - GUARDO EL WEAPON\033[0m" << std::endl; 
                         weapon = std::move(std::get<std::unique_ptr<Weapon>>(new_item.value()));
-                        eventos.push_back(std::make_shared<EventoPickup>(
-                            id, spawnBox.position.x, spawnBox.position.y, weapon_type));
+                        eventos.push_back(std::make_shared<EventoPickup>(id, spawnBox.position.x, spawnBox.position.y, weapon_type));
                     }
                     break;
                 }
                 case SpawnBox::ItemType::Proteccion: {
-                    // Obtener y asignar la protección
-                    std::cout << "\033[43;31m(PLAYER) - TOCO PROTECCION\033[0m" << std::endl;
                     ProteccionType proteccion_type = spawnBox.get_proteccion_type();
                     auto new_item = spawnBox.recoger_item();
 
@@ -343,15 +338,11 @@ public:
                         auto proteccion = std::move(std::get<std::unique_ptr<Proteccion>>(new_item.value()));
 
                         if (proteccion_type == ProteccionType::Casco) {
-                            std::cout << "\033[43;31m(PLAYER) - TOCO CASCO\033[0m" << std::endl;
                             casco = std::move(proteccion);
-                            eventos.push_back(std::make_shared<EventoPickupProteccion>(
-                                id, spawnBox.position.x, spawnBox.position.y, ProteccionType::Casco));
+                            eventos.push_back(std::make_shared<EventoPickupProteccion>(id, spawnBox.position.x, spawnBox.position.y, ProteccionType::Casco));
                         } else if (proteccion_type == ProteccionType::Armadura) {
-                            std::cout << "\033[43;31m(PLAYER) - TOCO ARMADURA\033[0m" << std::endl;
                             armadura = std::move(proteccion);
-                            eventos.push_back(std::make_shared<EventoPickupProteccion>(
-                                id, spawnBox.position.x, spawnBox.position.y, ProteccionType::Armadura));
+                            eventos.push_back(std::make_shared<EventoPickupProteccion>(id, spawnBox.position.x, spawnBox.position.y, ProteccionType::Armadura));
                         }
                     }
                     break;

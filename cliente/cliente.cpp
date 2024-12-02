@@ -75,7 +75,6 @@ void Cliente::procesar_eventos_recibidos() {
                 case Evento::EventoPickupProteccion: {
                     auto evento_pickup_proteccion = static_cast<EventoPickupProteccion*>(evento_recibido.get());
                     manejar_proteccion(*evento_pickup_proteccion, collidables);
-                    std::cout << "\033[43;31m(CLIENTE) - ACA MANEJAR PROTECCION TENGP LLAMAR\033[0m" << std::endl;
                     break;
                 }
 
@@ -136,7 +135,6 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
                 case Evento::EventoSpawnProteccionBox: {
-                    std::cout << "\033[43;31m(CLIENTE - CASOS) - TOCO PROTECCION BOX\033[0m" << std::endl;
                     auto evento_spawn_proteccion_box = static_cast<EventoSpawnProteccionBox*>(evento_recibido.get());
                     agregar_collidable_proteccion(*evento_spawn_proteccion_box);
                     break;
@@ -171,7 +169,6 @@ void Cliente::agregar_collidable_proteccion(const EventoSpawnProteccionBox& even
         20, 
         20
     );
-    std::cout << "\033[43;31m(CLEINTE -  AGREGAR-COLLIDABLE-PROTECCION) - TOCO PROTECCION\033[0m" << std::endl;
     std::unique_ptr<Proteccion> proteccion = std::make_unique<Proteccion>(evento_spawn_proteccion_box.proteccion_type);
     
     spawnBox->set_item(std::variant<std::unique_ptr<Weapon>, std::unique_ptr<Proteccion>>(std::move(proteccion)));
@@ -268,11 +265,9 @@ void Cliente::manejar_proteccion(const EventoPickupProteccion& evento_pickup, st
         }
     }
 
-
     if(evento_pickup.proteccion_type == ProteccionType::NoArmadura || evento_pickup.proteccion_type == ProteccionType::NoCasco){
         auto* spawnBox = new SpawnBox(
         Vector(evento_pickup.x, evento_pickup.y), 20, 20);
-        std::cout << "\033[43;31m(CLEINTE -  AGREGAR-COLLIDABLE-PROTECCION) - TOCO PROTECCION\033[0m" << std::endl;
         std::unique_ptr<Proteccion> proteccion = std::make_unique<Proteccion>(evento_pickup.proteccion_type);
         
         spawnBox->set_item(std::variant<std::unique_ptr<Weapon>, std::unique_ptr<Proteccion>>(std::move(proteccion)));

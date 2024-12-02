@@ -82,6 +82,7 @@ private:
 
     const int FACTOR_ESCALA = 2;
     const int FACTOR_ESCALA_ARMA = 3;
+    const int FACTOR_ESCALA_PROTECCION = 2;
     const int FACTOR_ESCALA_BOX = 2;
     const int ALTO_VENTANA = 600;
     const int ANCHO_VENTANA = 800;

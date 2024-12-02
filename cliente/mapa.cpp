@@ -114,7 +114,9 @@ void Mapa::renderizar_mapa() {
             float plat_x = spawnBox->position.x;
             float plat_y = ALTO_VENTANA - spawnBox->position.y - spawnBox->height * FACTOR_ESCALA_ARMA;
             float plat_width = spawnBox->width * FACTOR_ESCALA_ARMA;
-            float plat_height = spawnBox->height * FACTOR_ESCALA_ARMA; //TODO: ACOMODAR Y CALCULAR CON ESCALA DE ARMADURA
+            float plat_height = spawnBox->height * FACTOR_ESCALA_ARMA;
+
+            float casco_y = ALTO_VENTANA - spawnBox->position.y - spawnBox->height * FACTOR_ESCALA_PROTECCION;
 
             SpawnBox::ItemType tipo_item = spawnBox->get_item_type();
 
@@ -127,28 +129,26 @@ void Mapa::renderizar_mapa() {
                 switch (spawnBox->get_proteccion_type()) {
                     case ProteccionType::Armadura: {
                         Area armaduraSrcArea(0, 0, 256, 196);
-                        Area armaduraDestArea(plat_x, plat_y, 65, 65);
+                        Area armaduraDestArea(plat_x, plat_y + 10, 65, 65);
                         armadura.render(armaduraSrcArea, armaduraDestArea, SDL_FLIP_NONE, 0.0);
                         break;
                     }
                     case ProteccionType::Casco: {
                         Area cascoSrcArea(0, 0, 128, 128);
-                        Area cascoDestArea(plat_x, plat_y, 38, 38);
+                        Area cascoDestArea(plat_x, casco_y, 38, 38);
                         casco.render(cascoSrcArea, cascoDestArea, SDL_FLIP_NONE, 0.0);
                         break;
                     }
                     case ProteccionType::NoArmadura: {
-                        std::cout << "\033[43;31m(MAPA) - NO ARMADURA\033[0m" << std::endl;
                         Area armaduraSrcArea(0, 0, 256, 196);
                         Area armaduraDestArea(plat_x, plat_y, 65, 65);
-                        armadura.render(armaduraSrcArea, armaduraDestArea, SDL_FLIP_VERTICAL, 0.0);
+                        armadura.render(armaduraSrcArea, armaduraDestArea, SDL_FLIP_VERTICAL, 45.0);
                         break;
                     }
                     case ProteccionType::NoCasco: {
-                        std::cout << "\033[43;31m(MAPA) - NO CASCO\033[0m" << std::endl;
                         Area cascoSrcArea(0, 0, 128, 128);
-                        Area cascoDestArea(plat_x, plat_y, 38, 38);
-                        casco.render(cascoSrcArea, cascoDestArea, SDL_FLIP_VERTICAL, 0.0);
+                        Area cascoDestArea(plat_x, casco_y, 38, 38);
+                        casco.render(cascoSrcArea, cascoDestArea, SDL_FLIP_VERTICAL, 45.0);
                         break;
                     }
                     default:
