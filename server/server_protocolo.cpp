@@ -14,20 +14,21 @@ ProtocoloServidor::ProtocoloServidor(Socket&& conexion): conexion(std::move(cone
 ComandoAccion ProtocoloServidor::recibir_accion() {
     bool was_closed = false;
 
-    uint8_t data[8];
-    conexion.recvall(data, sizeof(data), &was_closed);
+    std::vector<uint8_t> data(ACCION_RECIBIDA);
+    conexion.recvall(data.data(), data.size(), &was_closed);
 
     if (was_closed) {
         return NONE_ACCION;
     }
 
-    return serializador.deserializar_accion(data);
+    return serializador.deserializar_accion(data.data());
 }
+
 
 
 bool ProtocoloServidor::enviar_id(int id) {
     bool was_closed = false;
-    std::vector<uint8_t> buffer= serializador.serializar_id(id);
+    std::vector<uint8_t> buffer = serializador.serializar_id(id);
 
     conexion.sendall(buffer.data(), buffer.size(), &was_closed);
 
@@ -35,9 +36,6 @@ bool ProtocoloServidor::enviar_id(int id) {
 }
 void ProtocoloServidor::enviar_estado(const Evento& evento) {
     bool was_closed = false;
-    if(evento.get_tipo() == Evento::EventoEspera){
-        std::cout << "protocolo: evento espera\n";
-    }
     
     std::vector<uint8_t> bits = serializador.serializar_evento(evento);
     

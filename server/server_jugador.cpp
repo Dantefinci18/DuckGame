@@ -8,9 +8,9 @@
 #include "server_protocolo.h"
 
 
-Jugador::Jugador(Queue<Accion>& comandos, Socket&& conexion):
+Jugador::Jugador(Queue<Accion>& comandos, Socket&& conexion,int id):
         protocolo(std::move(conexion)), 
-        id(generar_id()),
+        id(id),
         sender(protocolo, cola_eventos, id), 
         receiver(protocolo, comandos, id){
             protocolo.enviar_id(id);

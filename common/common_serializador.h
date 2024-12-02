@@ -18,7 +18,7 @@
 
 class Serializador {
 private:
-    std::vector<uint8_t> serializar_enum(std::bitset<8> bits);
+    std::vector<uint8_t> serializar_enum(std::bitset<5> bits);
     uint8_t deserializar_enum(const uint8_t* data);
 
 public:

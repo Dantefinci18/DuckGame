@@ -4,25 +4,25 @@
 #include <cstring>
 #include <memory>
       
-std::vector<uint8_t> Serializador::serializar_enum(std::bitset<8> bits){
-    std::vector<uint8_t> buffer(8); 
-    for (int i = 0; i < 8; ++i) {
-        buffer[7 - i] = bits[i] ? 1 : 0;  
+std::vector<uint8_t> Serializador::serializar_enum(std::bitset<5> bits){
+    std::vector<uint8_t> buffer(5); 
+    for (int i = 0; i < 5; ++i) {
+        buffer[4 - i] = bits[i];
     }
 
     return buffer;
 }
 
 std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
-    std::bitset<8> bits(accion);  
+    std::bitset<5> bits(accion);  
     return serializar_enum(bits);
 }
 
 uint8_t Serializador::deserializar_enum(const uint8_t* data){
     uint8_t valor = 0;
     
-    for (int i = 0; i < 8; ++i) {
-        valor |= (data[7 - i] << i);
+    for (int i = 0; i < 5; ++i) {
+        valor |= (data[4 - i] << i);
     }
 
     return valor;
@@ -475,41 +475,19 @@ std::unique_ptr<Evento> Serializador::deserializar_bala(const uint8_t* x_data, c
 }
 
 std::unique_ptr<Evento> Serializador::deserializar_caja_destruida(const uint8_t* x_data, const uint8_t* y_data) {
-    std::cout << "Deserializando caja destruida..." << std::endl;
 
-    // Imprimir datos brutos para x
-    std::cout << "Datos brutos de x_data: ";
-    for (int i = 0; i < 12; ++i) {
-        std::cout << static_cast<int>(x_data[i]) << " ";
-    }
-    std::cout << std::endl;
-
-    // Reconstruir x
     uint32_t x_bits = 0;
     for (int i = 0; i < 12; ++i) {
         x_bits |= (x_data[i] << (11 - i));
-        std::cout << "x_bits después del bit " << i << ": " << x_bits << std::endl;
     }
     int x = static_cast<int>(x_bits);
-    std::cout << "Valor final de x: " << x << std::endl;
 
-    // Imprimir datos brutos para y
-    std::cout << "Datos brutos de y_data: ";
-    for (int i = 0; i < 12; ++i) {
-        std::cout << static_cast<int>(y_data[i]) << " ";
-    }
-    std::cout << std::endl;
-
-    // Reconstruir y
     uint32_t y_bits = 0;
     for (int i = 0; i < 12; ++i) {
         y_bits |= (y_data[i] << (11 - i));
-        std::cout << "y_bits después del bit " << i << ": " << y_bits << std::endl;
     }
-    float y = static_cast<float>(y_bits);
-    std::cout << "Valor final de y: " << y << std::endl;
+    int y = static_cast<int>(y_bits);
 
-    // Retornar el evento deserializado
     return std::make_unique<EventoCajaDestruida>(x, y);
 }
 
