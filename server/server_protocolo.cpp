@@ -11,14 +11,14 @@
 ProtocoloServidor::ProtocoloServidor(Socket&& conexion): conexion(std::move(conexion)) {}
 
 
-Accion ProtocoloServidor::recibir_accion() {
+std::shared_ptr<Accion> ProtocoloServidor::recibir_accion() {
     bool was_closed = false;
 
     uint8_t data_tipo[8];
     conexion.recvall(data_tipo, sizeof(data_tipo), &was_closed);
 
     if (was_closed) {
-        return Accion(NONE_ACCION);
+        return std::make_unique<Accion>(NONE_ACCION);
     }
 
     std::cout << "tipo accion:\n";
@@ -29,8 +29,8 @@ Accion ProtocoloServidor::recibir_accion() {
         uint8_t data_cantidad_de_jugadores[32];
         conexion.recvall(data_cantidad_de_jugadores,sizeof(data_cantidad_de_jugadores),&was_closed);
 
-        if(was_closed){
-            return Accion(NONE_ACCION);
+        if (was_closed) {
+            return std::make_shared<Accion>(NONE_ACCION);
         }
 
         std::cout << "cantidad de jugadores:\n";
@@ -38,20 +38,36 @@ Accion ProtocoloServidor::recibir_accion() {
         uint8_t data_mapa[32];
         conexion.recvall(data_mapa,sizeof(data_mapa),&was_closed);
 
-        if(was_closed){
-            return Accion(NONE_ACCION);
+        if (was_closed) {
+            return std::make_shared<Accion>(NONE_ACCION);
         }
-
         std::cout << "mapa:\n";
         serializador.imprimir_uint8_t_array(data_mapa,sizeof(data_mapa));
 
-        AccionNuevaParida nuevaPartida = serializador.deserializar_nueva_partida(data_cantidad_de_jugadores,data_mapa);
+        uint8_t data_tamanio_nombre[32];
+        conexion.recvall(data_tamanio_nombre,sizeof(data_tamanio_nombre),&was_closed);
+
+        if (was_closed) {
+            return std::make_unique<Accion>(NONE_ACCION);
+        }
+        std::cout << "tamanio nombre partida:\n";
+        serializador.imprimir_uint8_t_array(data_tamanio_nombre,sizeof(data_tamanio_nombre));
+
+        int tamanio_nombre = serializador.deserializar_numero_entero(data_tamanio_nombre);
+
+        uint8_t data_nombre_partida[tamanio_nombre];
+        conexion.recvall(data_nombre_partida,sizeof(data_nombre_partida),&was_closed);
+
+        std::cout << "nombre partida:\n";
+        serializador.imprimir_uint8_t_array(data_nombre_partida,sizeof(data_nombre_partida));
+
+        auto nuevaPartida = serializador.deserializar_nueva_partida(data_nombre_partida,tamanio_nombre,data_cantidad_de_jugadores,data_mapa);
+        std::cout << "nombre partida en protocolo: \n" << nuevaPartida->nombre_partida << std::endl;
         return nuevaPartida;
 
     } 
 
-    return Accion(tipo_accion);
-
+    return std::make_shared<Accion>(tipo_accion);
 }
 
 
@@ -97,6 +113,10 @@ void ProtocoloServidor::enviar_estado(const Evento& evento) {
             break;
         }
     }*/
+}
+
+bool ProtocoloServidor::enviar_partidas(std::list<Partida> &partidas){
+    return true;
 }
 
 Socket ProtocoloServidor::get_socket(){

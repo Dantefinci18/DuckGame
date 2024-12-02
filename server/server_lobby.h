@@ -7,16 +7,18 @@
 #include "../common/common_queue.h"
 #include "../common/common_accion.h"
 #include "server_jugador.h"
+#include "../common/common_partida.h"
 #include <list>
 
 class ServerLobby : public Thread {
     private:
-        std::list<Gameloop*> partidas;
-        Queue<Accion> cola_comando_partidas;
+        std::unordered_map<int,Gameloop*> partidas;
+        Queue<std::shared_ptr<Accion>> cola_comando_partidas;
         std::unordered_map<int, Jugador*> jugadores_esperando;
         std::mutex mtx;
+        long cantidad_de_partidas = 0;
 
-        Gameloop *obtener_partida_en_espera();
+        std::list<Partida> obtener_partidas_en_espera();
         void cerrar_gameloops_terminados();
         void eliminar_terminadas();
         void eliminar_partidas();

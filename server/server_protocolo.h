@@ -5,6 +5,7 @@
 #include "../common/common_accion.h"
 #include "../common/common_serializador.h"
 #include "../common/common_evento.h"
+#include "../common/common_partida.h"
 #include "Collidable.h"
 #include "Vector.h"
 #include <mutex>
@@ -17,9 +18,10 @@ class ProtocoloServidor{
 
     public:
         explicit ProtocoloServidor(Socket&& conexion);
-        Accion recibir_accion();
+        std::shared_ptr<Accion> recibir_accion();
         bool enviar_id(int id);
         void enviar_estado(const Evento& evento); 
+        bool enviar_partidas(std::list<Partida> &partidas);
         Socket get_socket();  
         void cerrar_conexion();
 };

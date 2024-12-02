@@ -3,13 +3,15 @@
 #include "../common/common_color.h"
 #include "DisparoManager.h"
 
-Gameloop::Gameloop(int id_jugador, unsigned int capacidad_minima, Queue<std::unique_ptr<Evento>>& cola_eventos)
-    : capacidad_minima(capacidad_minima), 
+Gameloop::Gameloop(int id_jugador, const std::string &nombre, 
+                    unsigned int capacidad_minima, Queue<std::unique_ptr<Evento>>& cola_eventos): 
+    
+    capacidad_minima(capacidad_minima), 
     mapa(std::make_unique<Mapa>(1)), 
     color(0), 
     ticks_round_win_screen(60), 
     should_reset_round(false), 
-    leaderboard() {
+    nombre_partida(nombre) {
     
     agregar_jugador(id_jugador,cola_eventos);
 }
@@ -43,14 +45,14 @@ void Gameloop::run() {
     }
 }
 
-void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Collidable*> collidables) {
+void Gameloop::procesar_acciones(std::vector<std::shared_ptr<Accion>> acciones, std::vector<Collidable*> collidables) {
     std::vector<std::shared_ptr<Evento>> eventos;
 
     for (auto& accion : acciones) {
         std::lock_guard<std::mutex> lock(mtx);
 
-        int id = accion.get_player_id();
-        ComandoAccion command = accion.get_command();
+        int id = accion->get_player_id();
+        ComandoAccion command = accion->get_command();
         std::shared_ptr<Player> player = jugadores[id];
         if (player->is_duck_dead()) {
             continue;
@@ -134,12 +136,12 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
 }
 
 void Gameloop::cargar_acciones() {
-    std::vector<Accion> acciones;
-    Accion accion;
+    std::vector<std::shared_ptr<Accion>> acciones;
+    std::shared_ptr<Accion> accion;
     bool tried = comandos_acciones.try_pop(accion);
 
     while (tried) {
-        acciones.push_back(accion);
+        acciones.push_back(std::move(accion));
         tried = comandos_acciones.try_pop(accion);
     }
 
@@ -208,7 +210,7 @@ void Gameloop::handle_winner(Player* winner) {
 }
 
 
-Queue<Accion>& Gameloop::get_cola_acciones(){
+Queue<std::shared_ptr<Accion>>& Gameloop::get_cola_acciones(){
     return comandos_acciones;
 }
 
@@ -259,4 +261,8 @@ int Gameloop::getRandomMapIndex() {
     std::uniform_int_distribution<> dist(0, numFiles - 1);
 
     return dist(gen) + 1; 
+}
+
+const std::string& Gameloop::get_nombre(){
+    return nombre_partida;
 }

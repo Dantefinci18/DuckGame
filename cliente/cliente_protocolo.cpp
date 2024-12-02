@@ -8,12 +8,12 @@
 
 ClienteProtocolo::ClienteProtocolo(Socket&& socket) : socket(std::move(socket)) {}
 
-bool ClienteProtocolo::crear_partida(const std::string& mapa_seleccionado, const unsigned int cantidad_de_jugadores) {
+bool ClienteProtocolo::crear_partida(const std::string& nombre_partida,
+        const std::string& mapa_seleccionado, const unsigned int cantidad_de_jugadores) {
     
     (void)mapa_seleccionado;
     bool was_closed = false;
-    AccionNuevaParida nuevaPartida(cantidad_de_jugadores,1);
-    std::vector<uint8_t> partida_serializada = serializador.serializar_accion(nuevaPartida);
+    std::vector<uint8_t> partida_serializada = serializador.serializar_accion(std::make_unique<AccionNuevaPartida>(cantidad_de_jugadores,nombre_partida,1));
     socket.sendall(partida_serializada.data(), partida_serializada.size(), &was_closed);
     if (was_closed) {
         return false;
@@ -23,10 +23,22 @@ bool ClienteProtocolo::crear_partida(const std::string& mapa_seleccionado, const
     
 }
 
+bool ClienteProtocolo::cargar_partida(int id, const std::string& nombre_partida){
+    bool was_closed = false;
+
+    auto partida_serializada = serializador.serializar_accion(std::make_unique<AccionCargarPartida>(id,nombre_partida));
+    socket.sendall(partida_serializada.data(), partida_serializada.size(), &was_closed);
+    
+    if (was_closed) {
+        return false;
+    }
+
+    return true;
+}
+
 bool ClienteProtocolo::enviar_accion(ComandoAccion &comando_accion) {
     bool was_closed = false;
-    Accion accion(comando_accion);
-    std::vector<uint8_t> buffer= serializador.serializar_accion(accion);
+    std::vector<uint8_t> buffer= serializador.serializar_accion(std::make_unique<Accion>(comando_accion));
 
     socket.sendall(buffer.data(), buffer.size(), &was_closed);
 

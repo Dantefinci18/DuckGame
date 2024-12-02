@@ -3,6 +3,7 @@
 
 #include <string>
 #include <cstdint>
+#include <memory>
 
 enum ComandoAccion : uint8_t{
     DERECHA,
@@ -19,6 +20,7 @@ enum ComandoAccion : uint8_t{
     APUNTAR_ARRIBA,
     DEJAR_APUNTAR_ARRIBA,
     NUEVA_PARTIDA,
+    ESTABLECER_PARTIDAS,
     CARGAR_PARTIDA,
     NONE_ACCION
 };
@@ -28,6 +30,9 @@ class Accion {
         int player_id;
         ComandoAccion command;
     public:
+
+        virtual ComandoAccion get_command() const = 0;
+
         ComandoAccion get_command() {
             return command;
         }
@@ -42,18 +47,31 @@ class Accion {
 
         explicit Accion(ComandoAccion command) : player_id(-1), command(command) {}
         explicit Accion() : player_id(-1), command(ComandoAccion::NONE_ACCION) {}
+
+        virtual ~Accion() = default;
 };
 
-class AccionNuevaParida : public Accion {
+class AccionCargarPartida : public Accion {
+    public:
+        int id_partida;
+        const std::string& nombre_partida;
+
+        explicit AccionCargarPartida(int id_partida, const std::string& nombre_partida):
+            Accion(ComandoAccion::CARGAR_PARTIDA),id_partida(id_partida), nombre_partida(nombre_partida){}
+};
+
+class AccionNuevaPartida : public Accion {
     public:
         const unsigned int cantidad_de_jugadores;
+        const std::string& nombre_partida;
         const unsigned int mapa;
 
-        explicit AccionNuevaParida(const unsigned int cantidad_de_jugadores,const unsigned int mapa):
+        explicit AccionNuevaPartida(const unsigned int cantidad_de_jugadores, 
+            const std::string &nombre_partida,const unsigned int mapa):
             
             Accion(ComandoAccion::NUEVA_PARTIDA),
             cantidad_de_jugadores(cantidad_de_jugadores),
-            mapa(mapa){}
+            mapa(mapa),nombre_partida(nombre_partida){}
 };
 
 

@@ -1,4 +1,3 @@
-#define ACCION_NUEVA_PARTIDA_BITS_SIZE 72
 #define ACCION_BIT_SIZE 8
 
 #include "common_serializador.h"
@@ -13,11 +12,6 @@ void Serializador::serializar_enum(uint8_t tipo, std::vector<uint8_t>& buffer){
         buffer[i] = (tipo >> (7 - i)) & 1;
     }
     
-}
-
-std::vector<uint8_t> Serializador::serializar_string(const std::string& string){
-    std::vector<uint8_t> str_bits(string.begin(),string.end());
-    return str_bits;
 }
 
 void Serializador::serializar_numero_entero(int numero, std::vector<uint8_t>& buffer, int j){
@@ -50,33 +44,74 @@ int Serializador::deserializar_numero_entero(const uint8_t* data){
 }
 
 
+void Serializador::serializar_string(const std::string& string, std::vector<uint8_t> &buffer, int j){
+    std::vector<uint8_t> str_bits(string.begin(),string.end());
+    buffer.insert(buffer.begin()+j,string.begin(),string.end());
+}
 
-std::vector<uint8_t> Serializador::serializar_accion(Accion &accion) {
-    ComandoAccion tipo_accion = accion.get_command();
+
+std::vector<uint8_t> Serializador::serializar_accion(std::shared_ptr<Accion> accion) {
+    ComandoAccion tipo_accion = accion->get_command();
     std::vector<uint8_t> buffer;
 
     if(tipo_accion == NUEVA_PARTIDA){
-        AccionNuevaParida nuevaPartida = static_cast<AccionNuevaParida&>(accion);
-        buffer.resize(ACCION_NUEVA_PARTIDA_BITS_SIZE);
-        uint tipo_accion_uint8 = tipo_accion;
+        AccionNuevaPartida *nuevaPartida = static_cast<AccionNuevaPartida*>(accion.get());
+        buffer.resize(104 + nuevaPartida->nombre_partida.size());
+        uint8_t tipo_accion_uint8 = tipo_accion;
         serializar_enum(tipo_accion_uint8, buffer);
         
         std::cout << "tipo accion:\n";
         imprimir_uint8_t_array(buffer.data(),buffer.size());
         
-        serializar_numero_entero(nuevaPartida.cantidad_de_jugadores,buffer,8);
+        serializar_numero_entero(nuevaPartida->cantidad_de_jugadores,buffer,8);
 
         std::cout << "cantidad de jugadores:\n";
         imprimir_uint8_t_array(buffer.data(),buffer.size());
 
-        serializar_numero_entero(nuevaPartida.mapa,buffer,40);
+        serializar_numero_entero(nuevaPartida->mapa,buffer,40);
 
         std::cout << "mapa:\n"; 
         imprimir_uint8_t_array(buffer.data(),buffer.size());
+
+        serializar_numero_entero(nuevaPartida->nombre_partida.size(),buffer,72);
+
+        std::cout << "tamanio string nombre partida:\n";
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+
+        serializar_string(nuevaPartida->nombre_partida,buffer,104);
+
+        std::cout << "nombre partida:\n";
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+    
+    }else if(tipo_accion == CARGAR_PARTIDA){
+        AccionCargarPartida *cargarPartida = static_cast<AccionCargarPartida*>(accion.get());
+        buffer.resize(72 + cargarPartida->nombre_partida.size());
+        uint8_t tipo_accion_uint8 = tipo_accion;
+        serializar_enum(tipo_accion_uint8, buffer);
+        
+        std::cout << "tipo accion:\n";
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+
+        serializar_numero_entero(cargarPartida->id_partida,buffer,8);
+
+        std::cout << "id_partida:\n";
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+
+        serializar_numero_entero(cargarPartida->nombre_partida.size(),buffer,40);
+        
+
+        std::cout << "tamanio string nombre partida:\n";
+        imprimir_uint8_t_array(buffer.data(),buffer.size());
+
+        serializar_string(cargarPartida->nombre_partida,buffer,72);
+
+        std::cout << "nombre partida:\n";
+        imprimir_uint8_t_array(buffer.data(),buffer.size()); 
+
     
     }else{
         buffer.resize(ACCION_BIT_SIZE);
-        serializar_enum(accion.get_command(), buffer);
+        serializar_enum(accion->get_command(), buffer);
 
         std::cout << "tipo accion:\n";
         imprimir_uint8_t_array(buffer.data(),buffer.size());
@@ -90,10 +125,35 @@ ComandoAccion Serializador::deserializar_tipo_accion(const uint8_t* data){
     return static_cast<ComandoAccion>(deserializar_enum(data));
 }
 
-AccionNuevaParida Serializador::deserializar_nueva_partida(const uint8_t* data_jugadores, const uint8_t* data_mapa){
+
+std::string Serializador::deserializar_string(const uint8_t *data, size_t tamanio){
+    return std::string(reinterpret_cast<const char*>(data), tamanio);
+}
+
+
+std::shared_ptr<AccionNuevaPartida> Serializador::deserializar_nueva_partida(const uint8_t* data_nombre, size_t n,const uint8_t* data_jugadores, const uint8_t* data_mapa){
     int cantidad_de_jugadores = deserializar_numero_entero(data_jugadores);
     int mapa = deserializar_numero_entero(data_mapa);
-    return AccionNuevaParida(cantidad_de_jugadores,mapa);
+    std::string nombre = deserializar_string(data_nombre,n);
+    std::cout << "nombre partida en serializador: \n" << nombre << std::endl;
+    return std::make_shared<AccionNuevaPartida>(cantidad_de_jugadores,nombre,mapa);
+}
+
+
+std::vector<uint8_t> Serializador::serializar_partidas(std::list<Partida> partidas){  
+    std::vector<uint8_t> buffer;
+    serializar_numero_entero(partidas.size(),buffer,0);
+
+    int i = 32;
+
+    for(auto partida : partidas){
+        serializar_numero_entero(partida.id,buffer,i);
+        i += 32;
+        serializar_numero_entero(partida.nombre.size(),buffer,i);
+        i+= 32;
+        serializar_string(partida.nombre,buffer,i);
+        i+= partida.nombre.size();
+    }
 }
 
 

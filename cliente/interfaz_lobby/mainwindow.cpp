@@ -214,20 +214,21 @@ int ClienteLobby::run(){
         ventanaCargarPartida.show();
         ventanaCargarPartida.agregar_partida(1,"Dante");
 
-/*
-        ComandoAccion comando = CARGAR_PARTIDA;
+        ComandoAccion comando = ESTABLECER_PARTIDAS;
+        
         if(!protocolo.enviar_accion(comando)){
             QApplication::quit();
+            
+        }else{
+
+            //recibe las partidas
         }
 
-        mainWindow.hide();
-        id = protocolo.recibir_id();
-        receiver->start();
-        ventanaEsperando.show();*/
+
     });
 
     connect(&ventanaCargarPartida,&VentanaCargarPartida::unirse,this,[&](int id, std::string nombre_partida){
-        std::cout << id << " " << nombre_partida << std::endl;
+        
     });
 
 
@@ -243,14 +244,16 @@ int ClienteLobby::run(){
         const std::string& nombre, const std::string& mapaSeleccionado, const unsigned int cantidad_de_jugadores) {
 
 
-            if(!protocolo.crear_partida(mapaSeleccionado,cantidad_de_jugadores)){
+            if(!protocolo.crear_partida(nombre,mapaSeleccionado,cantidad_de_jugadores)){
                 QApplication::quit();
+            
+            }else{
+                
+                ventanaNuevaPartida.hide();
+                id = protocolo.recibir_id();
+                receiver->start();
+                ventanaEsperando.show();        
             }
-
-            ventanaNuevaPartida.hide();
-            id = protocolo.recibir_id();
-            receiver->start();
-            ventanaEsperando.show();        
     });
 
     connect(receiver, &QThread::finished, receiver, [&](){

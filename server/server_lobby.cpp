@@ -12,11 +12,11 @@ void ServerLobby::agregar_jugador(Socket& skt){
 void ServerLobby::run(){
     while(_keep_running){
         try{
-            auto accion_partida = cola_comando_partidas.pop();
+            std::shared_ptr<Accion> accion_partida = cola_comando_partidas.pop();
             eliminar_terminadas();
-            int id_jugador = accion_partida.get_player_id();
-            Jugador *jugador = jugadores_esperando[accion_partida.get_player_id()];
-            ComandoAccion partida = accion_partida.get_command();
+            int id_jugador = accion_partida->get_player_id();
+            Jugador *jugador = jugadores_esperando[accion_partida->get_player_id()];
+            ComandoAccion partida = accion_partida->get_command();
 
 
 
@@ -27,14 +27,23 @@ void ServerLobby::run(){
 
             }else if(partida == NUEVA_PARTIDA){
                 std::cout << "Crear nueva partida" << std::endl;
+                std::shared_ptr<AccionNuevaPartida> nueva_partida = std::dynamic_pointer_cast<AccionNuevaPartida>(accion_partida);
+                std::cout << "nombre de la partida: " << nueva_partida->nombre_partida << std::endl;
+                std::cout << "cantidad de jugadores de la partida: " << nueva_partida->cantidad_de_jugadores << std::endl;
                 jugador->enviar_evento(EventoEspera());
-                Gameloop *gameloop = new Gameloop(accion_partida.get_player_id(),2,jugador->get_cola_eventos());
-                partidas.push_back(gameloop);
+                Gameloop *gameloop = new Gameloop(accion_partida->get_player_id(),
+                                                    nueva_partida->nombre_partida,
+                                                    2,//nueva_partida.cantidad_de_jugadores,
+                                                    jugador->get_cola_eventos());
+                
+                partidas[cantidad_de_partidas] = gameloop;
             
+            }else if(partida == ESTABLECER_PARTIDAS){
+
             }else if(partida == CARGAR_PARTIDA){
                 std::cout << "Cargar partida" << std::endl;
-                Gameloop *gameloop = obtener_partida_en_espera();
-                if(gameloop != nullptr){
+                //Gameloop *gameloop = obtener_partida_en_espera();
+                /*if(gameloop != nullptr){
                     gameloop->agregar_jugador(id_jugador,jugador->get_cola_eventos());
                     
                     if(gameloop->esta_llena()){
@@ -42,7 +51,7 @@ void ServerLobby::run(){
                     }else{
                         jugador->enviar_evento(EventoEspera());
                     }
-                }
+                }*/
 
             }
 
@@ -62,23 +71,41 @@ void ServerLobby::comenzar_partida(Gameloop *partida){
     partida->start();
 }
 
-Gameloop *ServerLobby::obtener_partida_en_espera(){
-    for(auto& partida : partidas){
+std::list<Partida> ServerLobby::obtener_partidas_en_espera(){
+    std::list<Partida> partidas_disponibles;
+    
+    for(auto& pair : partidas){
+        auto partida = pair.second;
+        
+        if(!partida->esta_llena()){
+            Partida partida_disponible(pair.first,partida->get_nombre());
+            partidas_disponibles.push_back(partida_disponible);
+        }
+    }
+
+    return partidas_disponibles;
+
+}
+
+/*Gameloop *ServerLobby::obtener_partida_en_espera(){
+    for(auto& pair : partidas){
+        auto partida = pair.second;
+        
         if(!partida->esta_llena()){
             return partida;
         }
     }
 
     return nullptr;
-}
+}*/
 
 void ServerLobby::eliminar_terminadas(){
     for (auto it = partidas.begin(); it != partidas.end();) {
-        Gameloop* partida = *it;
+        Gameloop* partida = (*it).second;
         if (partida->esta_vacia()) {
             it = partidas.erase(it);
             eliminar_jugadores_de_una_partida(partida);
-            partidas.remove(partida);
+            partidas.erase(it);
             delete partida;
         
         } else {
@@ -100,7 +127,8 @@ void ServerLobby::eliminar_jugadores_de_una_partida(Gameloop *partida){
 }
 
 void ServerLobby::eliminar_partidas(){
-     for (auto partida: partidas) {
+     for (auto& pair: partidas) {
+        auto partida = pair.second;
         partida->stop();
         eliminar_jugadores_de_una_partida(partida);
         partida->join();

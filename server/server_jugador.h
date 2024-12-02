@@ -10,6 +10,7 @@
 #include "../common/common_color.h"
 #include "../common/common_queue.h"
 #include "../common/common_color.h"
+#include "../common/common_partida.h"
 
 #include "server_receiver.h"
 #include "server_sender.h"
@@ -27,7 +28,7 @@ private:
     int generar_id();
 
 public:
-    explicit Jugador(Queue<Accion> &comandos,Socket&& conexion);
+    explicit Jugador(Queue<std::shared_ptr<Accion>>& comandos,Socket&& conexion);
 
     void run();
 
@@ -39,9 +40,11 @@ public:
 
     int get_id();
 
-    void reset(Queue<Accion> &comandos);
+    void reset(Queue<std::shared_ptr<Accion>>& comandos);
 
     Queue<std::unique_ptr<Evento>>& get_cola_eventos();
+    
+    bool enviar_partidas(std::list<Partida>& partidas);
 
     void enviar_evento(const Evento& evento);
 };

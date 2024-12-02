@@ -7,27 +7,35 @@
 #include <memory>
 #include <bitset>
 #include <tuple>
+#include <list>
 #include "common_accion.h"
 #include "common_evento.h"
 #include "../server/Collidable.h"
 #include "../server/Platform.h"
 #include "../server/Player.h"
 #include "../server/SpawnPlace.h"
-#include "common_comando_partida.h"
 #include "../server/Box.h"
 #include "../server/server_leaderboard.h"
+#include "common_partida.h"
 
 class Serializador {
 
 public:
     void serializar_enum(uint8_t tipo, std::vector<uint8_t>& buffer);
     void serializar_numero_entero(int numero, std::vector<uint8_t>& buffer,int j);
-    std::vector<uint8_t> serializar_string(const std::string& string);
+    void serializar_string(const std::string& string,std::vector<uint8_t>& buffer,int j);
     uint8_t deserializar_enum(const uint8_t* data);
     int deserializar_numero_entero(const uint8_t* data);
-    std::vector<uint8_t> serializar_accion(Accion &accion);
+    std::string deserializar_string(const uint8_t *data, size_t tamanio);
+    
+    std::vector<uint8_t> serializar_accion(std::shared_ptr<Accion> accion);
     ComandoAccion deserializar_tipo_accion(const uint8_t* data);
-    AccionNuevaParida deserializar_nueva_partida(const uint8_t* data_jugadores, const uint8_t* mapa);
+    
+    std::shared_ptr<AccionNuevaPartida> deserializar_nueva_partida(
+        const uint8_t* data_nombre, size_t, const uint8_t* data_jugadores, const uint8_t* mapa);
+    
+    std::vector<uint8_t> serializar_partidas(std::list<Partida> partidas);
+
     std::vector<uint8_t> serializar_evento(const Evento& evento);
     std::vector<uint8_t> serializar_pickup(const Evento& evento);
     std::vector<uint8_t> serializar_spawn_arma(const Evento& evento);

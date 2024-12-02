@@ -15,18 +15,18 @@
 class Receiver: public Thread {
 private:
     ProtocoloServidor& protocolo;
-    Queue<Accion> *acciones;
+    Queue<std::shared_ptr<Accion>> *acciones;
     int id;
     std::mutex mtx;
 
 public:
-    explicit Receiver(ProtocoloServidor& protocolo, Queue<Accion>& acciones, int id);
+    explicit Receiver(ProtocoloServidor& protocolo, Queue<std::shared_ptr<Accion>>& acciones, int id);
 
     void run() override;
 
     bool se_cerro();
 
-    void reset_cola(Queue<Accion>& comandos);
+    void reset_cola(Queue<std::shared_ptr<Accion>>& comandos);
 };
 
 #endif

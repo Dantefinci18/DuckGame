@@ -6,7 +6,6 @@
 #include "../common/common_accion.h"
 #include "../common/common_serializador.h"
 #include "../server/Collidable.h"
-#include "../common/common_comando_partida.h"
 #include "../server/server_leaderboard.h"
 #include <vector>
 #include <memory>
@@ -31,7 +30,10 @@ class ClienteProtocolo{
          */
         bool enviar_accion(ComandoAccion &comando_accion);
 
-        bool crear_partida(const std::string& mapa_seleccionado, const unsigned int cantidad_de_jugadores);
+        bool crear_partida(const std::string& nombre_partida,
+                const std::string& mapa_seleccionado, const unsigned int cantidad_de_jugadores);
+        
+        bool cargar_partida(int id, const std::string& nombre_partida);
 
         /*
          * Funcion que recibe un id

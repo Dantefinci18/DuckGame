@@ -8,7 +8,7 @@
 #include "server_protocolo.h"
 
 
-Jugador::Jugador(Queue<Accion>& comandos, Socket&& conexion):
+Jugador::Jugador(Queue<std::shared_ptr<Accion>>& comandos, Socket&& conexion):
         protocolo(std::move(conexion)), 
         id(generar_id()),
         sender(protocolo, cola_eventos, id), 
@@ -45,13 +45,17 @@ int Jugador::generar_id() {
     return id;
 }
 
-void Jugador::reset(Queue<Accion> &comandos){
+void Jugador::reset(Queue<std::shared_ptr<Accion>>& comandos){
     receiver.reset_cola(comandos);
     sender.start();
 }
 
 Queue<std::unique_ptr<Evento>>& Jugador::get_cola_eventos(){
     return cola_eventos;
+}
+
+bool Jugador::enviar_partidas(std::list<Partida> &partidas){
+    return protocolo.enviar_partidas(partidas);
 }
 
 void Jugador::enviar_evento(const Evento& evento){

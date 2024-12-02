@@ -4,20 +4,20 @@
 #include <sstream>
 #include <string>
 
-Receiver::Receiver(ProtocoloServidor& protocolo, Queue<Accion>& acciones, int id):
+Receiver::Receiver(ProtocoloServidor& protocolo, Queue<std::shared_ptr<Accion>>& acciones, int id):
         protocolo(protocolo), acciones(&acciones), id(id) {}
 
 void Receiver::run() {
     try {
         while (_keep_running) {
-            Accion accion = protocolo.recibir_accion();
+            std::shared_ptr<Accion> accion = protocolo.recibir_accion();
 
-            if(accion.get_command() == NONE_ACCION){
+            if(accion->get_command() == NONE_ACCION){
                 _keep_running = false;
                 break;
             }
             
-            accion.set_player_id(id);
+            accion->set_player_id(id);
             std::lock_guard<std::mutex> lock(mtx);
             acciones->push(std::move(accion));
         }
@@ -30,7 +30,7 @@ void Receiver::run() {
 
 bool Receiver::se_cerro() { return !_keep_running; }
 
-void Receiver::reset_cola(Queue<Accion>& comandos){
+void Receiver::reset_cola( Queue<std::shared_ptr<Accion>>& comandos){
     std::lock_guard<std::mutex> lock(mtx);
     acciones = &comandos;
 }
