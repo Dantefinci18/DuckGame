@@ -31,8 +31,6 @@ class Accion {
         ComandoAccion command;
     public:
 
-        virtual ComandoAccion get_command() const = 0;
-
         ComandoAccion get_command() {
             return command;
         }
@@ -62,12 +60,12 @@ class AccionCargarPartida : public Accion {
 
 class AccionNuevaPartida : public Accion {
     public:
-        const unsigned int cantidad_de_jugadores;
-        const std::string& nombre_partida;
-        const unsigned int mapa;
+        int cantidad_de_jugadores;
+        std::string nombre_partida;
+        int mapa;
 
-        explicit AccionNuevaPartida(const unsigned int cantidad_de_jugadores, 
-            const std::string &nombre_partida,const unsigned int mapa):
+        explicit AccionNuevaPartida(int cantidad_de_jugadores, 
+            const std::string &nombre_partida, int mapa):
             
             Accion(ComandoAccion::NUEVA_PARTIDA),
             cantidad_de_jugadores(cantidad_de_jugadores),
