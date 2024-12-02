@@ -7,7 +7,7 @@
 std::vector<uint8_t> Serializador::serializar_enum(std::bitset<5> bits){
     std::vector<uint8_t> buffer(5); 
     for (int i = 0; i < 5; ++i) {
-        buffer[4 - i] = bits[i];
+        buffer[i] = bits[i];
     }
 
     return buffer;
@@ -21,13 +21,14 @@ std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
 uint8_t Serializador::deserializar_enum(const uint8_t* data){
     uint8_t valor = 0;
     
-    for (int i = 0; i < 5; ++i) {
-        valor |= (data[4 - i] << i);
+    std::bitset<5> bits;
+    for (int i = 0; i  < 5  ; i++) {
+        bits[i] = data[i];
     }
-
+    valor = static_cast<uint8_t>(bits.to_ulong());
+    
     return valor;
 }
-
 
 ComandoAccion Serializador::deserializar_accion(const uint8_t* data) {
     ComandoAccion accion = static_cast<ComandoAccion>(deserializar_enum(data));
@@ -98,60 +99,53 @@ std::vector<uint8_t> Serializador::serializar_espera(const Evento::TipoEvento& t
     std::vector<uint8_t> buffer(8);  
 
     uint8_t tipo = static_cast<uint8_t>(tipo_evento);
-    for (int i = 0; i < 8; ++i) {
-        buffer[i] = (tipo >> (7 - i)) & 1;
-    }
-
+    serializar_tipo_evento(buffer, tipo, 0);
     return buffer;
     
 }
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
-    std::vector<uint8_t> bits(74);
+    std::vector<uint8_t> bits(54);
 
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
 
-
-
     serializar_tipo_evento(bits, tipo_evento, 0);  
+    uint32_t id = static_cast<uint32_t>(static_cast<const EventoMovimiento&>(evento).id);
+    serializar_id_dos(bits, id, 8);
 
     int x = static_cast<int>(static_cast<const EventoMovimiento&>(evento).x);
     int y = static_cast<int>(static_cast<const EventoMovimiento&>(evento).y);
-    serializar_coordenadas(bits, x, y, 8, 20);
+    serializar_coordenadas(bits, x, y, 24, 36);
 
-    uint32_t id = static_cast<uint32_t>(static_cast<const EventoMovimiento&>(evento).id);
-    serializar_id_dos(bits, id, 32);
-
+    
     uint8_t color = static_cast<uint8_t>(static_cast<const EventoMovimiento&>(evento).color);
-    serializar_color(bits, color, 64);
+    serializar_color(bits, color, 48);
 
     char is_flapping = static_cast<char>(static_cast<const EventoMovimiento&>(evento).is_flapping);
-    bits[72] = is_flapping;
+    bits[52] = is_flapping;
 
     char reset = static_cast<char>(static_cast<const EventoMovimiento&>(evento).reset);
-    bits[73] = reset;
+    bits[53] = reset;
 
     return bits;
 }
 
 
-
-
 std::vector<uint8_t> Serializador::serializar_pickup(const Evento& evento) {
-    std::vector<uint8_t> bits(68);  
+    std::vector<uint8_t> bits(52);  
 
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
     serializar_tipo_evento(bits, tipo_evento, 0);  
 
+    int id = static_cast<int>(static_cast<const EventoPickup&>(evento).id);
+    serializar_id_dos(bits, id, 8);
+
     int x = static_cast<int>(static_cast<const EventoPickup&>(evento).x);
     int y = static_cast<int>(static_cast<const EventoPickup&>(evento).y);
-    serializar_coordenadas(bits, x, y, 8, 20);
-
-    uint32_t id = static_cast<uint32_t>(static_cast<const EventoPickup&>(evento).id);
-    serializar_id_dos(bits, id, 32);
-
+    serializar_coordenadas(bits, x, y, 24, 36);
+    
     uint8_t weapon_type = static_cast<uint8_t>(static_cast<const EventoPickup&>(evento).weapon_type);
-    serializar_weapon_type(bits, weapon_type, 64); 
+    serializar_weapon_type(bits, weapon_type, 48); 
 
     return bits;
 }
@@ -174,7 +168,7 @@ std::vector<uint8_t> Serializador::serializar_spawn_arma(const Evento& evento) {
 }
 
 std::vector<uint8_t> Serializador::serializar_spawn_arma_box(const Evento& evento) {
-    std::vector<uint8_t> bits(100); 
+    std::vector<uint8_t> bits(60); 
 
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
     serializar_tipo_evento(bits, tipo_evento, 0);
@@ -183,42 +177,32 @@ std::vector<uint8_t> Serializador::serializar_spawn_arma_box(const Evento& event
     int y = static_cast<int>(static_cast<const EventoSpawnArmaBox&>(evento).y);
     serializar_coordenadas(bits, x, y, 8, 20);
 
-    // Serializar width
     uint32_t width_bits = static_cast<uint32_t>(static_cast<const EventoSpawnArmaBox&>(evento).width);
-    for (int i = 0; i < 32; ++i) {
-        bits[32 + i] = (width_bits >> (31 - i)) & 1;
-    }
-
-    // Serializar height
+    serializar_tamaño_collidable(bits, width_bits, 32);
     uint32_t height_bits = static_cast<uint32_t>(static_cast<const EventoSpawnArmaBox&>(evento).height);
-    for (int i = 0; i < 32; ++i) {
-        bits[64 + i] = (height_bits >> (31 - i)) & 1;
-    }
+    serializar_tamaño_collidable(bits, height_bits, 44);
 
-    //Serializar weaponType
     uint32_t tipo_bits = static_cast<uint32_t>(static_cast<const EventoSpawnArmaBox&>(evento).weapon_type);
-    serializar_weapon_type(bits, tipo_bits, 96);
+    serializar_weapon_type(bits, tipo_bits, 56);
     return bits;
 }
 
 
 
 std::vector<uint8_t> Serializador::serializar_muerte(const Evento& evento) {
-    std::vector<uint8_t> bits(40);
+    std::vector<uint8_t> bits(24);
 
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
     serializar_tipo_evento(bits, tipo_evento, 0);
 
     uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoMuerte&>(evento).id);
-    for (int i = 0; i < 32; ++i) {
-        bits[8 + i] = (id_bits >> (31 - i)) & 1;
-    }
+    serializar_id_dos(bits, id_bits, 8);
 
     return bits;
 }
 
 std::vector<uint8_t> Serializador::serializar_apuntar(const Evento& evento) {
-    std::vector<uint8_t> bits(42);
+    std::vector<uint8_t> bits(26);
 
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
     serializar_tipo_evento(bits, tipo_evento, 0);
@@ -227,15 +211,17 @@ std::vector<uint8_t> Serializador::serializar_apuntar(const Evento& evento) {
     serializar_id_dos(bits, id_bits, 8);
 
     uint8_t direccion_bits = static_cast<uint8_t>(static_cast<const EventoApuntar&>(evento).direccion);
-    for (int i = 0; i < 2 ; ++i) {
-        bits[40 + i] = (direccion_bits >> (1 - i)) & 1;
+    
+    std::bitset <2> bits_direccion(direccion_bits);
+    for (int i = 0; i < 2; ++i) {
+        bits[24 + i] = bits_direccion[i];
     }
 
     return bits;
 }
 
 std::vector<uint8_t> Serializador::serializar_agacharse(const Evento& evento) {
-    std::vector<uint8_t> bits(40);
+    std::vector<uint8_t> bits(24);
 
     serializar_tipo_evento(bits, static_cast<uint8_t>(evento.get_tipo()), 0);
 
@@ -245,7 +231,7 @@ std::vector<uint8_t> Serializador::serializar_agacharse(const Evento& evento) {
 }
 
 std::vector<uint8_t> Serializador::serializar_levantarse(const Evento& evento) {
-    std::vector<uint8_t> bits(40);
+    std::vector<uint8_t> bits(24);
 
     serializar_tipo_evento(bits, static_cast<uint8_t>(evento.get_tipo()), 0);
 
@@ -256,7 +242,7 @@ std::vector<uint8_t> Serializador::serializar_levantarse(const Evento& evento) {
 
 
 std::vector<uint8_t> Serializador::serializar_win_round(const Evento& evento) {
-    std::vector<uint8_t> bits(40);
+    std::vector<uint8_t> bits(24);
 
     serializar_tipo_evento(bits, static_cast<uint8_t>(evento.get_tipo()), 0);
 
@@ -266,21 +252,14 @@ std::vector<uint8_t> Serializador::serializar_win_round(const Evento& evento) {
 }
 
 std::vector<uint8_t> Serializador::serializar_bala(const Evento& evento) {
-    std::vector<uint8_t> bits(72);
+    std::vector<uint8_t> bits(32);
 
     serializar_tipo_evento(bits, static_cast<uint8_t>(evento.get_tipo()), 0);
 
-    uint32_t x_bits;
-    memcpy(&x_bits, &static_cast<const EventoBala&>(evento).x, sizeof(float));
-    for (int i = 0; i < 32; ++i) {
-        bits[8 + i] = (x_bits >> (31 - i)) & 1;
-    }
+    int x = static_cast<int>(static_cast<const EventoBala&>(evento).x);
+    int y = static_cast<int>(static_cast<const EventoBala&>(evento).y);
+    serializar_coordenadas(bits, x, y, 8, 20);
 
-    uint32_t y_bits;
-    memcpy(&y_bits, &static_cast<const EventoBala&>(evento).y, sizeof(float));
-    for (int i = 0; i < 32; ++i) {
-        bits[40 + i] = (y_bits >> (31 - i)) & 1;
-    }
     
 
     return bits;
@@ -302,212 +281,117 @@ std::vector<uint8_t> Serializador::serializar_caja_destruida(const Evento& event
 
 Evento::TipoEvento Serializador::deserializar_tipo_evento(const uint8_t* tipo_evento_data) {
     uint8_t tipo_evento_bits = 0;
+    std::bitset<8> bits;
     for (int i = 0; i < 8; ++i) {
-        tipo_evento_bits |= (tipo_evento_data[i] << (7 - i));  
+        bits[i] = tipo_evento_data[i];
     }
+    tipo_evento_bits = static_cast<uint8_t>(bits.to_ulong());
     return static_cast<Evento::TipoEvento>(tipo_evento_bits);
 }
 
 
-std::unique_ptr<Evento> Serializador::deserializar_movimiento(
-    const uint8_t* id_data, const uint8_t* color_data, const uint8_t* x_data, const uint8_t* y_data, char is_flapping, char reset) {
-    
-    uint32_t id_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        id_bits |= (id_data[i] << (31 - i));
-    }
-    int id = static_cast<int>(id_bits);
+std::unique_ptr<Evento> Serializador::deserializar_movimiento(const uint8_t* data) {
+    int id = deserializar_id(data); 
 
-    uint8_t color_bits = 0;
-    for (int i = 0; i < 8; ++i) {
-        color_bits |= (color_data[i] << (7 - i));
-    }
-    ColorDuck color_asignado = static_cast<ColorDuck>(color_bits);
+    int x = deserializar_coordenadas(data + 16); 
+    int y = deserializar_coordenadas(data + 28);
 
-    uint32_t x_bits = 0;
-    for (int i = 0; i < 12; ++i) {
-        x_bits |= (x_data[i] << (11 - i));
-    }
-    int x = static_cast<int>(x_bits); 
+    ColorDuck color_asignado = deserializar_color(&data[40]);
 
-    uint32_t y_bits = 0;
-    for (int i = 0; i < 12; ++i) {
-        y_bits |= (y_data[i] << (11 - i));
-    }
-    int y = static_cast<int>(y_bits); 
+    char is_flapping = static_cast<char>(data[44]); 
+
+    char reset = static_cast<char>(data[45]);
 
     return std::make_unique<EventoMovimiento>(id, color_asignado, x, y, is_flapping, reset);
 }
 
 
-std::unique_ptr<Evento> Serializador::deserializar_pickup(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data) {
-    int id;
 
-    uint32_t id_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        id_bits |= (id_data[i] << (31 - i));
-    }
-    id = static_cast<int>(id_bits);
+std::unique_ptr<Evento> Serializador::deserializar_pickup(const uint8_t* data) {
+    int id = deserializar_id(data); 
 
-    uint32_t x_bits = 0;
-    for (int i = 0; i < 12; ++i) {
-        x_bits |= (x_data[i] << (11 - i));
-    }
-    int x = static_cast<int>(x_bits);
+    int x = deserializar_coordenadas(data + 16); 
+    int y = deserializar_coordenadas(data + 28);
 
-    uint32_t y_bits = 0;
-    for (int i = 0; i < 12; ++i) {
-        y_bits |= (y_data[i] << (11 - i));
-    }
-    int y = static_cast<int>(y_bits);
+    WeaponType tipo = deserializar_tipo_weapon(&data[40]); 
 
-    uint32_t tipo_bits = 0;
-    for (int i = 0; i < 4; ++i) {
-        tipo_bits |= (weapon_type_data[i] << (3 - i));
-    }
-
-    WeaponType tipo = static_cast<WeaponType>(tipo_bits);
     return std::make_unique<EventoPickup>(id, x, y, tipo);
 }
 
-std::unique_ptr<Evento> Serializador::deserializar_spawn_arma(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data) {
+
+
+std::unique_ptr<Evento> Serializador::deserializar_spawn_arma(const uint8_t* data) {
     
-    uint32_t x_bits = 0;
-    for (int i = 0; i < 12; ++i) {
-        x_bits |= (x_data[i] << (11 - i));
-    }
-    int x = static_cast<int>(x_bits);
+    int x = deserializar_coordenadas(data);        
+    int y = deserializar_coordenadas(data + 12);   
+    WeaponType tipo = deserializar_tipo_weapon(&data[24]); 
 
-    uint32_t y_bits = 0;
-    for (int i = 0; i < 12; ++i) {
-        y_bits |= (y_data[i] << (11 - i));
-    }
-
-    int y = static_cast<int>(y_bits);
-
-    uint32_t tipo_bits = 0;
-    for (int i = 0; i < 4; ++i) {
-        tipo_bits |= (weapon_type_data[i] << (3 - i));
-    }
-
-    WeaponType tipo = static_cast<WeaponType>(tipo_bits);
     return std::make_unique<EventoSpawnArma>(x, y, tipo);
 }
 
-std::unique_ptr<Evento> Serializador::deserializar_spawn_arma_box(const uint8_t* x_data, const uint8_t* y_data, 
-    const uint8_t* width_data, const uint8_t* height_data, const uint8_t* weapon_type_data) {
+std::unique_ptr<Evento> Serializador::deserializar_spawn_arma_box(const uint8_t* data) {
+    int x = deserializar_coordenadas(data);
+    int y = deserializar_coordenadas(&data[12]);
 
-    uint32_t x_bits = 0;
-    for (int i = 0; i < 12; ++i) {
-        x_bits |= (x_data[i] << (11 - i));
-    }
-    int x = static_cast<int>(x_bits);
+    int width = deserializar_tamaño_collidable(data, 24);
+    int height = deserializar_tamaño_collidable(data, 36);
 
-    uint32_t y_bits = 0;
-    for (int i = 0; i < 12; ++i) {
-        y_bits |= (y_data[i] << (11 - i));
-    }
-    int y = static_cast<int>(y_bits);
+    WeaponType tipo = deserializar_tipo_weapon(&data[48]);
 
-    uint32_t width = 0;
-    for (int i = 0; i < 32; ++i) {
-        width |= (width_data[i] << (31 - i));
-    }
-
-    uint32_t height = 0;
-    for (int i = 0; i < 32; ++i) {
-        height |= (height_data[i] << (31 - i));
-    }
-
-    uint32_t tipo_bits = 0;
-    for (int i = 0; i < 4; ++i) {
-        tipo_bits |= (weapon_type_data[i] << (3 - i));
-    }
-    
-    
-    WeaponType tipo = static_cast<WeaponType>(tipo_bits);
     return std::make_unique<EventoSpawnArmaBox>(x, y, width, height, tipo);
 }
 
-
 std::unique_ptr<Evento> Serializador::deserializar_muerte(const uint8_t* id_data) {
-    uint32_t id_bits = 0;
-
-    for (int i = 0; i < 32; ++i) {
-        id_bits |= (id_data[i] << (31 - i));
-    }
-    int id = static_cast<int>(id_bits);
+    int id = deserializar_id(id_data);
 
     return std::make_unique<EventoMuerte>(id);
 }
 
-std::unique_ptr<Evento> Serializador::deserializar_apuntar(const uint8_t* id_data, const uint8_t* direccion_data) {
-    uint32_t id_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        id_bits |= (id_data[i] << (31 - i));
-    }
-    int id = static_cast<int>(id_bits);
+std::unique_ptr<Evento> Serializador::deserializar_apuntar(const uint8_t* data) {
+    int id = deserializar_id(data);
 
     uint32_t direccion_bits = 0;
+    std::bitset<2> bits;
     for (int i = 0; i < 2; ++i) {
-        direccion_bits |= (direccion_data[i] << (1 - i));
+        bits[i] = data[16 + i];  
     }
+    direccion_bits = static_cast<uint8_t>(bits.to_ulong());
+
     DireccionApuntada direccion = static_cast<DireccionApuntada>(direccion_bits);
 
     return std::make_unique<EventoApuntar>(id, direccion);
 }
-std::unique_ptr<Evento> Serializador::deserializar_bala(const uint8_t* x_data, const uint8_t* y_data) {
-    float x, y;
 
-    uint32_t x_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        x_bits |= (x_data[i] << (31 - i));
-    }
-    memcpy(&x, &x_bits, sizeof(float));
- 
-    uint32_t y_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        y_bits |= (y_data[i] << (31 - i));
-    }
-    memcpy(&y, &y_bits, sizeof(float));
+std::unique_ptr<Evento> Serializador::deserializar_bala(const uint8_t* data) {
+    int x = deserializar_coordenadas(data);
+    int y = deserializar_coordenadas(&data[12]); 
 
     return std::make_unique<EventoBala>(x, y);
 }
 
-std::unique_ptr<Evento> Serializador::deserializar_caja_destruida(const uint8_t* x_data, const uint8_t* y_data) {
-
-    uint32_t x_bits = 0;
-    for (int i = 0; i < 12; ++i) {
-        x_bits |= (x_data[i] << (11 - i));
-    }
-    int x = static_cast<int>(x_bits);
-
-    uint32_t y_bits = 0;
-    for (int i = 0; i < 12; ++i) {
-        y_bits |= (y_data[i] << (11 - i));
-    }
-    int y = static_cast<int>(y_bits);
-
+std::unique_ptr<Evento> Serializador::deserializar_caja_destruida(const uint8_t* data) {
+    int x = deserializar_coordenadas(data);
+    int y = deserializar_coordenadas(&data[12]);
+    
     return std::make_unique<EventoCajaDestruida>(x, y);
 }
 
 std::vector<uint8_t> Serializador::serializar_id(int id) {
-    std::vector<uint8_t> binary_bits;
-
-    uint32_t id_bits = static_cast<uint32_t>(id);
-    for (int i = 0; i < 32; ++i) {
-        binary_bits.push_back((id_bits >> (31 - i)) & 1);
+    std::bitset <16> bits(id);
+    std::vector<uint8_t> binary_bits(16);
+    for (int i = 0; i < 16; ++i) {
+        binary_bits[i] = bits[i];
     }
 
     return binary_bits;
 }
 
 int Serializador::deserializar_id(const uint8_t* id_binary) {
-    int result = 0;
-    for (size_t i = 0; i < 32; ++i) {
-        result = (result << 1) | id_binary[i];
+    std::bitset <16> bits;
+    for (int i = 0; i < 16; ++i) {
+        bits[i] = id_binary[i];
     }
-    return result;
+    return static_cast<int>(bits.to_ulong());
 }
 
 void Serializador::imprimir_uint8_t_array(const uint8_t* array, size_t size) {
@@ -530,14 +414,10 @@ int Serializador::deserializar_cantidad(const uint8_t* cantidad_data) {
 
 std::vector<uint8_t> Serializador::serializar_mapa(const Evento& evento) {
     int cantidad = static_cast<const EventoMapa&>(evento).collidables.size();
-    std::cout << "Cantidad de collidables: " << cantidad << std::endl;
     std::vector<uint8_t> bits(40 + cantidad * 160); 
 
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
-    for (int i = 0; i < 8; ++i) {
-        bits[i] = (tipo_evento >> (7 - i)) & 1;
-    }
-
+    serializar_tipo_evento(bits, tipo_evento, 0);
     uint32_t cantidad_bits = static_cast<uint32_t>(cantidad);
     for (int i = 0; i < 32; ++i) {
         bits[8 + i] = (cantidad_bits >> (31 - i)) & 1;
@@ -691,7 +571,7 @@ std::tuple<int, int> Serializador::deserializar_tuple64(const uint8_t* tuple_dat
 void Serializador::serializar_tipo_evento(std::vector<uint8_t>& bits, uint8_t tipo_evento, size_t offset) {
     std::bitset<8> tipo_bits(tipo_evento);
     for (int i = 0; i < 8; ++i) {
-        bits[offset + i] = tipo_bits[7 - i];
+        bits[offset + i] = tipo_bits[i];
     }
 }
 
@@ -699,33 +579,76 @@ void Serializador::serializar_tipo_evento(std::vector<uint8_t>& bits, uint8_t ti
 void Serializador::serializar_coordenadas(std::vector<uint8_t>& bits, int x, int y, int offset_x, int offset_y) {
     std::bitset<12> x_bits(x);
     for (int i = 0; i < 12; ++i) {
-        bits[offset_x + i] = x_bits[11 - i];
+        bits[offset_x + i] = x_bits[i];
     }
 
     std::bitset<12> y_bits(y);
     for (int i = 0; i < 12; ++i) {
-        bits[offset_y + i] = y_bits[11 - i];
+        bits[offset_y + i] = y_bits[i];
     }
 }
 
 void Serializador::serializar_color(std::vector<uint8_t>& bits, uint8_t color, int offset) {
-    std::bitset<8> color_bits(color);
-    for (int i = 0; i < 8; ++i) {
-        bits[offset + i] = color_bits[7 - i];
+    std::bitset<4> color_bits(color);
+    for (int i = 0; i < 4; ++i) {
+        bits[offset + i] = color_bits[i];
     }
 }
 
 void Serializador::serializar_id_dos(std::vector<uint8_t>& bits, uint32_t id, size_t offset) {
-    std::bitset<32> id_bits(id);
-    for (int i = 0; i < 32; ++i) {
-        bits[offset + i] = id_bits[31 - i];
+    std::bitset<16> id_bits(id);
+    for (int i = 0; i < 16; ++i) {
+        bits[offset + i] = id_bits[i];
     }
+}
+
+void Serializador::serializar_tamaño_collidable(std::vector<uint8_t>& bits, uint32_t size, size_t offset) {
+    std::bitset<12> size_bits(size);
+    for (int i = 0; i < 12; ++i) {
+        bits[offset + i] = size_bits[i];
+    }
+    
 }
 
 void Serializador::serializar_weapon_type(std::vector<uint8_t>& bits, uint8_t weapon_type, size_t offset) {
     std::bitset<4> type_bits(weapon_type);
     for (int i = 0; i < 4; ++i) {
-        bits[offset + i] = type_bits[3 - i];
+        bits[offset + i] = type_bits[i];
     }
 }
 
+int Serializador::deserializar_coordenadas(const uint8_t* data) {
+    std::bitset <12> bits;
+    for (int i = 0; i < 12; ++i) {
+        bits[i] = data[i];
+    }
+    return static_cast<int>(bits.to_ulong());
+}
+
+ColorDuck Serializador::deserializar_color(const uint8_t* data) {
+    std::bitset<4> bits;
+    for (int i = 0; i < 4; ++i) {
+        bits[i] = data[i];
+    }
+    uint8_t color_bits = static_cast<uint8_t>(bits.to_ulong());
+    return static_cast<ColorDuck>(color_bits);
+}
+
+
+WeaponType Serializador::deserializar_tipo_weapon(const uint8_t* weapon_type_data) {
+    std::bitset<4> bits;
+    for (int i = 0; i < 4; ++i) {
+        bits[i] = weapon_type_data[i];
+    }
+    uint8_t tipo_bits = static_cast<uint8_t>(bits.to_ulong());
+    return static_cast<WeaponType>(tipo_bits);
+}
+
+
+int Serializador::deserializar_tamaño_collidable(const uint8_t* data, int offset) {
+    std::bitset<12> dimension_bits;
+    for (int i = 0; i < 12; ++i) {
+        dimension_bits[i] = data[offset + i];
+    }
+    return static_cast<int>(dimension_bits.to_ulong());
+}

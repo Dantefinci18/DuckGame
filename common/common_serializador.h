@@ -42,15 +42,14 @@ public:
     std::vector<uint8_t> serializar_caja_destruida(const Evento& evento);
 
 
-    std::unique_ptr<Evento> deserializar_movimiento(const uint8_t* id_data,const uint8_t* ,const uint8_t* x_data, const uint8_t* y_data, char is_flapping, char reset);
-    std::unique_ptr<Evento> deserializar_pickup(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
-    std::unique_ptr<Evento> deserializar_spawn_arma(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
-    std::unique_ptr<Evento> deserializar_spawn_arma_box(const uint8_t* x_data, const uint8_t* y_data, 
-    const uint8_t* width_data, const uint8_t* height_data, const uint8_t* weapon_type_data);
+    std::unique_ptr<Evento> deserializar_movimiento(const uint8_t* data);
+    std::unique_ptr<Evento> deserializar_pickup(const uint8_t* data);
+    std::unique_ptr<Evento> deserializar_spawn_arma(const uint8_t* data);
+    std::unique_ptr<Evento> deserializar_spawn_arma_box(const uint8_t* data);
     std::unique_ptr<Evento> deserializar_muerte(const uint8_t* id_data);
-    std::unique_ptr<Evento> deserializar_apuntar(const uint8_t* id_data, const uint8_t* direccion_data);
-    std::unique_ptr<Evento> deserializar_caja_destruida(const uint8_t* x_data, const uint8_t* y_data);
-    std::unique_ptr<Evento> deserializar_bala(const uint8_t* x_data, const uint8_t* y_data);
+    std::unique_ptr<Evento> deserializar_apuntar(const uint8_t* data);
+    std::unique_ptr<Evento> deserializar_caja_destruida(const uint8_t* data);
+    std::unique_ptr<Evento> deserializar_bala(const uint8_t* data);
     Evento::TipoEvento deserializar_tipo_evento(const uint8_t* tipo_evento_data);
 
     std::vector<uint8_t> serializar_id(int id);
@@ -74,8 +73,17 @@ public:
     void serializar_color(std::vector<uint8_t>& bits, uint8_t color, int offset);
 
     void serializar_id_dos(std::vector<uint8_t>& bits, uint32_t id, size_t offset);
+
+    void serializar_tamaño_collidable(std::vector<uint8_t>& bits, uint32_t size, size_t offset);
     
     void serializar_weapon_type(std::vector<uint8_t>& bits, uint8_t weapon_type, size_t offset);
+
+
+
+    int deserializar_coordenadas(const uint8_t* data);
+    ColorDuck deserializar_color(const uint8_t* data);
+    WeaponType deserializar_tipo_weapon(const uint8_t* weapon_type_data);
+    int deserializar_tamaño_collidable(const uint8_t* data, int offset);
 
 };
 #endif //COMMON_SERIALIZADOR_H
