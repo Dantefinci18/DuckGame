@@ -88,11 +88,11 @@ bool try_pop(T& val) {
     //std::cout << "veo si puedo pushear\n";
     
     if (closed) {
-        std::cout << "cola cerrada\n";
+        //std::cout << "cola cerrada\n";
         throw ClosedQueue();
     }
     while (q.size() == this->max_size) {
-        std::cout << "cola llena\n";
+        //std::cout << "cola llena\n";
         is_not_full.wait(lck);
     }
     if (q.empty()) {
@@ -110,7 +110,7 @@ T pop() {
     //std::cout << "veo si puedo popear\n";
     while (q.empty()) {
         if (closed) {
-            std::cout << "cola cerrada\n";
+            //std::cout << "cola cerrada\n";
             throw ClosedQueue();
         }
 
@@ -118,7 +118,7 @@ T pop() {
     }
 
     if (q.size() == this->max_size) {
-        std::cout << "tamanio maximo\n";
+        //std::cout << "tamanio maximo\n";
         is_not_full.notify_all();
     }
 
@@ -204,10 +204,10 @@ public:
     void push(void* const& val) {
         std::unique_lock<std::mutex> lck(mtx);
 
-        std::cout << "voy a pushear el evento\n";
+        //std::cout << "voy a pushear el evento\n";
 
         if (closed) {
-            std::cout << "cola cerrada\n";
+            //std::cout << "cola cerrada\n";
             throw ClosedQueue();
         }
 
@@ -220,7 +220,7 @@ public:
         }
 
         q.push(val);
-        std::cout << "evento pusheado\n";
+        //std::cout << "evento pusheado\n";
     }
 
 

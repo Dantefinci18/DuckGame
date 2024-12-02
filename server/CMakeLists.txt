@@ -1,6 +1,5 @@
 target_sources(taller_server
     PUBLIC
-    Game.h
     Player.h
     Vector.h
     Platform.h

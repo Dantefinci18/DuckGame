@@ -7,7 +7,6 @@ Sender::Sender(ProtocoloServidor& protocolo, Queue<std::unique_ptr<Evento>>& col
 void Sender::enviar_eventos() {
     while (_keep_running) {
         std::unique_ptr<Evento> estado = cola_eventos.pop();  
-
         if (estado) {
             protocolo.enviar_estado(*estado);
         }else{

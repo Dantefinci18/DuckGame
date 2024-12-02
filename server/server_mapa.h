@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <filesystem>
 #include <yaml-cpp/yaml.h>
 #include <unordered_map>
 #include "Platform.h"
@@ -12,6 +13,7 @@
 #include "SpawnBox.h"
 #include "Box.h"
 
+namespace fs = std::filesystem;
 class Mapa {
 private:
     std::vector<std::unique_ptr<Collidable>> collidables;

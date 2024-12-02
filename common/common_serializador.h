@@ -49,7 +49,8 @@ public:
     std::unique_ptr<Evento> deserializar_pickup(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
     std::unique_ptr<Evento> deserializar_pickup_proteccion(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* proteccion_type_data);
     std::unique_ptr<Evento> deserializar_spawn_arma(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
-    std::unique_ptr<Evento> deserializar_spawn_arma_box(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data);
+    std::unique_ptr<Evento> deserializar_spawn_arma_box(const uint8_t* x_data, const uint8_t* y_data, 
+        const uint8_t* width_data, const uint8_t* height_data, const uint8_t* weapon_type_data);
     std::unique_ptr<Evento> deserializar_spawn_proteccion_box(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* proteccion_type_data);
     std::unique_ptr<Evento> deserializar_disparo(const uint8_t* id_data);
     std::unique_ptr<Evento> deserializar_muerte(const uint8_t* id_data);

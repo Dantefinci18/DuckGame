@@ -12,8 +12,7 @@
 #include "../server/SpawnPlace.h"
 #include "../server/SpawnWeaponBox.h"
 #include "../server/SpawnBox.h"
-
-
+#include "../common/common_screen_utils.h"
 /* 
  * Clase que se encarga de renderizar el mapa del juego
  */
@@ -76,16 +75,10 @@ private:
     SdlTexture explosion;
     float x_expl;
     float y_expl;
+    int width_expl;
+    int height_expl;
     bool esta_explotando;
     std::vector<Collidable*> collidables_plataformas; 
-
-
-    const int FACTOR_ESCALA = 2;
-    const int FACTOR_ESCALA_ARMA = 3;
-    const int FACTOR_ESCALA_PROTECCION = 2;
-    const int FACTOR_ESCALA_BOX = 2;
-    const int ALTO_VENTANA = 600;
-    const int ANCHO_VENTANA = 800;
    
 };
 

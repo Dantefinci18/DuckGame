@@ -1,23 +1,29 @@
 #include "duck.h"
 
-#define ANCHO_IMG_DUCK_TOTAL 180
+#define ANCHO_DUCK_IMG_TOTAL 120
 #define ALTO_VENTANA 600
 #define DESPLAZAMIENTO_X 6
 #define DESPLAZAMIENTO_Y 4
 #define FACTOR_ESCALA 2
 #define VELOCIDAD_SALTO 15
-#define ANCHO_IMG_DUCK 32
-#define ALTO_IMG_DUCK 38
+#define ANCHO_DUCK_IMG 20
+#define ALTO_DUCK_IMG 24
+#define ANCHO_DUCK 32
+#define ALTO_DUCK 48
+#define ALTO_BALA 25
+#define ANCHO_BALA 11
 
 Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial,ColorDuck color)
-    : movimientos_en_x("../Imagenes/duck_x" + procesar_color(color) + ".png", window),
+    :
+      movimientos_en_x("../Imagenes/duck_x" + procesar_color(color) + ".png", window),
       movimiento_en_y("../Imagenes/movimiento_y" + procesar_color(color) + ".png", window),
       armas("../Imagenes/guns.png", window),
       armadura("../Imagenes/Chestplate.png", window),
       casco("../Imagenes/Spikehelm.png", window),
       death("../Imagenes/duckDead" + procesar_color(color) + ".png", window),
       color(color),
-      bala("../Imagenes/balas_magnum.png", window),
+      bala("../Imagenes/bullet.png", window),
+
       quieto(false),                
       weapon(std::nullopt),
       casco_equipado(std::nullopt),
@@ -47,22 +53,17 @@ void Duck::setear_bala(float x, float y) {
 }
 
 void Duck::render_bala() {
-
-    const int ANCHO_BALA = 12;  
-    const int ALTO_BALA = 16; 
-    const int FACTOR_ESCALA_BALA = 4; 
-    SDL_RendererFlip flip = (direccion_arma == DireccionApuntada::APUNTADO_IZQUIERDA) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-    double angle = 0.0;
+    double angle = (direccion_arma == DireccionApuntada::APUNTADO_IZQUIERDA) ? -90 : 90;
     if (direccion_arma == DireccionApuntada::APUNTADO_ARRIBA) {
-        angle = -90.0;
+        angle = 0.0;
     }
             
     Area srcArea(0, 0, ANCHO_BALA, ALTO_BALA);
 
     
     int x_renderizado = x_bala;
-    int y_renderizado = ALTO_VENTANA - y_bala - ALTO_BALA * FACTOR_ESCALA_BALA;
-    Area destArea(x_renderizado, y_renderizado, ANCHO_BALA * FACTOR_ESCALA_BALA, ALTO_BALA * FACTOR_ESCALA_BALA);
+    int y_renderizado = ALTO_VENTANA - y_bala - ALTO_BALA ;
+    Area destArea(x_renderizado, y_renderizado, ANCHO_BALA , ALTO_BALA);
 
     bala.render(srcArea, destArea, flip, angle);
     esta_disparando = false;
@@ -87,9 +88,9 @@ void Duck::render() {
         return;
     }
     if (is_dead) {
-        Area srcArea(0, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
-        int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA;
-        Area destArea(x_actual, y_renderizado, ANCHO_IMG_DUCK * FACTOR_ESCALA, ALTO_IMG_DUCK * FACTOR_ESCALA);
+        Area srcArea(0, 0, ANCHO_DUCK, ALTO_DUCK);
+        int y_renderizado = ALTO_VENTANA - y_actual - ALTO_DUCK;
+        Area destArea(x_actual, y_renderizado, ALTO_DUCK, ANCHO_DUCK);
         death.render(srcArea, destArea, flip);
         return;
     }
@@ -99,9 +100,9 @@ void Duck::render() {
     }
 
     if (esta_agachado) {
-        Area srcArea(5 * ANCHO_IMG_DUCK, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
-        int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA;
-        Area destArea(x_actual, y_renderizado, ANCHO_IMG_DUCK * FACTOR_ESCALA, ALTO_IMG_DUCK * FACTOR_ESCALA);
+        Area srcArea(5 * ANCHO_DUCK_IMG, 0, ANCHO_DUCK_IMG, ALTO_DUCK_IMG);
+        int y_renderizado = ALTO_VENTANA - y_actual - ALTO_DUCK;
+        Area destArea(x_actual, y_renderizado, ANCHO_DUCK, ALTO_DUCK);
         movimiento_en_y.render(srcArea, destArea, flip);
     } else {
         if (en_movimiento_x) {
@@ -114,27 +115,29 @@ void Duck::render() {
             render_idle();
         }
 
-        int y_renderizado = ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA;
-        Area srcArea(x_img, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK);
-        Area destArea(x_actual, y_renderizado, ANCHO_IMG_DUCK * FACTOR_ESCALA, ALTO_IMG_DUCK * FACTOR_ESCALA);
+        int y_renderizado = ALTO_VENTANA - y_actual - ALTO_DUCK;
+        Area srcArea(x_img, 0, ANCHO_DUCK_IMG, ALTO_DUCK_IMG);
+        Area destArea(x_actual, y_renderizado, ANCHO_DUCK, ALTO_DUCK);
 
         if (en_movimiento_y) {
+            
             render_movimiento_salto(srcArea, destArea);
         } else if (en_movimiento_x || quieto) {
+            Area srcArea(x_img, 0, ANCHO_DUCK_IMG, ALTO_DUCK_IMG);
             movimientos_en_x.render(srcArea, destArea, flip);
         }
     }
 
     if(armadura_equipada){
-        render_armadura(ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA);
-    }
-
-    if (weapon) {
-        render_arma(ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA);
+        render_armadura(ALTO_VENTANA - y_actual - ALTO_DUCK);
     }
 
     if (casco_equipado) {
-        render_casco(ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA);
+        render_casco(ALTO_VENTANA - y_actual - ALTO_DUCK);
+    }
+
+    if (weapon) {
+        render_arma(ALTO_VENTANA - y_actual - ALTO_DUCK);
     }
 }
 
@@ -208,8 +211,8 @@ void Duck::render_movimiento_horizontal() {
     }
 
     if (y_actual == y_des) {
-        if (x_img < ANCHO_IMG_DUCK_TOTAL - ANCHO_IMG_DUCK) {
-            x_img += ANCHO_IMG_DUCK;
+        if (x_img < ANCHO_DUCK_IMG_TOTAL - ANCHO_DUCK_IMG) {
+            x_img += ANCHO_DUCK_IMG;
         } else {
             x_img = 0;
         }
@@ -231,19 +234,19 @@ void Duck::render_movimiento_vertical() {
     }
 
     if (is_flapping) {
-        x_img = (x_img == 2 * ANCHO_IMG_DUCK ? 5 * ANCHO_IMG_DUCK : 2 * ANCHO_IMG_DUCK);
+        x_img = (x_img == 2 * ANCHO_DUCK_IMG ? 5 * ANCHO_DUCK_IMG : 2 * ANCHO_DUCK_IMG);
     } 
     else if (distancia_vertical > 0) {
-        x_img = 3 * ANCHO_IMG_DUCK;
+        x_img = 3 * ANCHO_DUCK_IMG;
     } else if (distancia_vertical < 0) {
-        x_img = (x_img < ANCHO_IMG_DUCK_TOTAL - ANCHO_IMG_DUCK) ? 4 * ANCHO_IMG_DUCK : 0;
+        x_img = (x_img < ANCHO_DUCK_IMG_TOTAL - ANCHO_DUCK_IMG) ? 4 * ANCHO_DUCK_IMG : 0;
     }
 }
 
 void Duck::render_idle() {
     x_img = 0;
-    movimientos_en_x.render(Area(0, 0, ANCHO_IMG_DUCK, ALTO_IMG_DUCK), 
-                            Area(x_actual, ALTO_VENTANA - y_actual - ALTO_IMG_DUCK * FACTOR_ESCALA, ANCHO_IMG_DUCK * FACTOR_ESCALA, ALTO_IMG_DUCK * FACTOR_ESCALA), flip);
+    movimientos_en_x.render(Area(0, 0, ANCHO_DUCK_IMG, ALTO_DUCK_IMG), 
+                            Area(x_actual, ALTO_VENTANA - y_actual - ALTO_DUCK, ANCHO_DUCK, ALTO_DUCK), flip);
 }
 
 void Duck::render_movimiento_salto(Area& srcArea, Area& destArea) {
@@ -253,60 +256,72 @@ void Duck::render_movimiento_salto(Area& srcArea, Area& destArea) {
 void Duck::render_arma(int y_renderizado) {
     int arma_index = static_cast<int>(weapon.value());
     Area armaSrcArea(arma_index * 38, 0, 38, 38);
-    
+    int aux_agachado = 0;
     int pos_arma_x = 0;
-    int pos_arma_y = 0;
     double angle = 0.0;
+
+    if(esta_agachado){
+        aux_agachado = 10 ;
+    }
 
     switch (direccion_arma) {
         case DireccionApuntada::APUNTADO_ARRIBA:
             if(flip == SDL_FLIP_NONE){
                 angle = -90.0;
-                pos_arma_x = 20;
+                pos_arma_x = ANCHO_DUCK/4;
             } else {
-                pos_arma_x = 10;
+                pos_arma_x = -ANCHO_DUCK/4;
                 angle = 90.0;
             }
-            pos_arma_y = 20;
             break;
         case DireccionApuntada::APUNTADO_DERECHA:
-            pos_arma_x = 20;
-            pos_arma_y = 25;
+            pos_arma_x = ANCHO_DUCK/4;
             break;
         case DireccionApuntada::APUNTADO_IZQUIERDA:
-            pos_arma_x = 10;
-            pos_arma_y = 25;
+            pos_arma_x = -ANCHO_DUCK/4;
             flip = SDL_FLIP_HORIZONTAL;
             break;
     }
-    Area armaDestArea(x_actual + pos_arma_x, y_renderizado + pos_arma_y, 38, 38);
+    Area armaDestArea(x_actual + pos_arma_x, y_renderizado + aux_agachado, ANCHO_DUCK, ALTO_DUCK);
     armas.render(armaSrcArea, armaDestArea, flip, angle);
 }
 
 void Duck::render_casco(int y_renderizado){
     if(casco_equipado){
-        int aux_acomodo = 15;
+        int pos_casco_x = 2;
         if(flip == SDL_FLIP_NONE){
-            aux_acomodo = 11;
+            pos_casco_x = -8;
         }
-        int aux_y = 8;
-        if(esta_agachado || is_flapping){
-            aux_y = 0;
+        int aux_y = 18;
+        if(esta_agachado){
+            aux_y = 10;
+            if(flip == SDL_FLIP_NONE){
+                pos_casco_x += 2;
+            } else {
+                pos_casco_x -= 2;
+            }
         }
         Area cascoSrcArea(0, 0, 128, 128);
-        Area cascoDestArea(x_actual + aux_acomodo, y_renderizado - aux_y, 38, 38);
+        Area cascoDestArea(x_actual + pos_casco_x, y_renderizado - aux_y, 38, 38);
         casco.render(cascoSrcArea, cascoDestArea, flip, 0.0);
     }
 }
 
 void Duck::render_armadura(int y_renderizado){
     if(armadura_equipada){
-        int aux_y = 10;
-        if(esta_agachado || is_flapping){
-            aux_y = 12;
+        int aux_y = 0;
+        int aux_x = ANCHO_DUCK/2;
+        if(esta_agachado){
+            if(flip == SDL_FLIP_NONE){
+                aux_x -= 5;
+            }
+            else{
+                aux_x += 5;
+            }
+            aux_y = 5;
         }
         Area armaduraSrcArea(0, 0, 256, 196);
-        Area armaduraDestArea(x_actual, y_renderizado + aux_y, 65, 65);
+        Area armaduraDestArea(x_actual - aux_x, y_renderizado + aux_y, 65, 65);
         armadura.render(armaduraSrcArea, armaduraDestArea, flip, 0.0); 
     }
 }

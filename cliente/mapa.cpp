@@ -21,6 +21,8 @@ Mapa::Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collida
     explosion("../Imagenes/explosion.png", window),
     x_expl(0),
     y_expl(0),
+    width_expl(0),
+    height_expl(0),
     esta_explotando(false),
     collidables_plataformas(collidables) {}
 
@@ -35,6 +37,8 @@ void Mapa::eliminar_caja(float x, float y) {
                 }
                 x_expl = x;
                 y_expl = y;
+                width_expl = box->width;
+                height_expl = box->height;
                 esta_explotando = true;
             }
         }
@@ -68,13 +72,11 @@ void Mapa::renderizar_mapa() {
     for (auto& collidable : this->collidables_plataformas) {
         if (collidable->getType() == CollidableType::Platform) {
             Platform* platform = static_cast<Platform*>(collidable);
-
             float plat_x = platform->position.x;  
-            float plat_y = ALTO_VENTANA - platform->position.y - platform->height * FACTOR_ESCALA; 
+            float plat_y = static_cast<float>(ScreenUtils::get_y_for_screen(platform->position.y, platform->height));
             float plat_width = platform->width;   
             float plat_height = platform->height; 
-
-            Area platformSrcArea(0, 0, 38, 38);  
+            Area platformSrcArea(5, 0, 38, 38);  
             Area platformDestArea(plat_x, plat_y, plat_width, plat_height); 
             plataformas.render(platformSrcArea, platformDestArea, SDL_FLIP_NONE);
         }
@@ -83,10 +85,10 @@ void Mapa::renderizar_mapa() {
             SpawnPlace* spawnPlace = static_cast<SpawnPlace*>(collidable);
             if (spawnPlace->has_weapon()) {
                 float plat_x = spawnPlace->position.x;  
-                float plat_y = ALTO_VENTANA - spawnPlace->position.y - spawnPlace->height * FACTOR_ESCALA_ARMA; 
-                float plat_width = spawnPlace->width * FACTOR_ESCALA_ARMA;   
-                float plat_height = spawnPlace->height * FACTOR_ESCALA_ARMA; 
-                int arma_index = static_cast<int>(spawnPlace->get_weapon_type()); //ojo switch aca
+                float plat_y = static_cast<float>(ScreenUtils::get_y_for_screen(spawnPlace->position.y, spawnPlace->height));
+                float plat_width = spawnPlace->width;   
+                float plat_height = spawnPlace->height; 
+                int arma_index = static_cast<int>(spawnPlace->get_weapon_type());
                 Area armaSrcArea(arma_index * 38, 0, 38,38);  
                 Area armaDestArea(plat_x, plat_y, plat_width, plat_height); 
                 armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
@@ -96,14 +98,11 @@ void Mapa::renderizar_mapa() {
         if (collidable->getType() == CollidableType::Box) {
             Box* box = static_cast<Box*>(collidable);
 
-            float box_x = box->position.x;  
-            float box_y = ALTO_VENTANA - box->position.y - 28 * FACTOR_ESCALA_BOX; 
-            float box_width = 28 * FACTOR_ESCALA_BOX;  
-            float box_height = 28 * FACTOR_ESCALA_BOX;
-            
+            float box_x = box->position.x;
+            float box_y = static_cast<float>(ScreenUtils::get_y_for_screen(box->position.y, box->height));
 
-            Area boxSrcArea(0, 0, 28, 28);  
-            Area boxDestArea(box_x, box_y, box_width, box_height); 
+            Area boxSrcArea(0, 0, 16, 17);  
+            Area boxDestArea(box_x, box_y, box->width, box->height); 
 
             boxes.render(boxSrcArea, boxDestArea, SDL_FLIP_NONE);
         }
@@ -112,11 +111,9 @@ void Mapa::renderizar_mapa() {
             SpawnBox* spawnBox = static_cast<SpawnBox*>(collidable);
 
             float plat_x = spawnBox->position.x;
-            float plat_y = ALTO_VENTANA - spawnBox->position.y - spawnBox->height * FACTOR_ESCALA_ARMA;
-            float plat_width = spawnBox->width * FACTOR_ESCALA_ARMA;
-            float plat_height = spawnBox->height * FACTOR_ESCALA_ARMA;
-
-            float casco_y = ALTO_VENTANA - spawnBox->position.y - spawnBox->height * FACTOR_ESCALA_PROTECCION;
+            float plat_y = static_cast<float>(ScreenUtils::get_y_for_screen(spawnBox->position.y, spawnBox->height));
+            float plat_width = spawnBox->width;
+            float plat_height = spawnBox->height;
 
             SpawnBox::ItemType tipo_item = spawnBox->get_item_type();
 
@@ -129,25 +126,25 @@ void Mapa::renderizar_mapa() {
                 switch (spawnBox->get_proteccion_type()) {
                     case ProteccionType::Armadura: {
                         Area armaduraSrcArea(0, 0, 256, 196);
-                        Area armaduraDestArea(plat_x, plat_y + 10, 65, 65);
+                        Area armaduraDestArea(plat_x, plat_y - 25, 65, 65);
                         armadura.render(armaduraSrcArea, armaduraDestArea, SDL_FLIP_NONE, 0.0);
                         break;
                     }
                     case ProteccionType::Casco: {
                         Area cascoSrcArea(0, 0, 128, 128);
-                        Area cascoDestArea(plat_x, casco_y, 38, 38);
+                        Area cascoDestArea(plat_x, plat_y - 15, 38, 38); //tenia un casco y
                         casco.render(cascoSrcArea, cascoDestArea, SDL_FLIP_NONE, 0.0);
                         break;
                     }
                     case ProteccionType::NoArmadura: {
                         Area armaduraSrcArea(0, 0, 256, 196);
-                        Area armaduraDestArea(plat_x, plat_y, 65, 65);
-                        armadura.render(armaduraSrcArea, armaduraDestArea, SDL_FLIP_VERTICAL, 45.0);
+                        Area armaduraDestArea(plat_x, plat_y - 20, 65, 65);
+                        armadura.render(armaduraSrcArea, armaduraDestArea, SDL_FLIP_VERTICAL, 90.0);
                         break;
                     }
                     case ProteccionType::NoCasco: {
                         Area cascoSrcArea(0, 0, 128, 128);
-                        Area cascoDestArea(plat_x, casco_y, 38, 38);
+                        Area cascoDestArea(plat_x, plat_y - 5, 38, 38); //tenia un casco y
                         casco.render(cascoSrcArea, cascoDestArea, SDL_FLIP_VERTICAL, 45.0);
                         break;
                     }
@@ -160,15 +157,12 @@ void Mapa::renderizar_mapa() {
         }
         if (esta_explotando) {
             float box_x = x_expl;
-            float box_y = ALTO_VENTANA - y_expl - 28 * FACTOR_ESCALA_BOX;
-            float box_width = 28 * FACTOR_ESCALA_BOX;
-            float box_height = 28 * FACTOR_ESCALA_BOX;
+            float box_y = static_cast<float>(ScreenUtils::get_y_for_screen(y_expl, height_expl));
 
-            Area boxSrcArea(0, 0, 28, 28);
-            Area boxDestArea(box_x, box_y, box_width, box_height);
+            Area boxSrcArea(0, 0, 25, 22);
+            Area boxDestArea(box_x, box_y, width_expl, height_expl);
             explosion.render(boxSrcArea, boxDestArea, SDL_FLIP_NONE);
             esta_explotando = false;
-
         }
     }
 }

@@ -13,7 +13,10 @@
 #include "server_mapa.h"
 #include "server_leaderboard.h"
 #include "bala.h"
+#include <filesystem>
+#include <random>
 
+namespace fs = std::filesystem;
 class Gameloop: public Thread {
 private:
     Queue<Accion> comandos_acciones;
@@ -45,6 +48,7 @@ public:
     std::vector<int> get_ids();
     void eliminar_jugador(int id_jugador,Queue<std::unique_ptr<Evento>>& cola_eventos);
     void run() override;
+    int getRandomMapIndex();
     Queue<Accion>& get_cola_acciones();
     bool esta_llena();
     bool esta_vacia();

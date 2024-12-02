@@ -116,7 +116,7 @@ public:
                             SpawnBox::ItemType tipo_item = recompensa->get_item_type();
 
                             if (tipo_item == SpawnBox::ItemType::Weapon) {
-                                EventoSpawnArmaBox evento_spawn_arma(caja_x, caja_y, recompensa->get_weapon_type());
+                                EventoSpawnArmaBox evento_spawn_arma(caja_x, caja_y, caja_impactada->width, caja_impactada->height, recompensa->get_weapon_type());
                                 eventos.push_back(std::make_shared<EventoSpawnArmaBox>(evento_spawn_arma));
                                 collidables_a_agregar.push_back(recompensa);
                             } else if (tipo_item == SpawnBox::ItemType::Proteccion) {

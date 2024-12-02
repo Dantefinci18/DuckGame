@@ -429,7 +429,7 @@ public:
     virtual ~Player() {}
 
     Player(int id, ColorDuck color)
-        : Collidable({200.0f,300.0f}, 32.0f, 64.0f), 
+        : Collidable({200.0f,300.0f}, 32.0f, 48.0f), 
           velocity(Vector(0, 0)), 
           speed(6.0f), 
           is_on_ground(false), 
