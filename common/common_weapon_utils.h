@@ -8,6 +8,8 @@
 #include "common_pistola_duelos.h"
 #include "common_rifle_ak47.h"
 #include "common_escopeta.h"
+#include "common_sniper.h"
+#include "common_pewpew_laser.h"
 class WeaponUtils {
 public:
     static std::unique_ptr<Weapon> create_weapon(WeaponType type) {
@@ -22,6 +24,10 @@ public:
                 return std::make_unique<PistolaDuelos>();
             case WeaponType::Escopeta:
                 return std::make_unique<Escopeta>();
+            case WeaponType::Sniper:
+                return std::make_unique<Sniper>();
+            case WeaponType::PewPewLaser:
+                return std::make_unique<PewPewLaser>();
             default:
                 throw std::invalid_argument("Unknown weapon type");
         }

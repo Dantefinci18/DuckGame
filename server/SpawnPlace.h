@@ -6,6 +6,8 @@
 #include "../common/common_pistola_duelos.h"
 #include "../common/common_rifle_ak47.h"
 #include "../common/common_escopeta.h"
+#include "../common/common_sniper.h"
+#include "../common/common_pewpew_laser.h"
 #include "../common/common_evento.h"
 #include "../common/common_weapon_utils.h"
 #include <optional>
@@ -63,7 +65,7 @@ class SpawnPlace : public Collidable {
     virtual std::unique_ptr<Weapon> elegir_arma_aleatoria() {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dist(0, 4);
+        std::uniform_int_distribution<> dist(0, 6);
 
         WeaponType tipo_arma = static_cast<WeaponType>(dist(gen));
         return WeaponUtils::create_weapon(tipo_arma);

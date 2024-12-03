@@ -11,6 +11,8 @@ enum class WeaponType {
     PistolaDuelos,
     RifleAK47,
     Escopeta,
+    Sniper,
+    PewPewLaser,
     None
     // Future types can be added here
 };

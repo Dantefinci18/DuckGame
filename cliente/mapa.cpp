@@ -88,8 +88,39 @@ void Mapa::renderizar_mapa() {
                 float plat_y = static_cast<float>(ScreenUtils::get_y_for_screen(spawnPlace->position.y, spawnPlace->height));
                 float plat_width = spawnPlace->width;   
                 float plat_height = spawnPlace->height; 
-                int arma_index = static_cast<int>(spawnPlace->get_weapon_type());
-                Area armaSrcArea(arma_index * 38, 0, 38,38);  
+                int arma_index = 0;
+                int cuadrado = 38;
+                switch (spawnPlace->get_weapon_type()){
+                    case WeaponType::PistolaCowboy:
+                        arma_index = 0;
+                        break;
+                    case WeaponType::PistolaMagnum:
+                        arma_index = 1;
+                        break;
+                    case WeaponType::PistolaDuelos:
+                        arma_index = 2;
+                        break;
+                    case WeaponType::RifleAK47:
+                        arma_index = 3;
+                        break;
+                    case WeaponType::Escopeta:
+                        arma_index = 4;
+                        break;
+                    case WeaponType::PewPewLaser:
+                        arma_index = 5;
+                        break;
+                    case WeaponType::Sniper:
+                        arma_index = 7;
+                        break;
+                    case WeaponType::None:
+                        arma_index = 0;
+                        cuadrado = 0;
+                        break;
+                    default:
+                        arma_index = 0;
+                        cuadrado = 0;
+                    }
+                Area armaSrcArea(arma_index * cuadrado, 0, cuadrado, cuadrado);  
                 Area armaDestArea(plat_x, plat_y, plat_width, plat_height); 
                 armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
             }
@@ -135,6 +166,12 @@ void Mapa::renderizar_mapa() {
                         break;
                     case WeaponType::Escopeta:
                         arma_index = 4;
+                        break;
+                    case WeaponType::PewPewLaser:
+                        arma_index = 5;
+                        break;
+                    case WeaponType::Sniper:
+                        arma_index = 7;
                         break;
                     case WeaponType::None:
                         arma_index = 0;

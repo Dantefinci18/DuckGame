@@ -274,6 +274,12 @@ void Duck::render_arma(int y_renderizado) {
         case WeaponType::Escopeta:
             arma_index = 4;
             break;
+        case WeaponType::PewPewLaser:
+            arma_index = 5;
+            break;
+        case WeaponType::Sniper:
+            arma_index = 7;
+            break;
         case WeaponType::None:
             arma_index = 0;
             cuadrado = 0;
