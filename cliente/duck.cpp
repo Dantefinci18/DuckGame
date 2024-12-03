@@ -78,6 +78,8 @@ void Duck::render() {
     if (reset) {
         std::cout << "reset" << std::endl;
         weapon = std::nullopt;
+        casco_equipado = std::nullopt;
+        armadura_equipada = std::nullopt;
         is_dead = false;
         esta_agachado = false;
         is_flapping = false;
