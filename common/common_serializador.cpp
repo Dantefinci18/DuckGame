@@ -83,32 +83,6 @@ std::vector<uint8_t> Serializador::serializar_accion(std::shared_ptr<Accion> acc
         std::cout << "nombre partida:\n";
         imprimir_uint8_t_array(buffer.data(),buffer.size());
     
-    }else if(tipo_accion == CARGAR_PARTIDA){
-        AccionCargarPartida *cargarPartida = static_cast<AccionCargarPartida*>(accion.get());
-        buffer.resize(72 + cargarPartida->nombre_partida.size());
-        uint8_t tipo_accion_uint8 = tipo_accion;
-        serializar_enum(tipo_accion_uint8, buffer);
-        
-        std::cout << "tipo accion:\n";
-        imprimir_uint8_t_array(buffer.data(),buffer.size());
-
-        serializar_numero_entero(cargarPartida->id_partida,buffer,8);
-
-        std::cout << "id_partida:\n";
-        imprimir_uint8_t_array(buffer.data(),buffer.size());
-
-        serializar_numero_entero(cargarPartida->nombre_partida.size(),buffer,40);
-        
-
-        std::cout << "tamanio string nombre partida:\n";
-        imprimir_uint8_t_array(buffer.data(),buffer.size());
-
-        serializar_string(cargarPartida->nombre_partida,buffer,72);
-
-        std::cout << "nombre partida:\n";
-        imprimir_uint8_t_array(buffer.data(),buffer.size()); 
-
-    
     }else{
         buffer.resize(ACCION_BIT_SIZE);
         serializar_enum(accion->get_command(), buffer);

@@ -211,17 +211,16 @@ int ClienteLobby::run(){
     });
 
     connect(&mainWindow, &MainWindow::cargar_partida, this,[&] () {
-        ventanaCargarPartida.show();
-        ventanaCargarPartida.agregar_partida(1,"Dante");
 
-        ComandoAccion comando = ESTABLECER_PARTIDAS;
+        ComandoAccion comando = CARGAR_PARTIDA;
         
         if(!protocolo.enviar_accion(comando)){
             QApplication::quit();
             
         }else{
-
-            //recibe las partidas
+            id = protocolo.recibir_id();
+            receiver->start();
+            ventanaEsperando.show();
         }
 
 

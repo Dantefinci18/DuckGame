@@ -33,7 +33,7 @@ void ServerLobby::run(){
                 jugador->enviar_evento(EventoEspera());
                 Gameloop *gameloop = new Gameloop(accion_partida->get_player_id(),
                                                     nueva_partida->nombre_partida,
-                                                    2,//nueva_partida.cantidad_de_jugadores,
+                                                    nueva_partida->cantidad_de_jugadores,//nueva_partida.cantidad_de_jugadores,
                                                     jugador->get_cola_eventos());
                 
                 partidas[cantidad_de_partidas] = gameloop;
@@ -42,8 +42,8 @@ void ServerLobby::run(){
 
             }else if(partida == CARGAR_PARTIDA){
                 std::cout << "Cargar partida" << std::endl;
-                //Gameloop *gameloop = obtener_partida_en_espera();
-                /*if(gameloop != nullptr){
+                Gameloop *gameloop = obtener_partida_en_espera();
+                if(gameloop != nullptr){
                     gameloop->agregar_jugador(id_jugador,jugador->get_cola_eventos());
                     
                     if(gameloop->esta_llena()){
@@ -51,7 +51,7 @@ void ServerLobby::run(){
                     }else{
                         jugador->enviar_evento(EventoEspera());
                     }
-                }*/
+                }
 
             }
 
@@ -71,7 +71,7 @@ void ServerLobby::comenzar_partida(Gameloop *partida){
     partida->start();
 }
 
-std::list<Partida> ServerLobby::obtener_partidas_en_espera(){
+/*std::list<Partida> ServerLobby::obtener_partidas_en_espera(){
     std::list<Partida> partidas_disponibles;
     
     for(auto& pair : partidas){
@@ -85,9 +85,9 @@ std::list<Partida> ServerLobby::obtener_partidas_en_espera(){
 
     return partidas_disponibles;
 
-}
+}*/
 
-/*Gameloop *ServerLobby::obtener_partida_en_espera(){
+Gameloop* ServerLobby::obtener_partida_en_espera(){
     for(auto& pair : partidas){
         auto partida = pair.second;
         
@@ -97,7 +97,7 @@ std::list<Partida> ServerLobby::obtener_partidas_en_espera(){
     }
 
     return nullptr;
-}*/
+}
 
 void ServerLobby::eliminar_terminadas(){
     for (auto it = partidas.begin(); it != partidas.end();) {
