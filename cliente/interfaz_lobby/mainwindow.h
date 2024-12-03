@@ -40,6 +40,7 @@ class VentanaCargarPartida : public QMainWindow{
     public:
         explicit VentanaCargarPartida(QWidget *parent = nullptr);
         void agregar_partida(int id,std::string nombre_partida);
+        void vaciar_scroll();
 };
 
 class VentanaNuevaPartida: public QMainWindow {

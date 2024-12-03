@@ -52,9 +52,9 @@ class Accion {
 class AccionCargarPartida : public Accion {
     public:
         int id_partida;
-        const std::string& nombre_partida;
+        std::string nombre_partida;
 
-        explicit AccionCargarPartida(int id_partida, const std::string& nombre_partida):
+        explicit AccionCargarPartida(int id_partida, std::string nombre_partida):
             Accion(ComandoAccion::CARGAR_PARTIDA),id_partida(id_partida), nombre_partida(nombre_partida){}
 };
 

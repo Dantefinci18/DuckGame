@@ -65,7 +65,33 @@ std::shared_ptr<Accion> ProtocoloServidor::recibir_accion() {
         std::cout << "nombre partida en protocolo: \n" << nuevaPartida->nombre_partida << std::endl;
         return nuevaPartida;
 
-    } 
+    }else if(tipo_accion == CARGAR_PARTIDA){
+        uint8_t id_bits[32];
+        conexion.recvall(id_bits,sizeof(id_bits),&was_closed);
+
+        if (was_closed) {
+            return std::make_unique<Accion>(NONE_ACCION);
+        }
+
+        uint8_t tamanio_nombre_bits[32];
+        conexion.recvall(tamanio_nombre_bits,sizeof(tamanio_nombre_bits),&was_closed);
+
+        if (was_closed) {
+            return std::make_unique<Accion>(NONE_ACCION);
+        }
+
+        int tamanio_nombre = serializador.deserializar_numero_entero(tamanio_nombre_bits);
+        uint8_t nombre_bits[tamanio_nombre];
+
+        conexion.recvall(nombre_bits,sizeof(nombre_bits),&was_closed);
+
+        if (was_closed) {
+            return std::make_unique<Accion>(NONE_ACCION);
+        }
+
+        return serializador.deserializar_cargar_partida(id_bits,nombre_bits,tamanio_nombre);
+
+    }
 
     return std::make_shared<Accion>(tipo_accion);
 }
@@ -117,7 +143,7 @@ void ProtocoloServidor::enviar_estado(const Evento& evento) {
 
 bool ProtocoloServidor::enviar_partidas(std::list<Partida>& partidas){
     bool was_closed = false;
-    auto partidas_bits = serializador.serializar_partidas(partidas);
+    std::vector<uint8_t> partidas_bits = serializador.serializar_partidas(partidas);
     conexion.sendall(partidas_bits.data(),partidas_bits.size(),&was_closed);
     return !was_closed;
 }

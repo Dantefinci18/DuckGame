@@ -6,7 +6,7 @@
 class Partida{
     public:
         int id;
-        const std::string& nombre;
+        std::string nombre;
 
         explicit Partida(int id, const std::string& nombre): id(id), nombre(nombre){}
 };

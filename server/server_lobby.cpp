@@ -37,6 +37,7 @@ void ServerLobby::run(){
                                                     jugador->get_cola_eventos());
                 
                 partidas[cantidad_de_partidas] = gameloop;
+                cantidad_de_partidas++;
             
             }else if(partida == ESTABLECER_PARTIDAS){
                 auto partidas = obtener_partidas_en_espera();
@@ -44,16 +45,13 @@ void ServerLobby::run(){
 
             }else if(partida == CARGAR_PARTIDA){
                 std::cout << "Cargar partida" << std::endl;
-                //Gameloop *gameloop = obtener_partida_en_espera();
-                /*if(gameloop != nullptr){
-                    gameloop->agregar_jugador(id_jugador,jugador->get_cola_eventos());
-                    
-                    if(gameloop->esta_llena()){
-                        comenzar_partida(gameloop);
-                    }else{
-                        jugador->enviar_evento(EventoEspera());
-                    }
-                }*/
+                auto cargar_partida = std::dynamic_pointer_cast<AccionCargarPartida>(accion_partida);
+                auto gameloop = partidas[cargar_partida->id_partida];
+                gameloop->agregar_jugador(id_jugador,jugador->get_cola_eventos());
+                
+                if(gameloop->esta_llena()){
+                    comenzar_partida(gameloop);
+                }
 
             }
 

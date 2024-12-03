@@ -140,6 +140,12 @@ std::shared_ptr<AccionNuevaPartida> Serializador::deserializar_nueva_partida(con
 }
 
 
+std::shared_ptr<AccionCargarPartida> Serializador::deserializar_cargar_partida(const uint8_t* data_id, const uint8_t* data_nombre,size_t n){
+    int id = deserializar_numero_entero(data_id);
+    std::string nombre = deserializar_string(data_nombre,n);
+    return std::make_shared<AccionCargarPartida>(id,nombre);
+}
+
 std::vector<uint8_t> Serializador::serializar_partidas(std::list<Partida>& partidas){  
     std::vector<uint8_t> buffer_cantidad(32);
     serializar_numero_entero(partidas.size(),buffer_cantidad,0);

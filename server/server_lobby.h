@@ -16,7 +16,7 @@ class ServerLobby : public Thread {
         Queue<std::shared_ptr<Accion>> cola_comando_partidas;
         std::unordered_map<int, Jugador*> jugadores_esperando;
         std::mutex mtx;
-        long cantidad_de_partidas = 0;
+        int cantidad_de_partidas = 0;
 
         std::list<Partida> obtener_partidas_en_espera();
         void cerrar_gameloops_terminados();

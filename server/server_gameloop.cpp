@@ -3,7 +3,7 @@
 #include "../common/common_color.h"
 #include "DisparoManager.h"
 
-Gameloop::Gameloop(int id_jugador, const std::string &nombre, 
+Gameloop::Gameloop(int id_jugador, std::string nombre, 
                     unsigned int capacidad_minima, Queue<std::unique_ptr<Evento>>& cola_eventos): 
     
     capacidad_minima(capacidad_minima), 
@@ -265,6 +265,6 @@ int Gameloop::getRandomMapIndex() {
     return dist(gen) + 1; 
 }
 
-const std::string& Gameloop::get_nombre(){
+std::string Gameloop::get_nombre(){
     return nombre_partida;
 }

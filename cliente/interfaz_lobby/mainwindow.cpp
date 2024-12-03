@@ -72,6 +72,14 @@ void VentanaCargarPartida::agregar_partida(int id, std::string nombre_partida){
         });
 }
 
+void VentanaCargarPartida::vaciar_scroll(){
+     QLayoutItem* item;
+    while ((item = scrollLayout->takeAt(0)) != nullptr) {
+        delete item->widget(); 
+        delete item;         
+    }
+}
+
 
 VentanaNuevaPartida::VentanaNuevaPartida(QWidget *parent):
     QMainWindow(parent),
@@ -220,10 +228,13 @@ int ClienteLobby::run(){
             QApplication::quit();
             
         }else{
-
+            id = protocolo.recibir_id();
             std::list<Partida> partidas = protocolo.recibir_partidas();
 
+            ventanaCargarPartida.vaciar_scroll();
+
             for(Partida partida: partidas){
+                ventanaCargarPartida.agregar_partida(partida.id,partida.nombre);
                 std::cout << partida.id << " " << partida.nombre << std::endl; 
             }
         }
@@ -232,7 +243,13 @@ int ClienteLobby::run(){
     });
 
     connect(&ventanaCargarPartida,&VentanaCargarPartida::unirse,this,[&](int id, std::string nombre_partida){
-        
+        if(!protocolo.cargar_partida(id,nombre_partida)){
+            QApplication::quit();
+        }else{
+            ventanaCargarPartida.hide();
+            receiver->start();
+            ventanaEsperando.show();
+        }
     });
 
 

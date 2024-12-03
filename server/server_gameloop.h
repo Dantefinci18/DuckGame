@@ -30,7 +30,7 @@ private:
     int ticks_round_win_screen;
     bool should_reset_round;
     Leaderboard leaderboard;
-    const std::string& nombre_partida;
+    std::string nombre_partida;
     
     std::vector<Bala> balas;  
 
@@ -43,7 +43,7 @@ private:
     void procesar_acciones(std::vector<std::shared_ptr<Accion>> acciones, std::vector<Collidable*> collidables);
 
 public:
-    explicit Gameloop(int id_jugador, const std::string& nombre,unsigned int capacidad_minima, Queue<std::unique_ptr<Evento>>& cola_eventos);
+    explicit Gameloop(int id_jugador, std::string nombre,unsigned int capacidad_minima, Queue<std::unique_ptr<Evento>>& cola_eventos);
 
     void agregar_jugador(int id_jugador,Queue<std::unique_ptr<Evento>>& cola_eventos);
     std::vector<int> get_ids();
@@ -53,7 +53,7 @@ public:
     Queue<std::shared_ptr<Accion>>& get_cola_acciones();
     bool esta_llena();
     bool esta_vacia();
-    const std::string& get_nombre();
+    std::string get_nombre();
 };
 
 #endif

@@ -31,6 +31,9 @@ public:
     std::vector<uint8_t> serializar_accion(std::shared_ptr<Accion> accion);
     ComandoAccion deserializar_tipo_accion(const uint8_t* data);
     
+    std::shared_ptr<AccionCargarPartida> deserializar_cargar_partida(
+                                            const uint8_t* data_id, const uint8_t* data_nombre,size_t n);
+
     std::shared_ptr<AccionNuevaPartida> deserializar_nueva_partida(
         const uint8_t* data_nombre, size_t n, const uint8_t* data_jugadores, const uint8_t* mapa);
     

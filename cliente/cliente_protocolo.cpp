@@ -443,6 +443,8 @@ std::list<Partida> ClienteProtocolo::recibir_partidas(){
         return std::list<Partida>();
 
     int tamanio_partidas = serializador.deserializar_numero_entero(tamanio_partidas_bits);
+
+    std::cout << "tamanio partidas: " << tamanio_partidas << std::endl;  
     
     for(int i = 0; i < tamanio_partidas; i++){
         uint8_t id_bits[32];
