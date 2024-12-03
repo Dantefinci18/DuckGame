@@ -342,7 +342,7 @@ void Cliente::ejecutar_juego() {
             for (auto& pair : enemigos) {
                 pair.second->renderizar();  
             }
-            window.render();
+            window.renderPortion(0,0,300,300);
              if (should_end) {
                 SDL_Delay(3000);
                 conectado = false;

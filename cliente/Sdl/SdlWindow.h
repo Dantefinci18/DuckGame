@@ -14,6 +14,7 @@ public:
     ~SdlWindow();
     void fill();
     void fill(int r, int g, int b, int alpha);
+    void renderPortion(int x, int y, int w, int h);
     void render();
     void set_title(const char* titulo);
     SDL_Renderer* getRenderer() const;

@@ -42,7 +42,6 @@ void SdlWindow::fill(int r, int g, int b, int alpha) {
 void SdlWindow::fill() { this->fill(0x33, 0x33, 0x33, 0xFF); }
 
 void SdlWindow::render() { 
-    //std::cout << "rendering_window" << std::endl;
     SDL_RenderPresent(this->renderer); 
 }
 

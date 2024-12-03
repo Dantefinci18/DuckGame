@@ -76,7 +76,6 @@ private:
     int height_expl;
     bool esta_explotando;
     std::vector<Collidable*> collidables_plataformas; 
-   
 };
 
 #endif
