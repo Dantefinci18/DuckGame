@@ -8,6 +8,8 @@
 #include <memory>
 #include "../server/Platform.h"  
 #include "../server/SpawnWeaponBox.h"
+#include "cliente_zoom_utils.cpp"
+#include "../server/SpawnBox.h"
 
 Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial)
     : id(id),
@@ -17,7 +19,7 @@ Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*
       mapa(std::make_unique<Mapa>(window, "../Imagenes/forest.png", collidables)),
       leaderboard(ClientLeaderboard(window, leaderboard.round, leaderboard.max_rounds, leaderboard.set_of_rounds, leaderboard.player_rounds_won)),
       protocolo(std::move(socket)),
-      teclado(conectado,queue_acciones),
+      teclado(conectado, queue_acciones),
       receiver(protocolo, queue_eventos, conectado),
       sender(protocolo, queue_acciones),
       collidables(collidables),
@@ -58,6 +60,7 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
 
+  
                 case Evento::EventoMuerte: {
                     auto evento_muerte = static_cast<EventoMuerte*>(evento_recibido.get());
                     manejar_muerte(*evento_muerte);
@@ -67,6 +70,12 @@ void Cliente::procesar_eventos_recibidos() {
                 case Evento::EventoPickup: {
                     auto evento_pickup = static_cast<EventoPickup*>(evento_recibido.get());
                     manejar_arma(*evento_pickup, collidables);
+                    break;
+                }
+
+                case Evento::EventoPickupProteccion: {
+                    auto evento_pickup_proteccion = static_cast<EventoPickupProteccion*>(evento_recibido.get());
+                    manejar_proteccion(*evento_pickup_proteccion, collidables);
                     break;
                 }
 
@@ -126,6 +135,17 @@ void Cliente::procesar_eventos_recibidos() {
 
                     break;
                 }
+                case Evento::EventoSpawnProteccionBox: {
+                    auto evento_spawn_proteccion_box = static_cast<EventoSpawnProteccionBox*>(evento_recibido.get());
+                    agregar_collidable_proteccion(*evento_spawn_proteccion_box);
+                    break;
+                }
+                case Evento::EventoDisparo: {
+                    auto evento_disparo = static_cast<EventoDisparo*>(evento_recibido.get());
+                    mixer.reproducir_efecto_disparo("../sounds/shotgun.wav");
+                    
+                    break;
+                }
                 default: {
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
@@ -136,7 +156,7 @@ void Cliente::procesar_eventos_recibidos() {
 }
 
 void Cliente::agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box) {
-    auto* spawnWeaponBox = new SpawnWeaponBox(
+    auto* spawnBox = new SpawnBox(
         Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 
         evento_spawn_arma_box.width, 
         evento_spawn_arma_box.height
@@ -144,12 +164,25 @@ void Cliente::agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box
 
     std::unique_ptr<Weapon> weapon = WeaponUtils::create_weapon(evento_spawn_arma_box.weapon_type);
     
-    spawnWeaponBox->set_weapon(std::move(weapon));
+    spawnBox->set_item(std::variant<std::unique_ptr<Weapon>, std::unique_ptr<Proteccion>>(std::move(weapon)));
 
-    collidables.push_back(spawnWeaponBox);
-    mapa->agregar_collidable(spawnWeaponBox);
+    collidables.push_back(spawnBox);
+    mapa->agregar_collidable(spawnBox);
 }
 
+void Cliente::agregar_collidable_proteccion(const EventoSpawnProteccionBox& evento_spawn_proteccion_box) {
+    auto* spawnBox = new SpawnBox(
+        Vector(evento_spawn_proteccion_box.x, evento_spawn_proteccion_box.y), 
+        20, 
+        20
+    );
+    std::unique_ptr<Proteccion> proteccion = std::make_unique<Proteccion>(evento_spawn_proteccion_box.proteccion_type);
+    
+    spawnBox->set_item(std::variant<std::unique_ptr<Weapon>, std::unique_ptr<Proteccion>>(std::move(proteccion)));
+
+    collidables.push_back(spawnBox);
+    mapa->agregar_collidable(spawnBox);
+}
 
 void Cliente::eliminar_caja(const EventoCajaDestruida& evento_caja_destruida) {
     mapa->eliminar_caja(evento_caja_destruida.x, evento_caja_destruida.y);
@@ -208,12 +241,13 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
             sPlace->clear_weapon();
 
         }
-        if (collidable->getType() == CollidableType::SpawnWeaponBox 
+        if (collidable->getType() == CollidableType::SpawnBox 
             && collidable->position.x == evento_pickup.x
             && collidable->position.y == evento_pickup.y) {
-            SpawnWeaponBox* sWeaponBox = static_cast<SpawnWeaponBox*>(collidable);
-            sWeaponBox->clear_weapon();
-            mapa->clear_weapon(sWeaponBox);
+            std::cout << "clearing weapon" << std::endl;
+            SpawnBox* sBox = static_cast<SpawnBox*>(collidable);
+            sBox->limpiar_item();
+            mapa->clear_weapon(sBox);
         }
     }
     if (evento_pickup.id != id) {
@@ -224,6 +258,38 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
         }
     }
     duck.set_weapon(evento_pickup.weapon_type);
+}
+
+void Cliente::manejar_proteccion(const EventoPickupProteccion& evento_pickup, std::vector<Collidable*> collidables) {
+    for (auto& collidable : collidables) {
+        if (collidable->getType() == CollidableType::SpawnBox 
+            && collidable->position.x == evento_pickup.x
+            && collidable->position.y == evento_pickup.y) {
+            std::cout << "clearing proteccion" << std::endl;
+            SpawnBox* sBox = static_cast<SpawnBox*>(collidable);
+            sBox->limpiar_item();
+        }
+    }
+
+    if(evento_pickup.proteccion_type == ProteccionType::NoArmadura || evento_pickup.proteccion_type == ProteccionType::NoCasco){
+        auto* spawnBox = new SpawnBox(
+        Vector(evento_pickup.x, evento_pickup.y), 20, 20);
+        std::unique_ptr<Proteccion> proteccion = std::make_unique<Proteccion>(evento_pickup.proteccion_type);
+        
+        spawnBox->set_item(std::variant<std::unique_ptr<Weapon>, std::unique_ptr<Proteccion>>(std::move(proteccion)));
+
+        collidables.push_back(spawnBox);
+        mapa->agregar_collidable(spawnBox);
+    }
+    
+    if (evento_pickup.id != id) {
+        auto it = enemigos.find(evento_pickup.id);
+        if (it != enemigos.end()) {
+            it->second->set_proteccion(evento_pickup.proteccion_type);
+            return;
+        }
+    }
+    duck.set_proteccion(evento_pickup.proteccion_type);
 }
 
 void Cliente::manejar_muerte(const EventoMuerte& evento_muerte) {
@@ -264,43 +330,60 @@ void Cliente::apuntar(const EventoApuntar& evento_apuntar) {
     }
 }
 
+#include "cliente_mixer.h"
 
 void Cliente::ejecutar_juego() {
-    
     const int frameDelay = 50;  
     Uint32 lastRenderTime = SDL_GetTicks();
 
-    ComandoAccion tecla_anterior = QUIETO;
-    
+    ClienteMixer mixer;
+
+    if (!mixer.inicializar_mixer()) {
+        SDL_Log("No se pudo inicializar SDL_mixer.");
+        return;
+    }
+
+    if (!mixer.cargar_y_reproducir_musica("../sounds/sonido_fondo.wav")) {
+        SDL_Log("No se pudo cargar o reproducir la música.");
+        return;
+    }
+
+    mixer.set_volumen(MIX_MAX_VOLUME);
+
     while (conectado) {
         Uint32 currentTime = SDL_GetTicks();
 
         if (currentTime - lastRenderTime >= frameDelay) {
             lastRenderTime = currentTime;
-            
+
+            window.set_target_for_frame();
             mapa->render();
-            leaderboard.render();
-            
             duck.render();
+            
+            for (auto& pair : enemigos) {
+                pair.second->renderizar();
+            }
+            SDL_Rect rect = ZoomUtils::get_zoom(enemigos, duck, 800, 600);
+            window.renderPortion(rect.x, rect.y, rect.w, rect.h);
+            leaderboard.render();
             if (win_message) {
                 win_message->render();
-               
-            }
-            for (auto& pair : enemigos) {
-                pair.second->renderizar();  
             }
             window.render();
-             if (should_end) {
-                SDL_Delay(lastRenderTime);
+
+            if (should_end) {
+                SDL_Delay(3000);
                 conectado = false;
             }
         }
 
         procesar_eventos_recibidos();
 
+        SDL_Delay(1);
     }
-}
 
+    mixer.detener_musica();
+}
 
 
 void Cliente::handle_win_screen(const EventoWinRound& evento) {

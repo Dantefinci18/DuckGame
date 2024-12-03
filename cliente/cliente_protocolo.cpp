@@ -108,6 +108,32 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             }
             return serializador.deserializar_pickup(evento_pickup);
         }
+        case Evento::EventoPickupProteccion: {
+            uint8_t id[16];
+            socket.recvall(id, sizeof(id), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t x[12];
+            socket.recvall(x, sizeof(x), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t y[12];
+            socket.recvall(y, sizeof(y), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+            uint8_t proteccion_type[1];
+            socket.recvall(proteccion_type, sizeof(proteccion_type), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            return serializador.deserializar_pickup_proteccion(id, x, y, proteccion_type);
+        }
         case Evento::EventoSpawnArma: {
             uint8_t evento_spawn_arma[28];
             socket.recvall(evento_spawn_arma, sizeof(evento_spawn_arma), &was_closed);
@@ -205,6 +231,33 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             return serializador.deserializar_spawn_arma_box(evento_spawn_arma_box);
 
         }
+
+        case Evento::EventoSpawnProteccionBox: {
+            uint8_t x[12];
+            socket.recvall(x, sizeof(x), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t y[12];
+            socket.recvall(y, sizeof(y), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t proteccion_type[1];
+            socket.recvall(proteccion_type, sizeof(proteccion_type), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            return serializador.deserializar_spawn_proteccion_box(x, y, proteccion_type);
+
+        }
+        case Evento::EventoDisparo: {
+            return std::make_unique<EventoDisparo>();
+        }
+
         default:
             return nullptr; 
     }

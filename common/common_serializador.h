@@ -29,8 +29,10 @@ public:
 
     std::vector<uint8_t> serializar_evento(const Evento& evento);
     std::vector<uint8_t> serializar_pickup(const Evento& evento);
+    std::vector<uint8_t> serializar_pickup_proteccion(const Evento& evento);
     std::vector<uint8_t> serializar_spawn_arma(const Evento& evento);
     std::vector<uint8_t> serializar_spawn_arma_box(const Evento& evento);
+    std::vector<uint8_t> serializar_spawn_proteccion_box(const Evento& evento);
     std::vector<uint8_t> serializar_movimiento(const Evento& evento);
     std::vector<uint8_t> serializar_muerte(const Evento& evento);
     std::vector<uint8_t> serializar_apuntar(const Evento& evento);
@@ -44,8 +46,10 @@ public:
 
     std::unique_ptr<Evento> deserializar_movimiento(const uint8_t* data);
     std::unique_ptr<Evento> deserializar_pickup(const uint8_t* data);
+    std::unique_ptr<Evento> deserializar_pickup_proteccion(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* proteccion_type_data);
     std::unique_ptr<Evento> deserializar_spawn_arma(const uint8_t* data);
     std::unique_ptr<Evento> deserializar_spawn_arma_box(const uint8_t* data);
+    std::unique_ptr<Evento> deserializar_spawn_proteccion_box(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* proteccion_type_data);
     std::unique_ptr<Evento> deserializar_muerte(const uint8_t* id_data);
     std::unique_ptr<Evento> deserializar_apuntar(const uint8_t* data);
     std::unique_ptr<Evento> deserializar_caja_destruida(const uint8_t* data);

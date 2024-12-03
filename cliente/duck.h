@@ -1,6 +1,7 @@
 #ifndef DUCK_H
 #define DUCK_H
-
+#define ANCHO_DUCK_IMG 20
+#define ALTO_DUCK_IMG 24
 #include <SDL2/SDL.h>
 #include <optional>
 #include "Sdl/Area.h"
@@ -10,6 +11,8 @@
 #include "../common/common_weapon.h"
 #include "../common/common_color.h"
 #include "../common/common_direcciones.h"
+#include "../common/common_proteccion.h"
+#include "cliente_mixer.h"
 
 class Duck {
 public:
@@ -25,6 +28,9 @@ public:
     void setear_bala(float x, float y);
     
 
+    /* 
+     * Funcion que renderiza la bala del pato
+     */
     void render_bala();
 
     /* 
@@ -67,6 +73,8 @@ public:
      */
     void set_weapon(WeaponType weapon);
 
+    void set_proteccion(ProteccionType proteccion);
+
     /* 
      * Funcion que mata al pato
      */
@@ -79,6 +87,8 @@ public:
      * Destructor de la clase Duck
      */
     ~Duck();
+    float x_actual;
+    float y_actual;
 
 private:
 
@@ -109,6 +119,10 @@ private:
      */
     void render_arma(int y_renderizado);
 
+    void render_casco(int y_renderizado);
+
+    void render_armadura(int y_renderizado);
+
     /* Dado un color devuelve un string */
     std::string procesar_color(ColorDuck color);
 
@@ -117,16 +131,19 @@ private:
     SdlTexture movimientos_en_x;
     SdlTexture movimiento_en_y;
     SdlTexture armas;
+    SdlTexture armadura;
+    SdlTexture casco;
     SdlTexture death;
     ColorDuck color;
     SdlTexture bala;
     bool quieto;
     std::optional<WeaponType> weapon;
+    std::optional<ProteccionType> casco_equipado;
+    std::optional<ProteccionType> armadura_equipada;
     DireccionApuntada direccion_arma;
     int x_img = 0;
     int y_img = 0;
-    float x_actual;
-    float y_actual;
+    
     bool is_dead;
     float x_des;
     int y_des;
@@ -137,6 +154,7 @@ private:
     bool esta_agachado;
     bool reset;
     SDL_RendererFlip flip;
+    ClienteMixer mixer;
 
 };
 

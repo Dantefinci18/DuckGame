@@ -39,6 +39,10 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoPickup) {
         return serializar_pickup(evento);
     }
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoPickupProteccion) {
+        return serializar_pickup_proteccion(evento);
+    }
     
     if (evento.get_tipo() == Evento::TipoEvento::EventoMovimiento) {
         return serializar_movimiento(evento);
@@ -91,6 +95,14 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoSpawnArmaBox){
         return serializar_spawn_arma_box(evento);
     }
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoSpawnProteccionBox){
+        return serializar_spawn_proteccion_box(evento);
+    }
+    if (evento.get_tipo() == Evento::TipoEvento::EventoDisparo){
+        return serializar_espera(Evento::TipoEvento::EventoDisparo);
+    }
+
     return std::vector<uint8_t>();
 }
 
@@ -103,6 +115,8 @@ std::vector<uint8_t> Serializador::serializar_espera(const Evento::TipoEvento& t
     return buffer;
     
 }
+
+
 
 std::vector<uint8_t> Serializador::serializar_movimiento(const Evento& evento) {
     std::vector<uint8_t> bits(54);
@@ -150,6 +164,25 @@ std::vector<uint8_t> Serializador::serializar_pickup(const Evento& evento) {
     return bits;
 }
 
+std::vector<uint8_t> Serializador::serializar_pickup_proteccion(const Evento& evento) {
+    std::vector<uint8_t> bits(49); 
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    serializar_tipo_evento(bits, tipo_evento, 0);
+
+    int id = static_cast<int>(static_cast<const EventoPickupProteccion&>(evento).id);
+    serializar_id_dos(bits, id, 8);
+
+    int x = static_cast<int>(static_cast<const EventoPickupProteccion&>(evento).x);
+    int y = static_cast<int>(static_cast<const EventoPickupProteccion&>(evento).y);
+    serializar_coordenadas(bits, x, y, 24, 36);
+
+    uint8_t proteccion_type = static_cast<uint8_t>(static_cast<const EventoPickupProteccion&>(evento).proteccion_type);
+    bits[48] = proteccion_type;
+    return bits;
+}
+
+
 
 std::vector<uint8_t> Serializador::serializar_spawn_arma(const Evento& evento) {
     std::vector<uint8_t> bits(36); 
@@ -186,6 +219,23 @@ std::vector<uint8_t> Serializador::serializar_spawn_arma_box(const Evento& event
     serializar_weapon_type(bits, tipo_bits, 56);
     return bits;
 }
+
+std::vector<uint8_t> Serializador::serializar_spawn_proteccion_box(const Evento& evento) {
+    std::vector<uint8_t> bits(33); 
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    serializar_tipo_evento(bits, tipo_evento, 0);
+
+    int x = static_cast<int>(static_cast<const EventoSpawnProteccionBox&>(evento).x);
+    int y = static_cast<int>(static_cast<const EventoSpawnProteccionBox&>(evento).y);
+    serializar_coordenadas(bits, x, y, 8, 20);
+
+    uint32_t tipo_bits = static_cast<uint32_t>(static_cast<const EventoSpawnProteccionBox&>(evento).proteccion_type);
+    bits[32] = tipo_bits;
+
+    return bits;
+}
+
 
 
 
@@ -318,6 +368,17 @@ std::unique_ptr<Evento> Serializador::deserializar_pickup(const uint8_t* data) {
     return std::make_unique<EventoPickup>(id, x, y, tipo);
 }
 
+std::unique_ptr<Evento> Serializador::deserializar_pickup_proteccion(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* proteccion_type_data) {
+    int id = deserializar_id(id_data);
+
+    int x = deserializar_coordenadas(x_data);
+    int y = deserializar_coordenadas(y_data);
+
+    ProteccionType tipo = static_cast<ProteccionType>(proteccion_type_data[0]);
+
+    return std::make_unique<EventoPickupProteccion>(id, x, y, tipo);
+}
+
 
 
 std::unique_ptr<Evento> Serializador::deserializar_spawn_arma(const uint8_t* data) {
@@ -340,6 +401,16 @@ std::unique_ptr<Evento> Serializador::deserializar_spawn_arma_box(const uint8_t*
 
     return std::make_unique<EventoSpawnArmaBox>(x, y, width, height, tipo);
 }
+
+std::unique_ptr<Evento> Serializador::deserializar_spawn_proteccion_box(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* proteccion_type_data) {
+    
+    int x = deserializar_coordenadas(x_data);
+    int y = deserializar_coordenadas(y_data);
+    ProteccionType tipo = static_cast<ProteccionType>(proteccion_type_data[0]);
+
+    return std::make_unique<EventoSpawnProteccionBox>(x, y, tipo);
+}
+
 
 std::unique_ptr<Evento> Serializador::deserializar_muerte(const uint8_t* id_data) {
     int id = deserializar_id(id_data);

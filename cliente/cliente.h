@@ -6,6 +6,7 @@
 #include "cliente_protocolo.h"
 #include "cliente_leaderboard.h"
 #include "cliente_teclado.h"
+#include "cliente_mixer.h"
 #include "duck.h"
 #include "mapa.h"
 #include "enemigo.h" 
@@ -22,7 +23,6 @@
 #include <SDL2/SDL.h>
 #include <unordered_map>
 #include <memory>  
-#include <atomic>
 
 
 class Cliente {
@@ -43,6 +43,8 @@ private:
     std::vector<Collidable*> collidables;
     std::unique_ptr<SdlFullscreenMessage> win_message;
     bool should_end;
+    ClienteMixer mixer;
+
 
     /*
      * Funcion que ejecuta el juego
@@ -59,6 +61,8 @@ private:
      * Recibe un evento de spawn de arma y un vector de collidables
      */
     void agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box);
+
+    void agregar_collidable_proteccion(const EventoSpawnProteccionBox& evento_spawn_proteccion_box);
 
     void eliminar_caja(const EventoCajaDestruida& evento_caja_destruida);
 
@@ -93,6 +97,8 @@ private:
      */
     void manejar_arma(const EventoPickup& evento_pickup, std::vector<Collidable*> collidables);
 
+    void manejar_proteccion(const EventoPickupProteccion& evento_pickup, std::vector<Collidable*> collidables);
+
     /*
      * Funcion que maneja la muerte
      * Recibe un evento de muerte
@@ -110,13 +116,6 @@ private:
      * Recibe un evento de apuntar valido
      */
     void apuntar(const EventoApuntar& evento_apuntar);
-
-    /*
-     * Funcion que envia una accion
-     * Recibe un puntero a una accion anterior y una accion
-     */
-    void enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion);
-
 
     /*
      * Funcion que procesa el evento de que alguien gano una ronda.

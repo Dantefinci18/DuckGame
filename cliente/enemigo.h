@@ -7,6 +7,7 @@
 #include "../server/Collidable.h"
 #include "../common/common_weapon.h"
 #include "../common/common_direcciones.h"
+#include "../common/common_proteccion.h"
 
 class Enemigo {
 public:
@@ -40,6 +41,8 @@ public:
      */
     void set_weapon(WeaponType weapon);
 
+    void set_proteccion(ProteccionType new_proteccion);
+
     /*
     * Debe recibir una dirección valida.
     * Setea la dirección apuntada del enemigo
@@ -69,10 +72,10 @@ public:
      * Destructor de la clase Enemigo
      */
     ~Enemigo();
+    Duck duck;
 
 private:
     int id;  
-    Duck duck; 
 };
 
 #endif // ENEMIGO_H

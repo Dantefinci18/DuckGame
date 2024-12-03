@@ -6,6 +6,7 @@
 #include "Platform.h"
 #include "SpawnPlace.h"
 #include "SpawnWeaponBox.h"
+#include "SpawnBox.h"
 #include "Box.h"
 #include <iostream>
 #include <optional>
@@ -28,9 +29,12 @@ private:
     ColorDuck color;
     bool is_dead;
     bool esta_agachado;
+    bool juntar_item;
     DireccionApuntada direccion_apuntada;
     DireccionApuntada ultima_direccion_horizontal;
     std::unique_ptr<Weapon> weapon;
+    std::unique_ptr<Proteccion> casco;
+    std::unique_ptr<Proteccion> armadura;
 
     void apuntar(DireccionApuntada nueva_direccion) {
         direccion_apuntada = nueva_direccion;
@@ -96,11 +100,36 @@ public:
         return destinos;
     }
 
+    void recibir_disparo(){
+        if(casco && casco->en_condiciones()){
+            casco->impactar();
+            casco = nullptr;
+            eventos.push_back(std::make_shared<EventoPickupProteccion>(id, position.x, position.y, ProteccionType::NoCasco));
+        } else if(armadura && armadura->en_condiciones()){
+            armadura->impactar();
+            armadura = nullptr;
+            eventos.push_back(std::make_shared<EventoPickupProteccion>(id, position.x, position.y, ProteccionType::NoArmadura));
+        } else {
+            morir();
+        }
+    }
+
     void morir() {
         eventos.push_back(std::make_shared<EventoMuerte>(id));
         is_dead = true;
     }
 
+    void intenta_juntar(){
+        juntar_item = true;
+    }
+
+    void dejar_de_juntar(){
+        juntar_item = false;
+    }
+
+    // deberia subir shooting=true a primera linea, como esta si no tiene arma no agarra armadura
+    //el chequeo lo hace disparar si no tiene arma
+    // PODRIAA SER MAS CLARO CON UN intenta_juntar 
     void iniciar_disparo(){
         if (!weapon) {
             return;
@@ -263,7 +292,7 @@ public:
             
         }
 
-        if (other.getType() == CollidableType::SpawnPlace) {
+        if (other.getType() == CollidableType::SpawnPlace /*&& juntar_item*/) {
             SpawnPlace& spawnPlace = static_cast<SpawnPlace&>(other);
             CollidableSide side = getCollisionSide(spawnPlace);
             if (side == CollidableSide::None) {
@@ -276,18 +305,51 @@ public:
             }
         }
 
-        if (other.getType() == CollidableType::SpawnWeaponBox) {
-            SpawnWeaponBox& spawnWeaponBox = static_cast<SpawnWeaponBox&>(other);
-            CollidableSide side = getCollisionSide(spawnWeaponBox);
+
+        if (other.getType() == CollidableType::SpawnBox /*&& juntar_item*/) {
+            SpawnBox& spawnBox = static_cast<SpawnBox&>(other);
+            CollidableSide side = getCollisionSide(spawnBox);
+
+            // Verificar si hay colisión válida
             if (side == CollidableSide::None) {
                 return false;
             }
-            std::optional<std::unique_ptr<Weapon>> new_weapon = spawnWeaponBox.get_weapon();
-            if (new_weapon) {
-                weapon = std::move(new_weapon.value());
-                eventos.push_back(std::make_shared<EventoPickup>(id, spawnWeaponBox.position.x, spawnWeaponBox.position.y, weapon->get_type()));
-            }
 
+            // Obtener el tipo de ítem de la caja
+            auto item_type = spawnBox.get_item_type();
+
+            switch (item_type) {
+                case SpawnBox::ItemType::Weapon: {
+                    // Obtener y asignar el arma al jugador
+                    WeaponType weapon_type = spawnBox.get_weapon_type();
+                    auto new_item = spawnBox.recoger_item();
+                    if (new_item && std::holds_alternative<std::unique_ptr<Weapon>>(new_item.value())) {
+                        weapon = std::move(std::get<std::unique_ptr<Weapon>>(new_item.value()));
+                        eventos.push_back(std::make_shared<EventoPickup>(id, spawnBox.position.x, spawnBox.position.y, weapon_type));
+                    }
+                    break;
+                }
+                case SpawnBox::ItemType::Proteccion: {
+                    ProteccionType proteccion_type = spawnBox.get_proteccion_type();
+                    auto new_item = spawnBox.recoger_item();
+
+                    if (new_item && std::holds_alternative<std::unique_ptr<Proteccion>>(new_item.value())) {
+                        auto proteccion = std::move(std::get<std::unique_ptr<Proteccion>>(new_item.value()));
+
+                        if (proteccion_type == ProteccionType::Casco) {
+                            casco = std::move(proteccion);
+                            eventos.push_back(std::make_shared<EventoPickupProteccion>(id, spawnBox.position.x, spawnBox.position.y, ProteccionType::Casco));
+                        } else if (proteccion_type == ProteccionType::Armadura) {
+                            armadura = std::move(proteccion);
+                            eventos.push_back(std::make_shared<EventoPickupProteccion>(id, spawnBox.position.x, spawnBox.position.y, ProteccionType::Armadura));
+                        }
+                    }
+                    break;
+                }
+                case SpawnBox::ItemType::None:
+                    std::cout << "La caja está vacía.\n";
+                    break;
+            }
         }
 
         return false;
@@ -344,6 +406,8 @@ public:
         ticks_to_reset_gravity = 0;
         shooting = false;
         position = {200.0f, 300.0f};
+        casco = nullptr;
+        armadura = nullptr;
         eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping(), true));
         
     }
@@ -379,9 +443,12 @@ public:
           color(color),
           is_dead(false),
           esta_agachado(false),
+          juntar_item(false),
           direccion_apuntada(DireccionApuntada::APUNTADO_DERECHA),
           ultima_direccion_horizontal(DireccionApuntada::APUNTADO_DERECHA),
-          weapon(nullptr) {}
+          weapon(nullptr),
+          casco(nullptr),
+          armadura(nullptr) {}
 };
 
 #endif

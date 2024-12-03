@@ -23,6 +23,10 @@ void Enemigo::set_weapon(WeaponType new_weapon) {
     duck.set_weapon(new_weapon);
 }
 
+void Enemigo::set_proteccion(ProteccionType new_proteccion) {
+    duck.set_proteccion(new_proteccion);
+}
+
 void Enemigo::apuntar_arma(DireccionApuntada direccion) {
     duck.apuntar_arma(direccion);
 }
