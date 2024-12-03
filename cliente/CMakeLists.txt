@@ -7,6 +7,7 @@ target_sources(taller_client
     cliente_sender.cpp
     cliente_receiver.cpp
     cliente_leaderboard.cpp
+    cliente_zoom_utils.cpp
     lobby.cpp
     enemigo.cpp
     mapa.cpp
