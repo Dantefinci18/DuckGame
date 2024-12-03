@@ -109,30 +109,13 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             return serializador.deserializar_pickup(evento_pickup);
         }
         case Evento::EventoPickupProteccion: {
-            uint8_t id[16];
-            socket.recvall(id, sizeof(id), &was_closed);
+            uint8_t evento_pickup_proteccion[41];
+            socket.recvall(evento_pickup_proteccion, sizeof(evento_pickup_proteccion), &was_closed);
             if (was_closed) {
                 return nullptr;
             }
 
-            uint8_t x[12];
-            socket.recvall(x, sizeof(x), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            uint8_t y[12];
-            socket.recvall(y, sizeof(y), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-            uint8_t proteccion_type[1];
-            socket.recvall(proteccion_type, sizeof(proteccion_type), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            return serializador.deserializar_pickup_proteccion(id, x, y, proteccion_type);
+            return serializador.deserializar_pickup_proteccion(evento_pickup_proteccion);
         }
         case Evento::EventoSpawnArma: {
             uint8_t evento_spawn_arma[28];
@@ -233,25 +216,12 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
         }
 
         case Evento::EventoSpawnProteccionBox: {
-            uint8_t x[12];
-            socket.recvall(x, sizeof(x), &was_closed);
+            uint8_t evento_spawn_proteccion_box[25];
+            socket.recvall(evento_spawn_proteccion_box, sizeof(evento_spawn_proteccion_box), &was_closed);
             if (was_closed) {
                 return nullptr;
             }
-
-            uint8_t y[12];
-            socket.recvall(y, sizeof(y), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            uint8_t proteccion_type[1];
-            socket.recvall(proteccion_type, sizeof(proteccion_type), &was_closed);
-            if (was_closed) {
-                return nullptr;
-            }
-
-            return serializador.deserializar_spawn_proteccion_box(x, y, proteccion_type);
+            return serializador.deserializar_spawn_proteccion_box(evento_spawn_proteccion_box);
 
         }
         case Evento::EventoDisparo: {
