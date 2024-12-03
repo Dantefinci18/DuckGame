@@ -118,8 +118,30 @@ void Mapa::renderizar_mapa() {
             SpawnBox::ItemType tipo_item = spawnBox->get_item_type();
 
             if (tipo_item == SpawnBox::ItemType::Weapon) {
-                int arma_index = static_cast<int>(spawnBox->get_weapon_type()); /// TODO: ACOMODAR CON SWITCH
-                Area armaSrcArea(arma_index * 38, 0, 38, 38);
+                int arma_index = 0;
+                int cuadrado = 38;
+                switch (spawnBox->get_weapon_type()){
+                    case WeaponType::PistolaCowboy:
+                        arma_index = 0;
+                        break;
+                    case WeaponType::PistolaMagnum:
+                        arma_index = 1;
+                        break;
+                    case WeaponType::PistolaDuelos:
+                        arma_index = 2;
+                        break;
+                    case WeaponType::RifleAK47:
+                        arma_index = 3;
+                        break;
+                    case WeaponType::None:
+                        arma_index = 0;
+                        cuadrado = 0;
+                        break;
+                    default:
+                        arma_index = 0;
+                        cuadrado = 0;
+                    }
+                Area armaSrcArea(arma_index * cuadrado, 0, cuadrado, cuadrado);
                 Area armaDestArea(plat_x, plat_y, plat_width, plat_height);
                 armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
             } else {
