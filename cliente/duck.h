@@ -10,6 +10,7 @@
 #include "../common/common_weapon.h"
 #include "../common/common_color.h"
 #include "../common/common_direcciones.h"
+#include "../common/common_proteccion.h"
 
 class Duck {
 public:
@@ -67,6 +68,8 @@ public:
      */
     void set_weapon(WeaponType weapon);
 
+    void set_proteccion(ProteccionType proteccion);
+
     /* 
      * Funcion que mata al pato
      */
@@ -109,6 +112,10 @@ private:
      */
     void render_arma(int y_renderizado);
 
+    void render_casco(int y_renderizado);
+
+    void render_armadura(int y_renderizado);
+
     /* Dado un color devuelve un string */
     std::string procesar_color(ColorDuck color);
 
@@ -117,11 +124,15 @@ private:
     SdlTexture movimientos_en_x;
     SdlTexture movimiento_en_y;
     SdlTexture armas;
+    SdlTexture armadura;
+    SdlTexture casco;
     SdlTexture death;
     ColorDuck color;
     SdlTexture bala;
     bool quieto;
     std::optional<WeaponType> weapon;
+    std::optional<ProteccionType> casco_equipado;
+    std::optional<ProteccionType> armadura_equipada;
     DireccionApuntada direccion_arma;
     int x_img = 0;
     int y_img = 0;

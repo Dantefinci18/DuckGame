@@ -35,6 +35,13 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             break;
         }
 
+        case Evento::EventoPickupProteccion: {
+            
+            const EventoPickupProteccion& evento_pickup_proteccion = static_cast<const EventoPickupProteccion&>(evento);
+            evento_ptr = std::make_unique<EventoPickupProteccion>(evento_pickup_proteccion.id, evento_pickup_proteccion.x, evento_pickup_proteccion.y, evento_pickup_proteccion.proteccion_type);
+            break;
+        }
+
         case Evento::EventoSpawnArma: {
             std::cout << "spawn_arma" << std::endl;
             const EventoSpawnArma& evento_spawn = static_cast<const EventoSpawnArma&>(evento);
@@ -111,6 +118,12 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
             const EventoSpawnArmaBox& evento_spawn_arma_box = static_cast<const EventoSpawnArmaBox&>(evento);
             evento_ptr = std::make_unique<EventoSpawnArmaBox>(evento_spawn_arma_box.x, evento_spawn_arma_box.y, 
                 evento_spawn_arma_box.width, evento_spawn_arma_box.height, evento_spawn_arma_box.weapon_type);
+            break;
+        }
+
+        case Evento::EventoSpawnProteccionBox: {
+            const EventoSpawnProteccionBox& evento_spawn_proteccion_box = static_cast<const EventoSpawnProteccionBox&>(evento);
+            evento_ptr = std::make_unique<EventoSpawnProteccionBox>(evento_spawn_proteccion_box.x, evento_spawn_proteccion_box.y, evento_spawn_proteccion_box.proteccion_type);
             break;
         }
 

@@ -8,6 +8,7 @@
 #include <memory>
 #include "../server/Platform.h"  
 #include "../server/SpawnWeaponBox.h"
+#include "../server/SpawnBox.h"
 
 Cliente::Cliente(int id,ColorDuck color,ClienteProtocolo& protocolo, std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial): 
     id(id),
@@ -71,6 +72,12 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
 
+                case Evento::EventoPickupProteccion: {
+                    auto evento_pickup_proteccion = static_cast<EventoPickupProteccion*>(evento_recibido.get());
+                    manejar_proteccion(*evento_pickup_proteccion, collidables);
+                    break;
+                }
+
                 case Evento::EventoSpawnArma: {
                     auto evento_spawn_arma = static_cast<EventoSpawnArma*>(evento_recibido.get());
                     spawn_arma(*evento_spawn_arma, collidables);
@@ -127,6 +134,11 @@ void Cliente::procesar_eventos_recibidos() {
 
                     break;
                 }
+                case Evento::EventoSpawnProteccionBox: {
+                    auto evento_spawn_proteccion_box = static_cast<EventoSpawnProteccionBox*>(evento_recibido.get());
+                    agregar_collidable_proteccion(*evento_spawn_proteccion_box);
+                    break;
+                }
                 default: {
                     std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
@@ -137,7 +149,7 @@ void Cliente::procesar_eventos_recibidos() {
 }
 
 void Cliente::agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box) {
-    auto* spawnWeaponBox = new SpawnWeaponBox(
+    auto* spawnBox = new SpawnBox(
         Vector(evento_spawn_arma_box.x, evento_spawn_arma_box.y), 
         evento_spawn_arma_box.width, 
         evento_spawn_arma_box.height
@@ -145,12 +157,25 @@ void Cliente::agregar_collidable(const EventoSpawnArmaBox& evento_spawn_arma_box
 
     std::unique_ptr<Weapon> weapon = WeaponUtils::create_weapon(evento_spawn_arma_box.weapon_type);
     
-    spawnWeaponBox->set_weapon(std::move(weapon));
+    spawnBox->set_item(std::variant<std::unique_ptr<Weapon>, std::unique_ptr<Proteccion>>(std::move(weapon)));
 
-    collidables.push_back(spawnWeaponBox);
-    mapa->agregar_collidable(spawnWeaponBox);
+    collidables.push_back(spawnBox);
+    mapa->agregar_collidable(spawnBox);
 }
 
+void Cliente::agregar_collidable_proteccion(const EventoSpawnProteccionBox& evento_spawn_proteccion_box) {
+    auto* spawnBox = new SpawnBox(
+        Vector(evento_spawn_proteccion_box.x, evento_spawn_proteccion_box.y), 
+        20, 
+        20
+    );
+    std::unique_ptr<Proteccion> proteccion = std::make_unique<Proteccion>(evento_spawn_proteccion_box.proteccion_type);
+    
+    spawnBox->set_item(std::variant<std::unique_ptr<Weapon>, std::unique_ptr<Proteccion>>(std::move(proteccion)));
+
+    collidables.push_back(spawnBox);
+    mapa->agregar_collidable(spawnBox);
+}
 
 void Cliente::eliminar_caja(const EventoCajaDestruida& evento_caja_destruida) {
     mapa->eliminar_caja(evento_caja_destruida.x, evento_caja_destruida.y);
@@ -209,13 +234,13 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
             sPlace->clear_weapon();
 
         }
-        if (collidable->getType() == CollidableType::SpawnWeaponBox 
+        if (collidable->getType() == CollidableType::SpawnBox 
             && collidable->position.x == evento_pickup.x
             && collidable->position.y == evento_pickup.y) {
             std::cout << "clearing weapon" << std::endl;
-            SpawnWeaponBox* sWeaponBox = static_cast<SpawnWeaponBox*>(collidable);
-            sWeaponBox->clear_weapon();
-            mapa->clear_weapon(sWeaponBox);
+            SpawnBox* sBox = static_cast<SpawnBox*>(collidable);
+            sBox->limpiar_item();
+            mapa->clear_weapon(sBox);
         }
     }
     if (evento_pickup.id != id) {
@@ -226,6 +251,39 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
         }
     }
     duck.set_weapon(evento_pickup.weapon_type);
+}
+
+void Cliente::manejar_proteccion(const EventoPickupProteccion& evento_pickup, std::vector<Collidable*> collidables) {
+    for (auto& collidable : collidables) {
+        if (collidable->getType() == CollidableType::SpawnBox 
+            && collidable->position.x == evento_pickup.x
+            && collidable->position.y == evento_pickup.y) {
+            std::cout << "clearing proteccion" << std::endl;
+            SpawnBox* sBox = static_cast<SpawnBox*>(collidable);
+            sBox->limpiar_item();
+            //mapa->clear_weapon(sBox);  //ojo
+        }
+    }
+
+    if(evento_pickup.proteccion_type == ProteccionType::NoArmadura || evento_pickup.proteccion_type == ProteccionType::NoCasco){
+        auto* spawnBox = new SpawnBox(
+        Vector(evento_pickup.x, evento_pickup.y), 20, 20);
+        std::unique_ptr<Proteccion> proteccion = std::make_unique<Proteccion>(evento_pickup.proteccion_type);
+        
+        spawnBox->set_item(std::variant<std::unique_ptr<Weapon>, std::unique_ptr<Proteccion>>(std::move(proteccion)));
+
+        collidables.push_back(spawnBox);
+        mapa->agregar_collidable(spawnBox);
+    }
+    
+    if (evento_pickup.id != id) {
+        auto it = enemigos.find(evento_pickup.id);
+        if (it != enemigos.end()) {
+            it->second->set_proteccion(evento_pickup.proteccion_type);
+            return;
+        }
+    }
+    duck.set_proteccion(evento_pickup.proteccion_type);
 }
 
 void Cliente::manejar_muerte(const EventoMuerte& evento_muerte) {

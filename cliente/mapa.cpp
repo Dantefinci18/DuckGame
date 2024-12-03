@@ -7,20 +7,16 @@
 #include "../server/Platform.h"
 #include "../server/SpawnPlace.h"
 #include "../server/SpawnWeaponBox.h"
+#include "../server/SpawnBox.h"
 #include "../server/Box.h"
 
 Mapa::Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collidable*> collidables)
     : 
     fondo(ruta_fondo, window),
-    /*
     plataformas("../Imagenes/Tileset_Surface.png", window),
     armas("../Imagenes/guns.png", window),
-    boxes("../Imagenes/box.png", window),
-    explosion("../Imagenes/explosion.png", window),
-    */
-
-    plataformas("../Imagenes/Tileset_Surface.png", window),
-    armas("../Imagenes/guns.png", window),
+    armadura("../Imagenes/Chestplate.png", window),
+    casco("../Imagenes/Spikehelm.png", window),
     boxes("../Imagenes/box.png", window),
     explosion("../Imagenes/explosion.png", window),
     x_expl(0),
@@ -51,10 +47,10 @@ void Mapa::eliminar_caja(float x, float y) {
     
 }
 
-void Mapa::clear_weapon(SpawnWeaponBox* sWeaponBox) {
+void Mapa::clear_weapon(SpawnBox* sWeaponBox) {
     for (auto& collidable : this->collidables_plataformas) {
-        if (collidable->getType() == CollidableType::SpawnWeaponBox) {
-            SpawnWeaponBox* spawnBox = static_cast<SpawnWeaponBox*>(collidable);
+        if (collidable->getType() == CollidableType::SpawnBox) {
+            SpawnBox* spawnBox = static_cast<SpawnBox*>(collidable);
             if (spawnBox->position.x == sWeaponBox->position.x && 
                 spawnBox->position.y == sWeaponBox->position.y) {
                 auto it = std::find(collidables_plataformas.begin(), collidables_plataformas.end(), collidable);
@@ -111,19 +107,53 @@ void Mapa::renderizar_mapa() {
             boxes.render(boxSrcArea, boxDestArea, SDL_FLIP_NONE);
         }
 
-        if (collidable->getType() == CollidableType::SpawnWeaponBox) {
-            SpawnWeaponBox* spawnWeaponBox = static_cast<SpawnWeaponBox*>(collidable);
+        if (collidable->getType() == CollidableType::SpawnBox) {
+            SpawnBox* spawnBox = static_cast<SpawnBox*>(collidable);
 
-            float plat_x = spawnWeaponBox->position.x;
-            float plat_y = static_cast<float>(ScreenUtils::get_y_for_screen(spawnWeaponBox->position.y, spawnWeaponBox->height));
-            float plat_width = spawnWeaponBox->width;
-            float plat_height = spawnWeaponBox->height;
+            float plat_x = spawnBox->position.x;
+            float plat_y = static_cast<float>(ScreenUtils::get_y_for_screen(spawnBox->position.y, spawnBox->height));
+            float plat_width = spawnBox->width;
+            float plat_height = spawnBox->height;
 
-            int arma_index = static_cast<int>(spawnWeaponBox->get_weapon_type());
+            SpawnBox::ItemType tipo_item = spawnBox->get_item_type();
 
-            Area armaSrcArea(arma_index * 38, 0, 38, 38);
-            Area armaDestArea(plat_x, plat_y, plat_width, plat_height);
-            armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
+            if (tipo_item == SpawnBox::ItemType::Weapon) {
+                int arma_index = static_cast<int>(spawnBox->get_weapon_type()); /// TODO: ACOMODAR CON SWITCH
+                Area armaSrcArea(arma_index * 38, 0, 38, 38);
+                Area armaDestArea(plat_x, plat_y, plat_width, plat_height);
+                armas.render(armaSrcArea, armaDestArea, SDL_FLIP_NONE);
+            } else {
+                switch (spawnBox->get_proteccion_type()) {
+                    case ProteccionType::Armadura: {
+                        Area armaduraSrcArea(0, 0, 256, 196);
+                        Area armaduraDestArea(plat_x, plat_y - 25, 65, 65);
+                        armadura.render(armaduraSrcArea, armaduraDestArea, SDL_FLIP_NONE, 0.0);
+                        break;
+                    }
+                    case ProteccionType::Casco: {
+                        Area cascoSrcArea(0, 0, 128, 128);
+                        Area cascoDestArea(plat_x, plat_y - 15, 38, 38); //tenia un casco y
+                        casco.render(cascoSrcArea, cascoDestArea, SDL_FLIP_NONE, 0.0);
+                        break;
+                    }
+                    case ProteccionType::NoArmadura: {
+                        Area armaduraSrcArea(0, 0, 256, 196);
+                        Area armaduraDestArea(plat_x, plat_y - 20, 65, 65);
+                        armadura.render(armaduraSrcArea, armaduraDestArea, SDL_FLIP_VERTICAL, 90.0);
+                        break;
+                    }
+                    case ProteccionType::NoCasco: {
+                        Area cascoSrcArea(0, 0, 128, 128);
+                        Area cascoDestArea(plat_x, plat_y - 5, 38, 38); //tenia un casco y
+                        casco.render(cascoSrcArea, cascoDestArea, SDL_FLIP_VERTICAL, 45.0);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+
+            
         }
         if (esta_explotando) {
             float box_x = x_expl;

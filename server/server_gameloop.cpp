@@ -69,6 +69,7 @@ void Gameloop::procesar_acciones(std::vector<std::shared_ptr<Accion>> acciones, 
             player->set_x_direction(0.0f);
         
         } else if (command == DISPARAR){
+            player->intenta_juntar();
             player->iniciar_disparo();
             /*std::vector<std::shared_ptr<Evento>> eventos;
             if(player->has_weapon()){
@@ -76,6 +77,7 @@ void Gameloop::procesar_acciones(std::vector<std::shared_ptr<Accion>> acciones, 
             }*/
         } else if (command == DEJAR_DISPARAR){
             std::cout << "Dejo de disparar" << std::endl;
+            player->dejar_de_juntar();
             player->dejar_disparar();
         } else if (command == RECARGAR) {
             player->reload();

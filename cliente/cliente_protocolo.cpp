@@ -182,6 +182,33 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
 
             return serializador.deserializar_pickup(id, x, y, weapon_type);
         }
+        case Evento::EventoPickupProteccion: {
+            uint8_t x[32];
+            socket.recvall(x, sizeof(x), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t y[32];
+            socket.recvall(y, sizeof(y), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t id[32];
+            socket.recvall(id, sizeof(id), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t proteccion_type[32];
+            socket.recvall(proteccion_type, sizeof(proteccion_type), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            return serializador.deserializar_pickup_proteccion(id, x, y, proteccion_type);
+        }
         case Evento::EventoSpawnArma: {
             uint8_t x[32];
             socket.recvall(x, sizeof(x), &was_closed);
@@ -348,6 +375,30 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             return std::make_unique<EventoEspera>();
         }
 
+
+        case Evento::EventoSpawnProteccionBox: {
+            uint8_t x[32];
+            socket.recvall(x, sizeof(x), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t y[32];
+            socket.recvall(y, sizeof(y), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            uint8_t proteccion_type[32];
+            socket.recvall(proteccion_type, sizeof(proteccion_type), &was_closed);
+            if (was_closed) {
+                return nullptr;
+            }
+
+            return serializador.deserializar_spawn_proteccion_box(x, y, proteccion_type);
+
+        }
+        
         default:
             return nullptr; 
     }
