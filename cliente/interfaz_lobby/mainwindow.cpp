@@ -194,7 +194,8 @@ ClienteLobby::ClienteLobby(int argc, char* argv[], Socket&& skt):
 void ClienteLobby::recibir_eventos(){
     while(color == ColorDuck::MAX_COLOR){
         auto evento = protocolo.recibir_evento();
-
+        std::cout << "evento_lobby" << std::endl;
+        evento->print();
         if(evento->get_tipo() == Evento::EventoMapa){
             auto evento_mapa = static_cast<EventoMapa*>(evento.get());
             collidables = evento_mapa->collidables;

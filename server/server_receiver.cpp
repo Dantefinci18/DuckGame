@@ -11,7 +11,7 @@ void Receiver::run() {
     try {
         while (_keep_running) {
             std::shared_ptr<Accion> accion = protocolo.recibir_accion();
-
+            accion->print();
             if(accion->get_command() == NONE_ACCION){
                 _keep_running = false;
                 break;

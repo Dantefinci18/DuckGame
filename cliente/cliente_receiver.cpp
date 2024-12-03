@@ -8,6 +8,8 @@ void ClienteReceiver::run() {
     while (_keep_running) {
         try {
             std::unique_ptr<Evento> evento = protocolo.recibir_evento();
+            std::cout << "evento_receiver" << std::endl;
+            evento->print();
             if (evento) {
                 queue_eventos.push(std::move(evento));  
             } else {

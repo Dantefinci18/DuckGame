@@ -4,7 +4,8 @@
 #include <string>
 #include <cstdint>
 #include <memory>
-
+#include <iostream>
+#include <sstream>
 enum ComandoAccion : uint8_t{
     DERECHA,
     IZQUIERDA,
@@ -47,6 +48,14 @@ class Accion {
         explicit Accion() : player_id(-1), command(ComandoAccion::NONE_ACCION) {}
 
         virtual ~Accion() = default;
+        virtual void print() const {
+            std::ostringstream oss;
+            oss << "{ \"type\": \"Accion\", "
+                << "\"player_id\": " << player_id << ", "
+                << "\"command\": " << command
+                << " }";
+            std::cout << oss.str() << std::endl;
+        };
 };
 
 class AccionCargarPartida : public Accion {
@@ -56,6 +65,15 @@ class AccionCargarPartida : public Accion {
 
         explicit AccionCargarPartida(int id_partida, std::string nombre_partida):
             Accion(ComandoAccion::CARGAR_PARTIDA),id_partida(id_partida), nombre_partida(nombre_partida){}
+        
+        void print() const override {
+            std::ostringstream oss;
+            oss << "{ \"type\": \"AccionCargarPartida\", "
+                << "\"id_partida\": " << id_partida << ", "
+                << "\"nombre_partida\": " << nombre_partida.c_str()
+                << " }";
+            std::cout << oss.str() << std::endl;
+        }
 };
 
 class AccionNuevaPartida : public Accion {
@@ -70,6 +88,16 @@ class AccionNuevaPartida : public Accion {
             Accion(ComandoAccion::NUEVA_PARTIDA),
             cantidad_de_jugadores(cantidad_de_jugadores),
             mapa(mapa),nombre_partida(nombre_partida){}
+        
+        void print() const override{
+            std::ostringstream oss;
+            oss << "{ \"type\": \"AccionNuevaPartida\", "
+                << "\"cantidad_de_jugadores\": " << cantidad_de_jugadores << ", "
+                << "\"nombre_partida\": " << nombre_partida.c_str() << ", "
+                << "\"mapa\": " << mapa << ", "
+                << " }";
+            std::cout << oss.str() << std::endl;
+        }
 };
 
 

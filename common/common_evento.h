@@ -52,7 +52,12 @@ public:
         : id(id), color(color), x(x), y(y), is_flapping(is_flapping), reset(reset) {}
 
     void print() const override {
-        
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoMovimiento\", "
+            << "\"id\": " << id << ", "
+            << "\"color\": " << static_cast<int>(color)
+            << " }";
+        std::cout << oss.str() << std::endl;
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoMovimiento; }  

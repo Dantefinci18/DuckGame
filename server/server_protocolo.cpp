@@ -21,8 +21,8 @@ std::shared_ptr<Accion> ProtocoloServidor::recibir_accion() {
         return std::make_unique<Accion>(NONE_ACCION);
     }
 
-    std::cout << "tipo accion:\n";
-    serializador.imprimir_uint8_t_array(data_tipo,sizeof(data_tipo));
+    //std::cout << "tipo accion:\n";
+    ////serializador.imprimir_uint8_t_array(data_tipo,sizeof(data_tipo));
     ComandoAccion tipo_accion = serializador.deserializar_tipo_accion(data_tipo);
 
     if(tipo_accion == NUEVA_PARTIDA){
@@ -33,16 +33,16 @@ std::shared_ptr<Accion> ProtocoloServidor::recibir_accion() {
             return std::make_shared<Accion>(NONE_ACCION);
         }
 
-        std::cout << "cantidad de jugadores:\n";
-        serializador.imprimir_uint8_t_array(data_cantidad_de_jugadores,sizeof(data_cantidad_de_jugadores));
+        //std::cout << "cantidad de jugadores:\n";
+        //serializador.imprimir_uint8_t_array(data_cantidad_de_jugadores,sizeof(data_cantidad_de_jugadores));
         uint8_t data_mapa[32];
         conexion.recvall(data_mapa,sizeof(data_mapa),&was_closed);
 
         if (was_closed) {
             return std::make_shared<Accion>(NONE_ACCION);
         }
-        std::cout << "mapa:\n";
-        serializador.imprimir_uint8_t_array(data_mapa,sizeof(data_mapa));
+        //std::cout << "mapa:\n";
+        //serializador.imprimir_uint8_t_array(data_mapa,sizeof(data_mapa));
 
         uint8_t data_tamanio_nombre[32];
         conexion.recvall(data_tamanio_nombre,sizeof(data_tamanio_nombre),&was_closed);
@@ -50,19 +50,19 @@ std::shared_ptr<Accion> ProtocoloServidor::recibir_accion() {
         if (was_closed) {
             return std::make_unique<Accion>(NONE_ACCION);
         }
-        std::cout << "tamanio nombre partida:\n";
-        serializador.imprimir_uint8_t_array(data_tamanio_nombre,sizeof(data_tamanio_nombre));
+        //std::cout << "tamanio nombre partida:\n";
+        //serializador.imprimir_uint8_t_array(data_tamanio_nombre,sizeof(data_tamanio_nombre));
 
         int tamanio_nombre = serializador.deserializar_numero_entero(data_tamanio_nombre);
 
         uint8_t data_nombre_partida[tamanio_nombre];
         conexion.recvall(data_nombre_partida,sizeof(data_nombre_partida),&was_closed);
 
-        std::cout << "nombre partida:\n";
-        serializador.imprimir_uint8_t_array(data_nombre_partida,sizeof(data_nombre_partida));
+        //std::cout << "nombre partida:\n";
+        //serializador.imprimir_uint8_t_array(data_nombre_partida,sizeof(data_nombre_partida));
 
         auto nuevaPartida = serializador.deserializar_nueva_partida(data_nombre_partida,tamanio_nombre,data_cantidad_de_jugadores,data_mapa);
-        std::cout << "nombre partida en protocolo: \n" << nuevaPartida->nombre_partida << std::endl;
+        //std::cout << "nombre partida en protocolo: \n" << nuevaPartida->nombre_partida << std::endl;
         return nuevaPartida;
 
     }else if(tipo_accion == CARGAR_PARTIDA){
@@ -109,7 +109,7 @@ void ProtocoloServidor::enviar_estado(const Evento& evento) {
     std::lock_guard<std::mutex> lock(mtx);
     bool was_closed = false;
     if(evento.get_tipo() == Evento::EventoEspera){
-        std::cout << "protocolo: evento espera\n";
+        //std::cout << "protocolo: evento espera\n";
     }
     
     std::vector<uint8_t> bits = serializador.serializar_evento(evento);
