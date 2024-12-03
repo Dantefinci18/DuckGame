@@ -38,6 +38,10 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoPickup) {
         return serializar_pickup(evento);
     }
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoPickupProteccion) {
+        return serializar_pickup_proteccion(evento);
+    }
     
     if (evento.get_tipo() == Evento::TipoEvento::EventoMovimiento) {
         return serializar_movimiento(evento);
@@ -96,6 +100,11 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoSpawnArmaBox){
         return serializar_spawn_arma_box(evento);
     }
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoSpawnProteccionBox){
+        return serializar_spawn_proteccion_box(evento);
+    }
+
     return std::vector<uint8_t>();
 }
 
@@ -188,6 +197,42 @@ std::vector<uint8_t> Serializador::serializar_pickup(const Evento& evento) {
     return bits;
 }
 
+std::vector<uint8_t> Serializador::serializar_pickup_proteccion(const Evento& evento) {
+    std::vector<uint8_t> bits(136); 
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        bits[i] = (tipo_evento >> (7 - i)) & 1;
+    }
+
+    uint32_t x_bits;
+    memcpy(&x_bits, &static_cast<const EventoPickupProteccion&>(evento).x, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[8 + i] = (x_bits >> (31 - i)) & 1;
+    }
+
+    // Serializar y
+    uint32_t y_bits;
+    memcpy(&y_bits, &static_cast<const EventoPickupProteccion&>(evento).y, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[40 + i] = (y_bits >> (31 - i)) & 1;
+    }
+
+    // Serializar id
+    uint32_t id_bits = static_cast<uint32_t>(static_cast<const EventoPickupProteccion&>(evento).id);
+    for (int i = 0; i < 32; ++i) {
+        bits[72 + i] = (id_bits >> (31 - i)) & 1;
+    }
+
+    //Serializar weaponType
+    uint32_t tipo_bits = static_cast<uint32_t>(static_cast<const EventoPickupProteccion&>(evento).proteccion_type);
+    for (int i = 0; i < 32; ++i) {
+        bits[104 + i] = (tipo_bits >> (31 - i)) & 1;
+    }
+    //imprimir_uint8_t_array(bits.data(), 136);
+    return bits;
+}
+
 std::vector<uint8_t> Serializador::serializar_spawn_arma(const Evento& evento) {
     std::vector<uint8_t> bits(104); 
 
@@ -255,6 +300,36 @@ std::vector<uint8_t> Serializador::serializar_spawn_arma_box(const Evento& event
     uint32_t tipo_bits = static_cast<uint32_t>(static_cast<const EventoSpawnArmaBox&>(evento).weapon_type);
     for (int i = 0; i < 32; ++i) {
         bits[136 + i] = (tipo_bits >> (31 - i)) & 1;
+    }
+    //imprimir_uint8_t_array(bits.data(), 104);
+    return bits;
+}
+
+std::vector<uint8_t> Serializador::serializar_spawn_proteccion_box(const Evento& evento) {
+    std::vector<uint8_t> bits(104); 
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    for (int i = 0; i < 8; ++i) {
+        bits[i] = (tipo_evento >> (7 - i)) & 1;
+    }
+
+    uint32_t x_bits;
+    memcpy(&x_bits, &static_cast<const EventoSpawnProteccionBox&>(evento).x, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[8 + i] = (x_bits >> (31 - i)) & 1;
+    }
+
+    // Serializar y
+    uint32_t y_bits;
+    memcpy(&y_bits, &static_cast<const EventoSpawnProteccionBox&>(evento).y, sizeof(float));
+    for (int i = 0; i < 32; ++i) {
+        bits[40 + i] = (y_bits >> (31 - i)) & 1;
+    }
+
+    //Serializar weaponType
+    uint32_t tipo_bits = static_cast<uint32_t>(static_cast<const EventoSpawnProteccionBox&>(evento).proteccion_type);
+    for (int i = 0; i < 32; ++i) {
+        bits[72 + i] = (tipo_bits >> (31 - i)) & 1;
     }
     //imprimir_uint8_t_array(bits.data(), 104);
     return bits;
@@ -482,6 +557,37 @@ std::unique_ptr<Evento> Serializador::deserializar_pickup(const uint8_t* id_data
     return std::make_unique<EventoPickup>(id, x, y, tipo);
 }
 
+std::unique_ptr<Evento> Serializador::deserializar_pickup_proteccion(const uint8_t* id_data, const uint8_t* x_data, const uint8_t* y_data, const uint8_t* proteccion_type_data) {
+    int id;
+    float x, y;
+
+    uint32_t id_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        id_bits |= (id_data[i] << (31 - i));
+    }
+    id = static_cast<int>(id_bits);
+
+    uint32_t x_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        x_bits |= (x_data[i] << (31 - i));
+    }
+    memcpy(&x, &x_bits, sizeof(float));
+ 
+    uint32_t y_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        y_bits |= (y_data[i] << (31 - i));
+    }
+    memcpy(&y, &y_bits, sizeof(float));
+
+    uint32_t tipo_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        tipo_bits |= (proteccion_type_data[i] << (31 - i));
+    }
+    ProteccionType tipo = static_cast<ProteccionType>(tipo_bits);
+    return std::make_unique<EventoPickupProteccion>(id, x, y, tipo);
+}
+
+
 std::unique_ptr<Evento> Serializador::deserializar_spawn_arma(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* weapon_type_data) {
     float x, y;
 
@@ -537,6 +643,29 @@ std::unique_ptr<Evento> Serializador::deserializar_spawn_arma_box(const uint8_t*
     }
     WeaponType tipo = static_cast<WeaponType>(tipo_bits);
     return std::make_unique<EventoSpawnArmaBox>(x, y, width, height, tipo);
+}
+
+std::unique_ptr<Evento> Serializador::deserializar_spawn_proteccion_box(const uint8_t* x_data, const uint8_t* y_data, const uint8_t* proteccion_type_data) {
+    float x, y;
+
+    uint32_t x_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        x_bits |= (x_data[i] << (31 - i));
+    }
+    memcpy(&x, &x_bits, sizeof(float));
+ 
+    uint32_t y_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        y_bits |= (y_data[i] << (31 - i));
+    }
+    memcpy(&y, &y_bits, sizeof(float));
+
+    uint32_t tipo_bits = 0;
+    for (int i = 0; i < 32; ++i) {
+        tipo_bits |= (proteccion_type_data[i] << (31 - i));
+    }
+    ProteccionType tipo = static_cast<ProteccionType>(tipo_bits);
+    return std::make_unique<EventoSpawnProteccionBox>(x, y, tipo);
 }
 
 std::unique_ptr<Evento> Serializador::deserializar_disparo(const uint8_t* id_data) {

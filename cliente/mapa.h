@@ -11,6 +11,7 @@
 #include "../server/Platform.h"
 #include "../server/SpawnPlace.h"
 #include "../server/SpawnWeaponBox.h"
+#include "../server/SpawnBox.h"
 #include "../common/common_screen_utils.h"
 /* 
  * Clase que se encarga de renderizar el mapa del juego
@@ -47,9 +48,9 @@ public:
 
     /*
      * Funcion que limpia un arma
-     * Recibe un puntero a un SpawnWeaponBox
+     * Recibe un puntero a un SpawnBox
      */
-    void clear_weapon(SpawnWeaponBox* sWeaponBox);
+    void clear_weapon(SpawnBox* sWeaponBox);
 
     /* Renderiza el mapa
      */
@@ -67,7 +68,9 @@ public:
 private:
     SdlTexture fondo;
     SdlTexture plataformas;
-    SdlTexture armas;    
+    SdlTexture armas;
+    SdlTexture armadura;
+    SdlTexture casco;    
     SdlTexture boxes;  
     SdlTexture explosion;
     float x_expl;

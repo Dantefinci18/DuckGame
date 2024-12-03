@@ -7,6 +7,7 @@
 #include "SpawnPlace.h"
 #include "Box.h"
 #include "SpawnWeaponBox.h"
+#include "SpawnBox.h"
 #include "bala.h"
 #include "../common/common_evento.h"
 #include <vector>
@@ -34,7 +35,7 @@ public:
             Vector punto_final = destino;
 
             for (auto& collidable : collidables) {
-                if(collidable->getType() != CollidableType::SpawnPlace && collidable->getType() != CollidableType::SpawnWeaponBox){
+                if(collidable->getType() != CollidableType::SpawnPlace && collidable->getType() != CollidableType::SpawnBox){
                     auto interseccion = collidable->intersection_point(origen, destino);
                     if (interseccion) {
                         float distancia = (*interseccion - origen).magnitude();
@@ -84,7 +85,8 @@ public:
                     case CollidableType::Player: {
                         Player* jugador_disparado = dynamic_cast<Player*>(primer_impacto);
                         if (jugador_disparado) {
-                            jugador_disparado->morir();
+                            //jugador_disparado->morir();
+                            jugador_disparado->recibir_disparo();
                         } else {
                             std::cerr << "Error: dynamic_cast a Player falló." << std::endl;
                         }
@@ -109,10 +111,26 @@ public:
 
                             EventoCajaDestruida evento_caja_destruida(caja_x, caja_y);
                             eventos.push_back(std::make_shared<EventoCajaDestruida>(evento_caja_destruida));
-                            SpawnWeaponBox* recompensa = new SpawnWeaponBox(Vector(caja_x, caja_y), caja_impactada->width, caja_impactada->height);
-                            EventoSpawnArmaBox evento_spawn_arma(caja_x, caja_y, caja_impactada->width, caja_impactada->height, recompensa->get_weapon_type());
-                            eventos.push_back(std::make_shared<EventoSpawnArmaBox>(evento_spawn_arma));
-                            collidables_a_agregar.push_back(recompensa);
+                            SpawnBox* recompensa = new SpawnBox(Vector(caja_x, caja_y), 20, 20);
+                            
+                            SpawnBox::ItemType tipo_item = recompensa->get_item_type();
+
+                            if (tipo_item == SpawnBox::ItemType::Weapon) {
+                                EventoSpawnArmaBox evento_spawn_arma(caja_x, caja_y, caja_impactada->width, caja_impactada->height, recompensa->get_weapon_type());
+                                eventos.push_back(std::make_shared<EventoSpawnArmaBox>(evento_spawn_arma));
+                                collidables_a_agregar.push_back(recompensa);
+                            } else if (tipo_item == SpawnBox::ItemType::Proteccion) {
+                                EventoSpawnProteccionBox evento_spawn_proteccion(caja_x, caja_y, recompensa->get_proteccion_type());
+                                eventos.push_back(std::make_shared<EventoSpawnProteccionBox>(evento_spawn_proteccion));
+                                collidables_a_agregar.push_back(recompensa);
+                            } else if (tipo_item == SpawnBox::ItemType::None) {
+                                std::cout << "La caja está vacía" << std::endl;
+                                std::cout << "ACA TENGO QUE MEJORARA QUE SEA NONE, DEBERIA SER NONE Y NO UNA ARMA NONE" << std::endl;
+                                std::cout << "OJO QUE CLIENTE Y DEMAS BUSCA POR TIPO DE ARMA NONE" << std::endl;
+                            } else{
+                               std::cout << "\033[43;31m(MANAGER) - TOCO ALGO RARO\033[0m" << std::endl; 
+                            }
+                            //collidables_a_agregar.push_back(recompensa);
                         } else {
                             std::cerr << "Error: dynamic_cast a Box falló." << std::endl;
                         }

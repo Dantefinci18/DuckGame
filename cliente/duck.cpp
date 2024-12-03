@@ -14,22 +14,20 @@
 #define ANCHO_BALA 11
 
 Duck::Duck(SdlWindow& window, float x_inicial, float y_inicial,ColorDuck color)
-    : /*movimientos_en_x("../Imagenes/duck_x" + procesar_color(color) + ".png", window),
-      movimiento_en_y("../Imagenes/movimiento_y" + procesar_color(color) + ".png", window),
-      armas("../Imagenes/guns.png", window),
-      death("../Imagenes/duckDead" + procesar_color(color) + ".png", window),
-      color(color),
-      bala("../Imagenes/bullet.png", window),*/
-
+    :
       movimientos_en_x("../Imagenes/duck_x" + procesar_color(color) + ".png", window),
       movimiento_en_y("../Imagenes/movimiento_y" + procesar_color(color) + ".png", window),
       armas("../Imagenes/guns.png", window),
+      armadura("../Imagenes/Chestplate.png", window),
+      casco("../Imagenes/Spikehelm.png", window),
       death("../Imagenes/duckDead" + procesar_color(color) + ".png", window),
       color(color),
       bala("../Imagenes/bullet.png", window),
 
       quieto(false),                
-      weapon(std::nullopt),          
+      weapon(std::nullopt),
+      casco_equipado(std::nullopt),
+      armadura_equipada(std::nullopt),          
       direccion_arma(DireccionApuntada::APUNTADO_DERECHA),
       x_img(0),                     
       y_img(0),                     
@@ -80,6 +78,8 @@ void Duck::render() {
     if (reset) {
         std::cout << "reset" << std::endl;
         weapon = std::nullopt;
+        casco_equipado = std::nullopt;
+        armadura_equipada = std::nullopt;
         is_dead = false;
         esta_agachado = false;
         is_flapping = false;
@@ -130,6 +130,14 @@ void Duck::render() {
         }
     }
 
+    if(armadura_equipada){
+        render_armadura(ALTO_VENTANA - y_actual - ALTO_DUCK);
+    }
+
+    if (casco_equipado) {
+        render_casco(ALTO_VENTANA - y_actual - ALTO_DUCK);
+    }
+
     if (weapon) {
         render_arma(ALTO_VENTANA - y_actual - ALTO_DUCK);
     }
@@ -166,6 +174,32 @@ void Duck::levantarse() {
 void Duck::set_weapon(WeaponType weapon) {
     this->weapon = weapon;
 }
+
+void Duck::set_proteccion(ProteccionType proteccion) {
+    switch (proteccion) {
+        case ProteccionType::Casco: {
+            casco_equipado = proteccion;
+            break;
+        }
+        case ProteccionType::Armadura: {
+            armadura_equipada = proteccion;
+            break;
+        }
+        case ProteccionType::NoCasco: {
+            casco_equipado = std::nullopt;
+            break;
+        }
+        case ProteccionType::NoArmadura: {
+            armadura_equipada = std::nullopt;
+            break;
+        }
+        default: {
+            casco_equipado = std::nullopt;
+            armadura_equipada = std::nullopt;
+        }
+    }
+}
+
 
 Duck::~Duck() {}
 
@@ -222,11 +256,37 @@ void Duck::render_movimiento_salto(Area& srcArea, Area& destArea) {
 }
 
 void Duck::render_arma(int y_renderizado) {
-    int arma_index = static_cast<int>(weapon.value());
-    Area armaSrcArea(arma_index * 38, 0, 38, 38);
-    
+    int arma_index = 0;
+    int cuadrado = 38;
+    switch (weapon.value()){
+        case WeaponType::PistolaCowboy:
+            arma_index = 0;
+            break;
+        case WeaponType::PistolaMagnum:
+            arma_index = 1;
+            break;
+        case WeaponType::PistolaDuelos:
+            arma_index = 2;
+            break;
+        case WeaponType::RifleAK47:
+            arma_index = 3;
+            break;
+        case WeaponType::None:
+            arma_index = 0;
+            cuadrado = 0;
+            break;
+        default:
+            arma_index = 0;
+            cuadrado = 0;
+    }
+    Area armaSrcArea(arma_index * cuadrado, 0, cuadrado, cuadrado);
+    int aux_agachado = 0;
     int pos_arma_x = 0;
     double angle = 0.0;
+
+    if(esta_agachado){
+        aux_agachado = 10 ;
+    }
 
     switch (direccion_arma) {
         case DireccionApuntada::APUNTADO_ARRIBA:
@@ -246,8 +306,48 @@ void Duck::render_arma(int y_renderizado) {
             flip = SDL_FLIP_HORIZONTAL;
             break;
     }
-    Area armaDestArea(x_actual + pos_arma_x, y_renderizado, ANCHO_DUCK, ALTO_DUCK);
+    Area armaDestArea(x_actual + pos_arma_x, y_renderizado + aux_agachado, ANCHO_DUCK, ALTO_DUCK);
     armas.render(armaSrcArea, armaDestArea, flip, angle);
+}
+
+void Duck::render_casco(int y_renderizado){
+    if(casco_equipado){
+        int pos_casco_x = 2;
+        if(flip == SDL_FLIP_NONE){
+            pos_casco_x = -8;
+        }
+        int aux_y = 18;
+        if(esta_agachado){
+            aux_y = 10;
+            if(flip == SDL_FLIP_NONE){
+                pos_casco_x += 2;
+            } else {
+                pos_casco_x -= 2;
+            }
+        }
+        Area cascoSrcArea(0, 0, 128, 128);
+        Area cascoDestArea(x_actual + pos_casco_x, y_renderizado - aux_y, 38, 38);
+        casco.render(cascoSrcArea, cascoDestArea, flip, 0.0);
+    }
+}
+
+void Duck::render_armadura(int y_renderizado){
+    if(armadura_equipada){
+        int aux_y = 0;
+        int aux_x = ANCHO_DUCK/2;
+        if(esta_agachado){
+            if(flip == SDL_FLIP_NONE){
+                aux_x -= 5;
+            }
+            else{
+                aux_x += 5;
+            }
+            aux_y = 5;
+        }
+        Area armaduraSrcArea(0, 0, 256, 196);
+        Area armaduraDestArea(x_actual - aux_x, y_renderizado + aux_y, 65, 65);
+        armadura.render(armaduraSrcArea, armaduraDestArea, flip, 0.0); 
+    }
 }
 
 std::string Duck::procesar_color(ColorDuck color){

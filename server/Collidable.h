@@ -13,7 +13,8 @@ enum class CollidableType {
     Player,
     Box,
     SpawnPlace,
-    SpawnWeaponBox
+    SpawnWeaponBox,
+    SpawnBox
 };
 
 enum class CollidableSide {
