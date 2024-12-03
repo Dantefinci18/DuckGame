@@ -402,61 +402,51 @@ void Serializador::imprimir_uint8_t_array(const uint8_t* array, size_t size) {
 }
 
 
+int Serializador::deserializar_cantidad_collidables(const uint8_t* cantidad_data) {
+    std::bitset<6> bits;
+    for (int i = 0; i < 6; ++i) {
+        bits[i] = cantidad_data[i];
+    }
+    return static_cast<int>(bits.to_ulong());
+}
+
 int Serializador::deserializar_cantidad(const uint8_t* cantidad_data) {
-    int cantidad = 0;
+    uint32_t cantidad = 0;
     for (int i = 0; i < 32; ++i) {
         cantidad |= (cantidad_data[i] << (31 - i));
     }
-    return cantidad;
+    return static_cast<int>(cantidad);
 }
-
-
 
 std::vector<uint8_t> Serializador::serializar_mapa(const Evento& evento) {
     int cantidad = static_cast<const EventoMapa&>(evento).collidables.size();
-    std::vector<uint8_t> bits(40 + cantidad * 160); 
+    std::vector<uint8_t> bits(14 + cantidad * 52); 
 
     uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
     serializar_tipo_evento(bits, tipo_evento, 0);
-    uint32_t cantidad_bits = static_cast<uint32_t>(cantidad);
-    for (int i = 0; i < 32; ++i) {
-        bits[8 + i] = (cantidad_bits >> (31 - i)) & 1;
-    }
+    serializar_cantidad(bits, cantidad, 8);
 
     const std::vector<Collidable*>& collidables = static_cast<const EventoMapa&>(evento).collidables;
-    int offset = 40; 
+    int offset = 14; 
 
     for (const auto& collidable : collidables) {
         uint32_t tipo_bits = static_cast<uint32_t>(collidable->getType());
-        for (int i = 0; i < 32; ++i) {
-            bits[offset + i] = (tipo_bits >> (31 - i)) & 1;
-        }
+        serializar_tipo_collidable(bits, tipo_bits, offset);
 
-        uint32_t x_bits;
-        memcpy(&x_bits, &collidable->position.x, sizeof(float));
-        for (int i = 0; i < 32; ++i) {
-            bits[offset + 32 + i] = (x_bits >> (31 - i)) & 1;
-        }
+        int x_bits = static_cast<int>(collidable->position.x);
+        int y_bits = static_cast<int>(collidable->position.y);
 
-        uint32_t y_bits;
-        memcpy(&y_bits, &collidable->position.y, sizeof(float));
-        for (int i = 0; i < 32; ++i) {
-            bits[offset + 64 + i] = (y_bits >> (31 - i)) & 1;
-        }
+        serializar_coordenadas(bits, x_bits, y_bits, offset + 4, offset + 16);
 
-        uint32_t width_bits;
-        memcpy(&width_bits, &collidable->width, sizeof(float));
-        for (int i = 0; i < 32; ++i) {
-            bits[offset + 96 + i] = (width_bits >> (31 - i)) & 1;
-        }
+        int width_bits = static_cast<int>(collidable->width);
+        serializar_tamaño_collidable(bits, width_bits, offset + 28);
 
-        uint32_t height_bits;
-        memcpy(&height_bits, &collidable->height, sizeof(float));
-        for (int i = 0; i < 32; ++i) {
-            bits[offset + 128 + i] = (height_bits >> (31 - i)) & 1;
-        }
+        int height_bits = static_cast<int>(collidable->height);
+        serializar_tamaño_collidable(bits, height_bits, offset + 40);
 
-        offset += 160; 
+
+
+        offset += 52; 
     }
 
     // Serialize leaderboard
@@ -506,39 +496,13 @@ std::vector<uint8_t> Serializador::serializar_mapa(const Evento& evento) {
 
 Collidable* Serializador::deserializar_collidable(const uint8_t* collidable_data) {
 
-    uint32_t tipo_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        tipo_bits |= (collidable_data[i] << (31 - i));
-    }
-    CollidableType tipo = static_cast<CollidableType>(tipo_bits);
+    CollidableType tipo = static_cast<CollidableType>(deserializar_tipo_collidable(collidable_data));
 
-    uint32_t x_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        x_bits |= (collidable_data[32 + i] << (31 - i));
-    }
-    float x;
-    memcpy(&x, &x_bits, sizeof(float));
+    int x = deserializar_coordenadas(&collidable_data[4]);
+    int y = deserializar_coordenadas(&collidable_data[16]);
 
-    uint32_t y_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        y_bits |= (collidable_data[64 + i] << (31 - i));
-    }
-    float y;
-    memcpy(&y, &y_bits, sizeof(float));
-
-    uint32_t width_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        width_bits |= (collidable_data[96 + i] << (31 - i));
-    }
-    float width;
-    memcpy(&width, &width_bits, sizeof(float));
-
-    uint32_t height_bits = 0;
-    for (int i = 0; i < 32; ++i) {
-        height_bits |= (collidable_data[128 + i] << (31 - i));
-    }
-    float height;
-    memcpy(&height, &height_bits, sizeof(float));
+    int width = deserializar_tamaño_collidable(collidable_data, 28);
+    int height = deserializar_tamaño_collidable(collidable_data, 40);
 
     switch (tipo) {
     case CollidableType::Platform:
@@ -610,11 +574,26 @@ void Serializador::serializar_tamaño_collidable(std::vector<uint8_t>& bits, uin
     
 }
 
+void Serializador::serializar_tipo_collidable(std::vector<uint8_t>& bits, uint32_t tipo, size_t offset) {
+    std::bitset<4> tipo_bits(tipo);
+    for (int i = 0; i < 4; ++i) {
+        bits[offset + i] = tipo_bits[i];
+    }
+}
+
 void Serializador::serializar_weapon_type(std::vector<uint8_t>& bits, uint8_t weapon_type, size_t offset) {
     std::bitset<4> type_bits(weapon_type);
     for (int i = 0; i < 4; ++i) {
         bits[offset + i] = type_bits[i];
     }
+}
+
+void Serializador::serializar_cantidad(std::vector<uint8_t>& bits, int cantidad, size_t offset) {
+    std::bitset<12> cantidad_bits(cantidad);
+    for (int i = 0; i < 12; ++i) {
+        bits[offset + i] = cantidad_bits[i];
+    }
+
 }
 
 int Serializador::deserializar_coordenadas(const uint8_t* data) {
@@ -652,3 +631,13 @@ int Serializador::deserializar_tamaño_collidable(const uint8_t* data, int offse
     }
     return static_cast<int>(dimension_bits.to_ulong());
 }
+
+CollidableType Serializador::deserializar_tipo_collidable(const uint8_t* collidable_data) {
+    std::bitset<4> bits;
+    for (int i = 0; i < 4; ++i) {
+        bits[i] = collidable_data[i];
+    }
+    uint8_t tipo_bits = static_cast<uint8_t>(bits.to_ulong());
+    return static_cast<CollidableType>(tipo_bits);
+}
+

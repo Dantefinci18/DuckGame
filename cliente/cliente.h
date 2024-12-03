@@ -5,6 +5,7 @@
 #include "cliente_receiver.h"
 #include "cliente_protocolo.h"
 #include "cliente_leaderboard.h"
+#include "cliente_teclado.h"
 #include "duck.h"
 #include "mapa.h"
 #include "enemigo.h" 
@@ -21,21 +22,23 @@
 #include <SDL2/SDL.h>
 #include <unordered_map>
 #include <memory>  
+#include <atomic>
 
 
 class Cliente {
 private:
     int id;
+    std::atomic<bool> conectado;
     SdlWindow window;
     Duck duck;
     std::unique_ptr<Mapa> mapa;
     ClientLeaderboard leaderboard;
     ClienteProtocolo protocolo;
+    ClienteTeclado teclado;
     ClienteReceiver receiver;
     ClienteSender sender;
     Queue<std::unique_ptr<Evento>> queue_eventos;
     Queue<ComandoAccion> queue_acciones;
-    std::atomic<bool> conectado {true};
     std::unordered_map<int, std::unique_ptr<Enemigo>> enemigos;
     std::vector<Collidable*> collidables;
     std::unique_ptr<SdlFullscreenMessage> win_message;
@@ -114,11 +117,6 @@ private:
      */
     void enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion);
 
-    /*
-     * Funcion que controla los eventos del teclado
-     * Recibe un puntero a una accion anterior
-     */
-    void controlar_eventos_del_teclado(ComandoAccion* tecla_anterior);
 
     /*
      * Funcion que procesa el evento de que alguien gano una ronda.

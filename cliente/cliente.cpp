@@ -11,11 +11,13 @@
 
 Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial)
     : id(id),
+      conectado(true),
       window(800,600),
       duck(window, x_inicial,y_inicial, color),
       mapa(std::make_unique<Mapa>(window, "../Imagenes/forest.png", collidables)),
       leaderboard(ClientLeaderboard(window, leaderboard.round, leaderboard.max_rounds, leaderboard.set_of_rounds, leaderboard.player_rounds_won)),
       protocolo(std::move(socket)),
+      teclado(conectado,queue_acciones),
       receiver(protocolo, queue_eventos, conectado),
       sender(protocolo, queue_acciones),
       collidables(collidables),
@@ -23,6 +25,7 @@ Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*
       should_end(nullptr) {}
 
 void Cliente::start() {
+    teclado.start();
     receiver.start();
     sender.start();
     ejecutar_juego();
@@ -208,7 +211,6 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
         if (collidable->getType() == CollidableType::SpawnWeaponBox 
             && collidable->position.x == evento_pickup.x
             && collidable->position.y == evento_pickup.y) {
-            std::cout << "clearing weapon" << std::endl;
             SpawnWeaponBox* sWeaponBox = static_cast<SpawnWeaponBox*>(collidable);
             sWeaponBox->clear_weapon();
             mapa->clear_weapon(sWeaponBox);
@@ -262,57 +264,6 @@ void Cliente::apuntar(const EventoApuntar& evento_apuntar) {
     }
 }
 
-void Cliente::enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion) {
-    if (*tecla_anterior != accion && conectado) {
-        queue_acciones.push(std::move(accion));
-
-        *tecla_anterior = accion;
-    }
-}
-
-void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
-    SDL_Event evento;
-    if (SDL_PollEvent(&evento)) {
-        switch (evento.type) {
-            case SDL_QUIT:
-                conectado = false;
-                break;
-
-            case SDL_KEYDOWN:
-                if (evento.key.keysym.sym == SDLK_LEFT) {
-                    enviar_accion(tecla_anterior, IZQUIERDA);
-                } else if (evento.key.keysym.sym == SDLK_RIGHT) {
-                    enviar_accion(tecla_anterior, DERECHA);
-                } else if (evento.key.keysym.sym == SDLK_SPACE) {
-                    enviar_accion(tecla_anterior, SALTAR);
-                } else if (evento.key.keysym.sym == SDLK_v) {
-                    enviar_accion(tecla_anterior, DISPARAR);
-                } else if (evento.key.keysym.sym == SDLK_r) {
-                    enviar_accion(tecla_anterior, RECARGAR);
-                } else if(evento.key.keysym.sym == SDLK_UP){
-                    enviar_accion(tecla_anterior, APUNTAR_ARRIBA);
-                } else if (evento.key.keysym.sym == SDLK_DOWN) {
-                    enviar_accion(tecla_anterior,AGACHARSE);
-                }
-                break;
-
-            case SDL_KEYUP:
-                if (evento.key.keysym.sym == SDLK_LEFT || evento.key.keysym.sym == SDLK_RIGHT) {
-                    enviar_accion(tecla_anterior, QUIETO);
-                } else if (evento.key.keysym.sym == SDLK_SPACE) {
-                    *tecla_anterior = ComandoAccion::QUIETO;
-                } else if (evento.key.keysym.sym == SDLK_v) {
-                    enviar_accion(tecla_anterior, DEJAR_DISPARAR);
-                } else if (evento.key.keysym.sym == SDLK_UP){
-                    enviar_accion(tecla_anterior, DEJAR_APUNTAR_ARRIBA);
-                } else if (evento.key.keysym.sym == SDLK_DOWN) {
-                    enviar_accion(tecla_anterior, LEVANTARSE);
-                }
-                break;
-        }
-    }
-}
-
 
 void Cliente::ejecutar_juego() {
     
@@ -340,15 +291,13 @@ void Cliente::ejecutar_juego() {
             }
             window.render();
              if (should_end) {
-                SDL_Delay(3000);
+                SDL_Delay(lastRenderTime);
                 conectado = false;
             }
         }
 
         procesar_eventos_recibidos();
-        controlar_eventos_del_teclado(&tecla_anterior);
 
-        SDL_Delay(1);
     }
 }
 
@@ -382,6 +331,7 @@ std::unordered_map<ColorDuck, int> Cliente::get_colors(std::unordered_map<int,in
     return colors;
 }
 void Cliente::stop() {
+    teclado.stop();
     receiver.stop();
     sender.stop();
     protocolo.cerrar_conexion();
@@ -390,6 +340,7 @@ void Cliente::stop() {
 }
 
 void Cliente::join() {
+    teclado.join();
     receiver.join();
     sender.join();
 }

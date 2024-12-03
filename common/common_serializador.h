@@ -58,6 +58,8 @@ public:
 
     void imprimir_uint8_t_array(const uint8_t* array, size_t size);
 
+    int deserializar_cantidad_collidables(const uint8_t* cantidad_data);
+
     int deserializar_cantidad(const uint8_t* cantidad_data);
 
     std::vector<uint8_t> serializar_mapa(const Evento& evento);
@@ -67,23 +69,19 @@ public:
     std::tuple<int, int> deserializar_tuple64(const uint8_t* tuple_data);
 
     void serializar_tipo_evento(std::vector<uint8_t>& bits, uint8_t tipo_evento, size_t offset);
-
     void serializar_coordenadas(std::vector<uint8_t>& bits, int x, int y, int offset_x, int offset_y);
-
     void serializar_color(std::vector<uint8_t>& bits, uint8_t color, int offset);
-
     void serializar_id_dos(std::vector<uint8_t>& bits, uint32_t id, size_t offset);
-
     void serializar_tamaño_collidable(std::vector<uint8_t>& bits, uint32_t size, size_t offset);
-    
+    void serializar_tipo_collidable(std::vector<uint8_t>& bits, uint32_t tipo, size_t offset);
     void serializar_weapon_type(std::vector<uint8_t>& bits, uint8_t weapon_type, size_t offset);
-
+    void serializar_cantidad(std::vector<uint8_t>& bits, int cantidad, size_t offset);
 
 
     int deserializar_coordenadas(const uint8_t* data);
     ColorDuck deserializar_color(const uint8_t* data);
     WeaponType deserializar_tipo_weapon(const uint8_t* weapon_type_data);
     int deserializar_tamaño_collidable(const uint8_t* data, int offset);
-
+    CollidableType deserializar_tipo_collidable(const uint8_t* collidable_data);
 };
 #endif //COMMON_SERIALIZADOR_H

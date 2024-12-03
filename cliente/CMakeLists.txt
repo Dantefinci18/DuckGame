@@ -7,6 +7,7 @@ target_sources(taller_client
     cliente_sender.cpp
     cliente_receiver.cpp
     cliente_leaderboard.cpp
+    cliente_teclado.cpp
     lobby.cpp
     enemigo.cpp
     mapa.cpp
@@ -20,6 +21,7 @@ target_sources(taller_client
     cliente_sender.h
     cliente_receiver.h
     cliente_leaderboard.h
+    cliente_teclado.h
     lobby.h
     enemigo.h
     mapa.h

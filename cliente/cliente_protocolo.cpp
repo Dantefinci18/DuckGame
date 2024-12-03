@@ -51,17 +51,17 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             return serializador.deserializar_movimiento(evento_movimiento);
         }
         case Evento::EventoMapa: {
-            uint8_t cantidad[32];
+            uint8_t cantidad[6];
             socket.recvall(cantidad, sizeof(cantidad), &was_closed);
             if (was_closed) {
                 return nullptr;
             }
 
-            int cantidad_collidables = serializador.deserializar_cantidad(cantidad);
+            int cantidad_collidables = serializador.deserializar_cantidad_collidables(cantidad);
             std::vector<Collidable*> collidables;
 
             for (int i = 0; i < cantidad_collidables; i++) {
-                uint8_t collidable_data[160];
+                uint8_t collidable_data[52];
                 socket.recvall(collidable_data, sizeof(collidable_data), &was_closed);
                 if (was_closed) {
                     return nullptr;
