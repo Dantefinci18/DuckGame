@@ -8,6 +8,7 @@
 #include <memory>
 #include "../server/Platform.h"  
 #include "../server/SpawnWeaponBox.h"
+#include "cliente_zoom_utils.cpp"
 
 Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial)
     : id(id),
@@ -330,20 +331,23 @@ void Cliente::ejecutar_juego() {
 
         if (currentTime - lastRenderTime >= frameDelay) {
             lastRenderTime = currentTime;
-            
+            window.set_target_for_frame();
             mapa->render();
-            leaderboard.render();
+            
             
             duck.render();
-            if (win_message) {
-                win_message->render();
-               
-            }
+            
             for (auto& pair : enemigos) {
                 pair.second->renderizar();  
             }
-            window.renderPortion(0,0,300,300);
-             if (should_end) {
+            SDL_Rect rect = ZoomUtils::get_zoom(enemigos, duck, 800, 600);
+            window.renderPortion(rect.x, rect.y, rect.w, rect.h);
+            leaderboard.render();
+            if (win_message) {
+                win_message->render();
+            }
+            window.render();
+            if (should_end) {
                 SDL_Delay(3000);
                 conectado = false;
             }

@@ -17,6 +17,7 @@ public:
     void renderPortion(int x, int y, int w, int h);
     void render();
     void set_title(const char* titulo);
+    void set_target_for_frame();
     SDL_Renderer* getRenderer() const;
     int width;
     int height;
@@ -24,6 +25,7 @@ public:
 private:
     
     SDL_Window* window;
+    SDL_Texture* renderTarget;
     SDL_Renderer* renderer;
 };
 

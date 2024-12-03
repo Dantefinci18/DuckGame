@@ -1,6 +1,7 @@
 #ifndef DUCK_H
 #define DUCK_H
-
+#define ANCHO_DUCK_IMG 20
+#define ALTO_DUCK_IMG 24
 #include <SDL2/SDL.h>
 #include <optional>
 #include "Sdl/Area.h"
@@ -79,6 +80,8 @@ public:
      * Destructor de la clase Duck
      */
     ~Duck();
+    float x_actual;
+    float y_actual;
 
 private:
 
@@ -125,8 +128,7 @@ private:
     DireccionApuntada direccion_arma;
     int x_img = 0;
     int y_img = 0;
-    float x_actual;
-    float y_actual;
+    
     bool is_dead;
     float x_des;
     int y_des;

@@ -69,10 +69,10 @@ public:
      * Destructor de la clase Enemigo
      */
     ~Enemigo();
+    Duck duck;
 
 private:
     int id;  
-    Duck duck; 
 };
 
 #endif // ENEMIGO_H

@@ -19,6 +19,7 @@ SdlWindow::SdlWindow(int width, int height): width(width), height(height) {
     if (errCode) {
         throw SdlException("Error al crear ventana", SDL_GetError());
     }
+    renderTarget = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_TARGET, width, height);
 }
 
 
@@ -41,10 +42,23 @@ void SdlWindow::fill(int r, int g, int b, int alpha) {
 
 void SdlWindow::fill() { this->fill(0x33, 0x33, 0x33, 0xFF); }
 
+void SdlWindow::renderPortion(int x, int y, int w, int h) {
+    SDL_SetRenderTarget(this->renderer, nullptr);
+    SDL_Rect src =  {x, y, w, h};
+    SDL_Rect dest = {0, 0, width, height};
+
+    SDL_RenderCopy(this->renderer, renderTarget, &src, &dest);
+}
+
 void SdlWindow::render() { 
     SDL_RenderPresent(this->renderer); 
 }
 
+void SdlWindow::set_target_for_frame() {
+    SDL_SetRenderTarget(this->renderer, renderTarget);
+    SDL_SetRenderDrawColor(this->renderer, 0,0,0,255);
+    SDL_RenderClear(this->renderer);
+}
 void SdlWindow::set_title(const char* titulo) { SDL_SetWindowTitle(window, titulo); }
 
 SDL_Renderer* SdlWindow::getRenderer() const { return this->renderer; }
