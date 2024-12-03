@@ -140,20 +140,46 @@ std::shared_ptr<AccionNuevaPartida> Serializador::deserializar_nueva_partida(con
 }
 
 
-std::vector<uint8_t> Serializador::serializar_partidas(std::list<Partida> partidas){  
-    std::vector<uint8_t> buffer;
-    serializar_numero_entero(partidas.size(),buffer,0);
-
-    int i = 32;
+std::vector<uint8_t> Serializador::serializar_partidas(std::list<Partida>& partidas){  
+    std::vector<uint8_t> buffer_cantidad(32);
+    serializar_numero_entero(partidas.size(),buffer_cantidad,0);
+    
+    std::cout << "cantidad de partidas:\n";
+    imprimir_uint8_t_array(buffer_cantidad.data(),buffer_cantidad.size());
+    
+    std::vector<uint8_t> buffer_total = buffer_cantidad;
 
     for(auto partida : partidas){
-        serializar_numero_entero(partida.id,buffer,i);
-        i += 32;
-        serializar_numero_entero(partida.nombre.size(),buffer,i);
-        i+= 32;
-        serializar_string(partida.nombre,buffer,i);
-        i+= partida.nombre.size();
+        std::vector<uint8_t> buffer_partida(64+partida.nombre.size());
+        serializar_numero_entero(partida.id,buffer_partida,0);
+
+        std::cout << "partida id\n";
+        imprimir_uint8_t_array(buffer_partida.data(),buffer_partida.size());
+
+        serializar_numero_entero(partida.nombre.size(),buffer_partida,32);
+
+        std::cout << "partida tamanio nombre\n";
+        imprimir_uint8_t_array(buffer_partida.data(),buffer_partida.size());
+
+        serializar_string(partida.nombre,buffer_partida,64);
+
+        std::cout << "partida nombre\n";
+        imprimir_uint8_t_array(buffer_partida.data(),buffer_partida.size());
+
+        buffer_total.insert(buffer_total.end(), buffer_partida.begin(), buffer_partida.end());
     }
+
+    std::cout << "cantidad de bits totales:\n";
+    imprimir_uint8_t_array(buffer_total.data(),buffer_total.size());
+
+    return buffer_total;
+}
+
+
+Partida Serializador::deserializar_partida(const uint8_t* data_id, const uint8_t* data_nombre, size_t n){
+    int id = deserializar_numero_entero(data_id);
+    std::string nombre = deserializar_string(data_nombre,n);
+    return Partida(id,nombre);
 }
 
 

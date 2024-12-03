@@ -115,8 +115,11 @@ void ProtocoloServidor::enviar_estado(const Evento& evento) {
     }*/
 }
 
-bool ProtocoloServidor::enviar_partidas(std::list<Partida> &partidas){
-    return true;
+bool ProtocoloServidor::enviar_partidas(std::list<Partida>& partidas){
+    bool was_closed = false;
+    auto partidas_bits = serializador.serializar_partidas(partidas);
+    conexion.sendall(partidas_bits.data(),partidas_bits.size(),&was_closed);
+    return !was_closed;
 }
 
 Socket ProtocoloServidor::get_socket(){

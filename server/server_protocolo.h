@@ -21,7 +21,7 @@ class ProtocoloServidor{
         std::shared_ptr<Accion> recibir_accion();
         bool enviar_id(int id);
         void enviar_estado(const Evento& evento); 
-        bool enviar_partidas(std::list<Partida> &partidas);
+        bool enviar_partidas(std::list<Partida>& partidas);
         Socket get_socket();  
         void cerrar_conexion();
 };

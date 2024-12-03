@@ -5,6 +5,7 @@
 #include "../common/common_evento.h"
 #include "../common/common_accion.h"
 #include "../common/common_serializador.h"
+#include "../common/common_partida.h"
 #include "../server/Collidable.h"
 #include "../server/server_leaderboard.h"
 #include <vector>
@@ -52,6 +53,8 @@ class ClienteProtocolo{
          * y lo retorna
          */
         std::vector<Collidable*> recibir_mapa();
+
+        std::list<Partida> recibir_partidas();
 
     private:
         Socket socket;

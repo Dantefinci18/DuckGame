@@ -221,7 +221,11 @@ int ClienteLobby::run(){
             
         }else{
 
-            //recibe las partidas
+            std::list<Partida> partidas = protocolo.recibir_partidas();
+
+            for(Partida partida: partidas){
+                std::cout << partida.id << " " << partida.nombre << std::endl; 
+            }
         }
 
 

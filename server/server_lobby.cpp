@@ -33,12 +33,14 @@ void ServerLobby::run(){
                 jugador->enviar_evento(EventoEspera());
                 Gameloop *gameloop = new Gameloop(accion_partida->get_player_id(),
                                                     nueva_partida->nombre_partida,
-                                                    2,//nueva_partida.cantidad_de_jugadores,
+                                                    nueva_partida->cantidad_de_jugadores,
                                                     jugador->get_cola_eventos());
                 
                 partidas[cantidad_de_partidas] = gameloop;
             
             }else if(partida == ESTABLECER_PARTIDAS){
+                auto partidas = obtener_partidas_en_espera();
+                jugador->enviar_partidas(partidas);
 
             }else if(partida == CARGAR_PARTIDA){
                 std::cout << "Cargar partida" << std::endl;

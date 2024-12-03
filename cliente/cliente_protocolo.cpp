@@ -430,6 +430,57 @@ std::vector<Collidable*> ClienteProtocolo::recibir_mapa() {
     return collidables;
 }
 
+std::list<Partida> ClienteProtocolo::recibir_partidas(){
+    bool was_closed = false;
+    std::list<Partida> partidas;
+    uint8_t tamanio_partidas_bits[32];
+    socket.recvall(tamanio_partidas_bits,sizeof(tamanio_partidas_bits),&was_closed);
+
+    std::cout << "cantidad de partidas\n";
+    serializador.imprimir_uint8_t_array(tamanio_partidas_bits,sizeof(tamanio_partidas_bits));
+
+    if(was_closed)
+        return std::list<Partida>();
+
+    int tamanio_partidas = serializador.deserializar_numero_entero(tamanio_partidas_bits);
+    
+    for(int i = 0; i < tamanio_partidas; i++){
+        uint8_t id_bits[32];
+        socket.recvall(id_bits,sizeof(id_bits),&was_closed);
+
+        std::cout << "id partida:\n";
+        serializador.imprimir_uint8_t_array(id_bits,sizeof(id_bits));
+
+        if(was_closed)
+            return std::list<Partida>();
+        
+        uint8_t tamanio_nombre_bits[32];
+        socket.recvall(tamanio_nombre_bits,sizeof(tamanio_nombre_bits),&was_closed);
+
+        std::cout << "tamanio_nombre partida:\n";
+        serializador.imprimir_uint8_t_array(tamanio_nombre_bits,sizeof(tamanio_nombre_bits));
+
+
+        if(was_closed)
+            return std::list<Partida>();
+        
+        int tamanio_nombre = serializador.deserializar_numero_entero(tamanio_nombre_bits);
+        uint8_t nombre_bits[tamanio_nombre];
+        socket.recvall(nombre_bits,sizeof(nombre_bits),&was_closed);
+
+        std::cout << "nombre partida\n";
+        serializador.imprimir_uint8_t_array(nombre_bits,sizeof(nombre_bits));
+
+        if(was_closed)
+            return std::list<Partida>();
+        
+        Partida partida = serializador.deserializar_partida(id_bits,nombre_bits,tamanio_nombre);
+        partidas.push_back(partida);
+    }
+
+    return partidas;
+}
+
 void ClienteProtocolo::cerrar_conexion() {
     socket.shutdown(2);
     socket.close();
