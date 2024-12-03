@@ -9,13 +9,12 @@
 class PistolaDuelos : public Weapon {
 public:
     PistolaDuelos()
-        : Weapon(1, WeaponType::PistolaDuelos, 50),
+        : Weapon(1, WeaponType::PistolaDuelos, 5 * TILES),
           retroceso(false),
           dispersion(7.0f) {}
 
     void reload() override {
         ammo = 1;
-        std::cout << "Municion: " << ammo << std::endl;
     }
 
     bool es_automatica() override {

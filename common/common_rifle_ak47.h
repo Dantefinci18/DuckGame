@@ -9,7 +9,7 @@
 class RifleAK47 : public Weapon {
 public:
     RifleAK47()
-        : Weapon(30, WeaponType::RifleAK47, 130),
+        : Weapon(30, WeaponType::RifleAK47, 13 * TILES),
           retroceso(true),
           dispersion(6.0f),
           last_shot_time(std::chrono::steady_clock::now()),
@@ -17,7 +17,6 @@ public:
 
     void reload() override {
         ammo = 30;
-        std::cout << "Municion: " << ammo << std::endl;
     }
 
     bool es_automatica() override {

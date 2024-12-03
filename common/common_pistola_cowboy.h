@@ -3,11 +3,10 @@
 #include "common_weapon.h"
 class PistolaCowboy : public Weapon {
     public:
-    PistolaCowboy() : Weapon(6, WeaponType::PistolaCowboy, 200) {} // aca 200 es los tiles hardcodeado de distancia en realidad
+    PistolaCowboy() : Weapon(6, WeaponType::PistolaCowboy, 20 * TILES) {}
 
     void reload() override {
         ammo = 6;
-        std::cout << "Municion: " << ammo << std::endl;
     }
     bool es_automatica() override {
         return false;

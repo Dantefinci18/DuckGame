@@ -133,6 +133,9 @@ void Mapa::renderizar_mapa() {
                     case WeaponType::RifleAK47:
                         arma_index = 3;
                         break;
+                    case WeaponType::Escopeta:
+                        arma_index = 4;
+                        break;
                     case WeaponType::None:
                         arma_index = 0;
                         cuadrado = 0;
