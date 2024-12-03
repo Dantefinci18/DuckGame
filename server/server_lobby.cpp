@@ -1,12 +1,12 @@
 #include "server_lobby.h"
 
+ServerLobby::ServerLobby(int id) : id(id) {}    
+
 void ServerLobby::agregar_jugador(Socket& skt){
-    std::cout << "voy a crar un jugador\n";
-    Jugador *jugador = new Jugador(cola_comando_partidas,std::move(skt));
-    std::cout << "jugador creado\n";
+    id ++;
+    Jugador *jugador = new Jugador(cola_comando_partidas,std::move(skt),id);
     jugador->run();
     jugadores_esperando[jugador->get_id()] = jugador;
-    std::cout << "se aniade el jugador al lobby\n";
 }
 
 void ServerLobby::run(){
@@ -23,7 +23,6 @@ void ServerLobby::run(){
                 jugadores_esperando.erase(id_jugador);
 
             }else if(partida == NUEVA_PARTIDA){
-                std::cout << "Crear nueva partida" << std::endl;
                 jugador->enviar_evento(EventoEspera());
                 Gameloop *gameloop = new Gameloop(accion_partida.get_player_id(),2,jugador->get_cola_eventos());
                 partidas.push_back(gameloop);

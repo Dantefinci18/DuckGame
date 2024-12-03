@@ -11,6 +11,7 @@
 
 class ServerLobby : public Thread {
     private:
+        int id;
         std::list<Gameloop*> partidas;
         Queue<Accion> cola_comando_partidas;
         std::unordered_map<int, Jugador*> jugadores_esperando;
@@ -24,6 +25,7 @@ class ServerLobby : public Thread {
         void cerrar_conexiones();
         void comenzar_partida(Gameloop *partida);
     public:
+        explicit ServerLobby(int id);
         void agregar_jugador(Socket& skt);
         void finalizar();
         void run() override;

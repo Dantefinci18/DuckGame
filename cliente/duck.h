@@ -12,6 +12,7 @@
 #include "../common/common_color.h"
 #include "../common/common_direcciones.h"
 #include "../common/common_proteccion.h"
+#include "cliente_mixer.h"
 
 class Duck {
 public:
@@ -27,6 +28,9 @@ public:
     void setear_bala(float x, float y);
     
 
+    /* 
+     * Funcion que renderiza la bala del pato
+     */
     void render_bala();
 
     /* 
@@ -150,6 +154,7 @@ private:
     bool esta_agachado;
     bool reset;
     SDL_RendererFlip flip;
+    ClienteMixer mixer;
 
 };
 

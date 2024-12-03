@@ -101,8 +101,8 @@ public:
                     case CollidableType::Box: {
                         Box* caja_impactada = dynamic_cast<Box*>(primer_impacto);
                         if (caja_impactada && caja_impactada->esta_activa()) {
-                            float caja_x = caja_impactada->get_position().x;
-                            float caja_y = caja_impactada->get_position().y;
+                            int caja_x = caja_impactada->get_position().x;
+                            int caja_y = caja_impactada->get_position().y;
 
                             std::cout << "Le pegaste a una caja en (" 
                                       << caja_x << ", " 

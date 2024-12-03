@@ -27,7 +27,7 @@ private:
     int generar_id();
 
 public:
-    explicit Jugador(Queue<Accion> &comandos,Socket&& conexion);
+    explicit Jugador(Queue<Accion> &comandos,Socket&& conexion,int id);
 
     void run();
 
