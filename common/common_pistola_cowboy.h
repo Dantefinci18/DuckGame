@@ -21,11 +21,10 @@ class PistolaCowboy : public Weapon {
 
         ammo--;
         tiene_retroceso = false;
-        // Normalize the direction vector to get a unit vector
-        float magnitude = direction.magnitude();//std::sqrt(direction.x * direction.x + direction.y * direction.y);
-        Vector unitDirection(direction.x / magnitude, direction.y / magnitude);
 
-        // Calculate the endpoint by moving 'range' units along the direction
+        float magnitude = direction.magnitude();
+        Vector unitDirection(direction.x / magnitude, direction.y / magnitude);
+        
         Vector endpoint = from + unitDirection * range;
 
         destinations.push_back(endpoint);

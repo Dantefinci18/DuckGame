@@ -83,7 +83,6 @@ public:
         if (!weapon) {
             return {};
         }
-        //shooting = true;
         bool tiene_retroceso = false;
         auto destinos = weapon->shoot(get_posicion_arma(), get_direccion_apuntada(), tiene_retroceso);
         
@@ -127,9 +126,6 @@ public:
         juntar_item = false;
     }
 
-    // deberia subir shooting=true a primera linea, como esta si no tiene arma no agarra armadura
-    //el chequeo lo hace disparar si no tiene arma
-    // PODRIAA SER MAS CLARO CON UN intenta_juntar 
     void iniciar_disparo(){
         if (!weapon) {
             return;
