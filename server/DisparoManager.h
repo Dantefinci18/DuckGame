@@ -85,7 +85,6 @@ public:
                     case CollidableType::Player: {
                         Player* jugador_disparado = dynamic_cast<Player*>(primer_impacto);
                         if (jugador_disparado) {
-                            //jugador_disparado->morir();
                             jugador_disparado->recibir_disparo();
                         } else {
                             std::cerr << "Error: dynamic_cast a Player falló." << std::endl;
@@ -124,13 +123,10 @@ public:
                                 eventos.push_back(std::make_shared<EventoSpawnProteccionBox>(evento_spawn_proteccion));
                                 collidables_a_agregar.push_back(recompensa);
                             } else if (tipo_item == SpawnBox::ItemType::None) {
-                                std::cout << "La caja está vacía" << std::endl;
-                                std::cout << "ACA TENGO QUE MEJORARA QUE SEA NONE, DEBERIA SER NONE Y NO UNA ARMA NONE" << std::endl;
-                                std::cout << "OJO QUE CLIENTE Y DEMAS BUSCA POR TIPO DE ARMA NONE" << std::endl;
+
                             } else{
-                               std::cout << "\033[43;31m(MANAGER) - TOCO ALGO RARO\033[0m" << std::endl; 
+                               throw std::invalid_argument("Tipo de ecompensa no reconocida");  
                             }
-                            //collidables_a_agregar.push_back(recompensa);
                         } else {
                             std::cerr << "Error: dynamic_cast a Box falló." << std::endl;
                         }
