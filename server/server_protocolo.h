@@ -21,6 +21,8 @@ class ProtocoloServidor{
         void enviar_estado(const Evento& evento); 
         Socket get_socket();  
         void cerrar_conexion();
+        int ACCION_RECIBIDA = 5;
 };
+
 
 #endif

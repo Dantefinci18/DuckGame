@@ -52,6 +52,9 @@ void Duck::setear_bala(float x, float y) {
     esta_disparando = true;
 }
 
+
+
+
 void Duck::render_bala() {
     double angle = (direccion_arma == DireccionApuntada::APUNTADO_IZQUIERDA) ? -90 : 90;
     if (direccion_arma == DireccionApuntada::APUNTADO_ARRIBA) {

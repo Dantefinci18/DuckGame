@@ -1,4 +1,3 @@
-
 target_sources(taller_client
   PRIVATE
     main.cpp
@@ -8,6 +7,8 @@ target_sources(taller_client
     cliente_receiver.cpp
     cliente_leaderboard.cpp
     cliente_zoom_utils.cpp
+    cliente_teclado.cpp
+    cliente_mixer.cpp
     lobby.cpp
     enemigo.cpp
     mapa.cpp
@@ -21,6 +22,8 @@ target_sources(taller_client
     cliente_sender.h
     cliente_receiver.h
     cliente_leaderboard.h
+    cliente_teclado.h
+    cliente_mixer.h
     lobby.h
     enemigo.h
     mapa.h
