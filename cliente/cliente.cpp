@@ -352,34 +352,29 @@ void Cliente::ejecutar_juego() {
 
     while (conectado) {
         Uint32 currentTime = SDL_GetTicks();
-
-        if (currentTime - lastRenderTime >= frameDelay) {
-            lastRenderTime = currentTime;
-
-            window.set_target_for_frame();
-            mapa->render();
-            duck.render();
-            
-            for (auto& pair : enemigos) {
-                pair.second->renderizar();
-            }
-            SDL_Rect rect = ZoomUtils::get_zoom(enemigos, duck, 800, 600);
-            window.renderPortion(rect.x, rect.y, rect.w, rect.h);
-            leaderboard.render();
-            if (win_message) {
-                win_message->render();
-            }
-            window.render();
-
-            if (should_end) {
-                SDL_Delay(3000);
-                conectado = false;
-            }
+        window.set_target_for_frame();
+        mapa->render();
+        duck.render();
+        
+        for (auto& pair : enemigos) {
+            pair.second->renderizar();
         }
+        SDL_Rect rect = ZoomUtils::get_zoom(enemigos, duck, 800, 600);
+        window.renderPortion(rect.x, rect.y, rect.w, rect.h);
+        leaderboard.render();
+        if (win_message) {
+            win_message->render();
+        }
+        window.render();
 
+        if (should_end) {
+            SDL_Delay(3000);
+            conectado = false;
+        }
+        lastRenderTime = SDL_GetTicks();
         procesar_eventos_recibidos();
 
-        SDL_Delay(1);
+        SDL_Delay(frameDelay - (currentTime - lastRenderTime));
     }
 
     mixer.detener_musica();
