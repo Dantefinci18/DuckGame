@@ -25,7 +25,7 @@ void ServerLobby::run(){
             }else if(partida == NUEVA_PARTIDA){
                 std::cout << "Crear nueva partida" << std::endl;
                 jugador->enviar_evento(EventoEspera());
-                Gameloop *gameloop = new Gameloop(accion_partida.get_player_id(),3,jugador->get_cola_eventos());
+                Gameloop *gameloop = new Gameloop(accion_partida.get_player_id(),2,jugador->get_cola_eventos());
                 partidas.push_back(gameloop);
             
             }else if(partida == CARGAR_PARTIDA){
