@@ -1,6 +1,8 @@
 #ifndef SERVER_PROTOCOLO_H
 #define SERVER_PROTOCOLO_H
 
+#define ACCION_RECIBIDA 5
+
 #include "../common/common_socket.h"
 #include "../common/common_accion.h"
 #include "../common/common_serializador.h"
@@ -25,5 +27,6 @@ class ProtocoloServidor{
         Socket get_socket();  
         void cerrar_conexion();
 };
+
 
 #endif

@@ -8,11 +8,10 @@
 
 class PistolaMagnum : public Weapon {
 public:
-    PistolaMagnum() : Weapon(6, WeaponType::PistolaMagnum, 200), retroceso(true), dispersion(4.0f) {}
+    PistolaMagnum() : Weapon(6, WeaponType::PistolaMagnum, 20 * TILES), retroceso(true), dispersion(4.0f) {}
 
     void reload() override {
         ammo = 6;
-        std::cout << "Municion: " << ammo << std::endl;
     }
 
     bool es_automatica() override {

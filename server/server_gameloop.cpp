@@ -69,6 +69,7 @@ void Gameloop::procesar_acciones(std::vector<std::shared_ptr<Accion>> acciones, 
             player->set_x_direction(0.0f);
         
         } else if (command == DISPARAR){
+            monitor.enviar_evento(EventoDisparo());
             player->intenta_juntar();
             player->iniciar_disparo();
             /*std::vector<std::shared_ptr<Evento>> eventos;

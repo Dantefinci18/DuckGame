@@ -132,7 +132,7 @@ private:
     std::unique_ptr<Weapon> generar_arma() {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dist(0, 3); // Número de tipos de armas
+        std::uniform_int_distribution<> dist(0, 4); // Número de tipos de armas
 
         WeaponType tipo_arma = static_cast<WeaponType>(dist(gen));
         return WeaponUtils::create_weapon(tipo_arma);

@@ -14,7 +14,7 @@ ProtocoloServidor::ProtocoloServidor(Socket&& conexion): conexion(std::move(cone
 std::shared_ptr<Accion> ProtocoloServidor::recibir_accion() {
     bool was_closed = false;
 
-    uint8_t data_tipo[8];
+    uint8_t data_tipo[ACCION_RECIBIDA];
     conexion.recvall(data_tipo, sizeof(data_tipo), &was_closed);
 
     if (was_closed) {
@@ -68,12 +68,14 @@ std::shared_ptr<Accion> ProtocoloServidor::recibir_accion() {
     } 
 
     return std::make_shared<Accion>(tipo_accion);
+
 }
+
 
 
 bool ProtocoloServidor::enviar_id(int id) {
     bool was_closed = false;
-    std::vector<uint8_t> buffer= serializador.serializar_id(id);
+    std::vector<uint8_t> buffer = serializador.serializar_id(id);
 
     conexion.sendall(buffer.data(), buffer.size(), &was_closed);
 
@@ -82,9 +84,6 @@ bool ProtocoloServidor::enviar_id(int id) {
 void ProtocoloServidor::enviar_estado(const Evento& evento) {
     std::lock_guard<std::mutex> lock(mtx);
     bool was_closed = false;
-    if(evento.get_tipo() == Evento::EventoEspera){
-        std::cout << "protocolo: evento espera\n";
-    }
     
     std::vector<uint8_t> bits = serializador.serializar_evento(evento);
     

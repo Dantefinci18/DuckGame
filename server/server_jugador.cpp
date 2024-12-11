@@ -8,9 +8,9 @@
 #include "server_protocolo.h"
 
 
-Jugador::Jugador(Queue<std::shared_ptr<Accion>>& comandos, Socket&& conexion):
+Jugador::Jugador(Queue<std::shared_ptr<Accion>>& comandos, Socket&& conexion,int id):
         protocolo(std::move(conexion)), 
-        id(generar_id()),
+        id(id),
         sender(protocolo, cola_eventos, id), 
         receiver(protocolo, comandos, id){
             protocolo.enviar_id(id);
@@ -32,16 +32,6 @@ void Jugador::stop() {
 void Jugador::cerrar_conexion() { protocolo.cerrar_conexion(); }
 
 int Jugador::get_id() {
-    return id;
-}
-
-int Jugador::generar_id() {
-    std::random_device rd;
-    std::mt19937 engine(rd());
-    std::uniform_int_distribution<int> distribution(INT32_MIN, INT32_MAX);
-
-    int id = distribution(engine);
-    std::cout << id << std::endl;
     return id;
 }
 

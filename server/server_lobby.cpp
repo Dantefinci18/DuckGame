@@ -1,12 +1,12 @@
 #include "server_lobby.h"
 
+ServerLobby::ServerLobby(int id) : id(id) {}    
+
 void ServerLobby::agregar_jugador(Socket& skt){
-    std::cout << "voy a crar un jugador\n";
-    Jugador *jugador = new Jugador(cola_comando_partidas,std::move(skt));
-    std::cout << "jugador creado\n";
+    id ++;
+    Jugador *jugador = new Jugador(cola_comando_partidas,std::move(skt),id);
     jugador->run();
     jugadores_esperando[jugador->get_id()] = jugador;
-    std::cout << "se aniade el jugador al lobby\n";
 }
 
 void ServerLobby::run(){
@@ -25,11 +25,12 @@ void ServerLobby::run(){
                 jugadores_esperando.erase(id_jugador);
 
 
-            }else if(partida == NUEVA_PARTIDA){
+            }else if(partida == NUEVA_PARTIDA){            
                 std::cout << "Crear nueva partida" << std::endl;
                 std::shared_ptr<AccionNuevaPartida> nueva_partida = std::dynamic_pointer_cast<AccionNuevaPartida>(accion_partida);
                 std::cout << "nombre de la partida: " << nueva_partida->nombre_partida << std::endl;
                 std::cout << "cantidad de jugadores de la partida: " << nueva_partida->cantidad_de_jugadores << std::endl;
+
                 jugador->enviar_evento(EventoEspera());
                 Gameloop *gameloop = new Gameloop(accion_partida->get_player_id(),
                                                     nueva_partida->nombre_partida,

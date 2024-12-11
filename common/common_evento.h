@@ -21,7 +21,6 @@ public:
         EventoPickupProteccion,
         EventoSpawnArma,
         EventoMuerte,
-        EventoDisparo,
         EventoEspera,
         EventoApuntar,
         EventoAgacharse,
@@ -31,7 +30,8 @@ public:
         EventoBala,
         EventoCajaDestruida,
         EventoSpawnArmaBox,
-        EventoSpawnProteccionBox
+        EventoSpawnProteccionBox,
+        EventoDisparo
     };
 
     virtual ~Evento() = default;
@@ -52,6 +52,16 @@ public:
         : id(id), color(color), x(x), y(y), is_flapping(is_flapping), reset(reset) {}
 
     void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoMovimiento\", "
+            << "\"id\": " << id << ", "
+            << "\"color\": " << static_cast<int>(color) << ", "
+            << "\"x\": " << x << ", "
+            << "\"y\": " << y << ", "
+            << "\"is_flapping\": " << is_flapping << ", "
+            << "\"reset\": " << reset
+            << " }";
+        
         
     }
 
@@ -165,22 +175,6 @@ public:
     TipoEvento get_tipo() const override { return TipoEvento::EventoMuerte; } 
 };
 
-class EventoDisparo : public Evento {
-public:
-    int id;
-
-    EventoDisparo(int id) : id(id) {}
-
-    void print() const override {
-        std::ostringstream oss;
-        oss << "{ \"type\": \"EventoDisparo\", "
-            << "\"id\": " << id
-            << " }";
-        std::cout << oss.str() << std::endl;
-    }
-
-    TipoEvento get_tipo() const override { return TipoEvento::EventoDisparo; } 
-};
 
 class EventoEspera : public Evento {
 public:
@@ -294,10 +288,10 @@ public:
 
 class EventoCajaDestruida : public Evento {
 public:
-    float x;
-    float y;
+    int x;
+    int y;
 
-    EventoCajaDestruida(float x, float y) : x(x), y(y) {}
+    EventoCajaDestruida(int x, int y) : x(x), y(y) {}
 
     void print() const override {
         std::ostringstream oss;
@@ -356,4 +350,16 @@ public:
     TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnProteccionBox; } 
 };
 
+class EventoDisparo : public Evento {
+    public:
+    EventoDisparo() {}
+
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoDisparo\" }";
+        std::cout << oss.str() << std::endl;
+    }
+
+    TipoEvento get_tipo() const override { return TipoEvento::EventoDisparo; }
+};
 #endif // COMMON_EVENTO_H

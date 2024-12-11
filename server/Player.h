@@ -93,7 +93,6 @@ public:
 
         if(!destinos.empty()){
             std::cout << "Disparó el pato id " << id << std::endl;
-            eventos.push_back(std::make_shared<EventoDisparo>(id));
         }
         if(!weapon->es_automatica()){
             shooting = false;
@@ -103,12 +102,12 @@ public:
 
     void recibir_disparo(){
         if(casco && casco->en_condiciones()){
-            //falta sacarlo
             casco->impactar();
+            casco = nullptr;
             eventos.push_back(std::make_shared<EventoPickupProteccion>(id, position.x, position.y, ProteccionType::NoCasco));
         } else if(armadura && armadura->en_condiciones()){
-            //falta sacarlo
             armadura->impactar();
+            armadura = nullptr;
             eventos.push_back(std::make_shared<EventoPickupProteccion>(id, position.x, position.y, ProteccionType::NoArmadura));
         } else {
             morir();
@@ -407,6 +406,8 @@ public:
         ticks_to_reset_gravity = 0;
         shooting = false;
         position = {200.0f, 300.0f};
+        casco = nullptr;
+        armadura = nullptr;
         eventos.push_back(std::make_shared<EventoMovimiento>(id, color, position.x, position.y, is_flapping(), true));
         
     }

@@ -7,7 +7,7 @@
 
 #include "../common/common_liberror.h"
 
-Aceptador::Aceptador(Socket& skt):skt(skt) {}
+Aceptador::Aceptador(Socket& skt):skt(skt),lobby(0) {}
 
 void Aceptador::run() {
     lobby.start();

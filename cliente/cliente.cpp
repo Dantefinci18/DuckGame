@@ -8,15 +8,18 @@
 #include <memory>
 #include "../server/Platform.h"  
 #include "../server/SpawnWeaponBox.h"
+#include "cliente_zoom_utils.cpp"
 #include "../server/SpawnBox.h"
 
 Cliente::Cliente(int id,ColorDuck color,ClienteProtocolo& protocolo, std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial): 
     id(id),
+    conectado(true),
     window(800,600),
     duck(window, x_inicial,y_inicial, color),
     mapa(std::make_unique<Mapa>(window, "../Imagenes/forest.png", collidables)),
     leaderboard(ClientLeaderboard(window, leaderboard.round, leaderboard.max_rounds, leaderboard.set_of_rounds, leaderboard.player_rounds_won)),
     protocolo(protocolo),
+    teclado(conectado, queue_acciones),
     receiver(protocolo, queue_eventos, conectado),
     sender(protocolo, queue_acciones),
     collidables(collidables),
@@ -24,6 +27,7 @@ Cliente::Cliente(int id,ColorDuck color,ClienteProtocolo& protocolo, std::vector
     should_end(nullptr) {}
 
 void Cliente::start() {
+    teclado.start();
     receiver.start();
     sender.start();
     ejecutar_juego();
@@ -56,10 +60,7 @@ void Cliente::procesar_eventos_recibidos() {
                     break;
                 }
 
-                case Evento::EventoDisparo: {
-                    break;
-                }
-
+  
                 case Evento::EventoMuerte: {
                     auto evento_muerte = static_cast<EventoMuerte*>(evento_recibido.get());
                     manejar_muerte(*evento_muerte);
@@ -137,6 +138,12 @@ void Cliente::procesar_eventos_recibidos() {
                 case Evento::EventoSpawnProteccionBox: {
                     auto evento_spawn_proteccion_box = static_cast<EventoSpawnProteccionBox*>(evento_recibido.get());
                     agregar_collidable_proteccion(*evento_spawn_proteccion_box);
+                    break;
+                }
+                case Evento::EventoDisparo: {
+                    auto evento_disparo = static_cast<EventoDisparo*>(evento_recibido.get());
+                    mixer.reproducir_efecto_disparo("../sounds/shotgun.wav");
+                    
                     break;
                 }
                 default: {
@@ -261,7 +268,6 @@ void Cliente::manejar_proteccion(const EventoPickupProteccion& evento_pickup, st
             std::cout << "clearing proteccion" << std::endl;
             SpawnBox* sBox = static_cast<SpawnBox*>(collidable);
             sBox->limpiar_item();
-            //mapa->clear_weapon(sBox);  //ojo
         }
     }
 
@@ -324,96 +330,55 @@ void Cliente::apuntar(const EventoApuntar& evento_apuntar) {
     }
 }
 
-void Cliente::enviar_accion(ComandoAccion* tecla_anterior, ComandoAccion accion) {
-    if (*tecla_anterior != accion && conectado) {
-        queue_acciones.push(std::move(accion));
-
-        *tecla_anterior = accion;
-    }
-}
-
-void Cliente::controlar_eventos_del_teclado(ComandoAccion* tecla_anterior) {
-    SDL_Event evento;
-    if (SDL_PollEvent(&evento)) {
-        switch (evento.type) {
-            case SDL_QUIT:
-                conectado = false;
-                break;
-
-            case SDL_KEYDOWN:
-                if (evento.key.keysym.sym == SDLK_LEFT) {
-                    enviar_accion(tecla_anterior, IZQUIERDA);
-                } else if (evento.key.keysym.sym == SDLK_RIGHT) {
-                    enviar_accion(tecla_anterior, DERECHA);
-                } else if (evento.key.keysym.sym == SDLK_SPACE) {
-                    enviar_accion(tecla_anterior, SALTAR);
-                } else if (evento.key.keysym.sym == SDLK_v) {
-                    enviar_accion(tecla_anterior, DISPARAR);
-                } else if (evento.key.keysym.sym == SDLK_r) {
-                    enviar_accion(tecla_anterior, RECARGAR);
-                } else if(evento.key.keysym.sym == SDLK_UP){
-                    enviar_accion(tecla_anterior, APUNTAR_ARRIBA);
-                } else if (evento.key.keysym.sym == SDLK_DOWN) {
-                    enviar_accion(tecla_anterior,AGACHARSE);
-                }
-                break;
-
-            case SDL_KEYUP:
-                if (evento.key.keysym.sym == SDLK_LEFT || evento.key.keysym.sym == SDLK_RIGHT) {
-                    enviar_accion(tecla_anterior, QUIETO);
-                } else if (evento.key.keysym.sym == SDLK_SPACE) {
-                    *tecla_anterior = ComandoAccion::QUIETO;
-                } else if (evento.key.keysym.sym == SDLK_v) {
-                    enviar_accion(tecla_anterior, DEJAR_DISPARAR);
-                } else if (evento.key.keysym.sym == SDLK_UP){
-                    enviar_accion(tecla_anterior, DEJAR_APUNTAR_ARRIBA);
-                } else if (evento.key.keysym.sym == SDLK_DOWN) {
-                    enviar_accion(tecla_anterior, LEVANTARSE);
-                }
-                break;
-        }
-    }
-}
-
+#include "cliente_mixer.h"
 
 void Cliente::ejecutar_juego() {
-    
     const int frameDelay = 50;  
     Uint32 lastRenderTime = SDL_GetTicks();
 
-    ComandoAccion tecla_anterior = QUIETO;
-    
+    ClienteMixer mixer;
+
+    if (!mixer.inicializar_mixer()) {
+        SDL_Log("No se pudo inicializar SDL_mixer.");
+        return;
+    }
+
+    if (!mixer.cargar_y_reproducir_musica("../sounds/sonido_fondo.wav")) {
+        SDL_Log("No se pudo cargar o reproducir la música.");
+        return;
+    }
+
+    mixer.set_volumen(MIX_MAX_VOLUME);
+
     while (conectado) {
         Uint32 currentTime = SDL_GetTicks();
-
-        if (currentTime - lastRenderTime >= frameDelay) {
-            lastRenderTime = currentTime;
-            
-            mapa->render();
-            leaderboard.render();
-            
-            duck.render();
-            if (win_message) {
-                win_message->render();
-               
-            }
-            for (auto& pair : enemigos) {
-                pair.second->renderizar();  
-            }
-            window.render();
-             if (should_end) {
-                SDL_Delay(3000);
-                conectado = false;
-            }
+        window.set_target_for_frame();
+        mapa->render();
+        duck.render();
+        
+        for (auto& pair : enemigos) {
+            pair.second->renderizar();
         }
+        SDL_Rect rect = ZoomUtils::get_zoom(enemigos, duck, 800, 600);
+        window.renderPortion(rect.x, rect.y, rect.w, rect.h);
+        leaderboard.render();
+        if (win_message) {
+            win_message->render();
+        }
+        window.render();
 
+        if (should_end) {
+            SDL_Delay(3000);
+            conectado = false;
+        }
+        lastRenderTime = SDL_GetTicks();
         procesar_eventos_recibidos();
-        controlar_eventos_del_teclado(&tecla_anterior);
 
-        SDL_Delay(1);
+        SDL_Delay(frameDelay - (currentTime - lastRenderTime));
     }
-}
 
+    mixer.detener_musica();
+}
 
 
 void Cliente::handle_win_screen(const EventoWinRound& evento) {
@@ -444,6 +409,7 @@ std::unordered_map<ColorDuck, int> Cliente::get_colors(std::unordered_map<int,in
     return colors;
 }
 void Cliente::stop() {
+    teclado.stop();
     receiver.stop();
     sender.stop();
     protocolo.cerrar_conexion();
@@ -452,6 +418,7 @@ void Cliente::stop() {
 }
 
 void Cliente::join() {
+    teclado.join();
     receiver.join();
     sender.join();
 }

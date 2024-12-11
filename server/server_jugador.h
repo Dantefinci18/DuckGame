@@ -25,10 +25,9 @@ private:
     Sender sender;
     std::mutex mtx;
     Receiver receiver;
-    int generar_id();
 
 public:
-    explicit Jugador(Queue<std::shared_ptr<Accion>>& comandos,Socket&& conexion);
+    explicit Jugador(Queue<std::shared_ptr<Accion>>&comandos,Socket&& conexion,int id);
 
     void run();
 
