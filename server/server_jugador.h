@@ -43,7 +43,7 @@ public:
 
     Queue<std::unique_ptr<Evento>>& get_cola_eventos();
     
-    bool enviar_partidas(std::list<Partida>& partidas);
+    bool enviar_partidas(std::list<Partida> partidas);
 
     void enviar_evento(const Evento& evento);
 };

@@ -53,6 +53,8 @@ class ClienteProtocolo{
          */
         std::vector<Collidable*> recibir_mapa();
 
+        std::list<Partida> recibir_partidas();
+
     private:
         Socket socket;
         Serializador serializador;

@@ -40,6 +40,7 @@ void ServerLobby::run(){
                 partidas[cantidad_de_partidas] = gameloop;
             
             }else if(partida == ESTABLECER_PARTIDAS){
+                jugador->enviar_partidas(obtener_partidas_en_espera());
 
             }else if(partida == CARGAR_PARTIDA){
                 std::cout << "Cargar partida" << std::endl;
@@ -72,7 +73,7 @@ void ServerLobby::comenzar_partida(Gameloop *partida){
     partida->start();
 }
 
-/*std::list<Partida> ServerLobby::obtener_partidas_en_espera(){
+std::list<Partida> ServerLobby::obtener_partidas_en_espera(){
     std::list<Partida> partidas_disponibles;
     
     for(auto& pair : partidas){
@@ -86,7 +87,7 @@ void ServerLobby::comenzar_partida(Gameloop *partida){
 
     return partidas_disponibles;
 
-}*/
+}
 
 Gameloop* ServerLobby::obtener_partida_en_espera(){
     for(auto& pair : partidas){

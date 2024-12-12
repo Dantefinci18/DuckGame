@@ -65,6 +65,8 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
         return nullptr;
     }
 
+    std::cout << "recibo evento\n";
+    serializador.imprimir_uint8_t_array(tipo_evento,sizeof(tipo_evento));
     Evento::TipoEvento tipo = serializador.deserializar_tipo_evento(tipo_evento);
 
     switch (tipo) {
@@ -320,6 +322,59 @@ std::vector<Collidable*> ClienteProtocolo::recibir_mapa() {
 
     return collidables;
 }
+
+std::list<Partida> ClienteProtocolo::recibir_partidas(){
+    bool was_closed = false;
+    std::list<Partida> partidas;
+    uint8_t tamanio_partidas_bits[32];
+    socket.recvall(tamanio_partidas_bits,sizeof(tamanio_partidas_bits),&was_closed);
+
+    if(was_closed){
+        return partidas;
+    }
+
+    std::cout << "tamanio partidas\n";
+    serializador.imprimir_uint8_t_array(tamanio_partidas_bits,sizeof(tamanio_partidas_bits));
+    int tamanio_partidas = serializador.deserializar_numero_entero(tamanio_partidas_bits);
+
+    for(int i = 0; i < tamanio_partidas;i++){
+        uint8_t id_bits[32];
+        socket.recvall(id_bits,sizeof(id_bits),&was_closed);
+        if(was_closed){
+            return partidas;
+        }
+
+        std::cout << "id_partida\n";
+        serializador.imprimir_uint8_t_array(id_bits,sizeof(id_bits));
+        int id_partida = serializador.deserializar_numero_entero(id_bits);
+        uint8_t tamanio_nombre_bits[32];
+        socket.recvall(tamanio_nombre_bits,sizeof(tamanio_nombre_bits),&was_closed);
+
+        if(was_closed){
+            return partidas;
+        }
+        
+        std::cout << "tamanio nombre\n";
+        serializador.imprimir_uint8_t_array(tamanio_nombre_bits,sizeof(tamanio_nombre_bits));
+        int tamanio_nombre = serializador.deserializar_numero_entero(tamanio_nombre_bits);  
+        uint8_t nombre_bits[tamanio_nombre];
+        socket.recvall(nombre_bits,sizeof(nombre_bits),&was_closed);
+
+        if(was_closed){
+            return partidas;
+        }
+
+        std::cout << "nombre partida\n";
+        serializador.imprimir_uint8_t_array(nombre_bits,sizeof(nombre_bits));
+        std::string nombre_partida = serializador.deserializar_string(nombre_bits,tamanio_nombre);
+        std::cout << nombre_partida << std::endl;
+        Partida partida(id_partida,nombre_partida);
+        partidas.push_back(partida);
+    }
+
+    return partidas;   
+}
+
 
 void ClienteProtocolo::cerrar_conexion() {
     socket.shutdown(2);

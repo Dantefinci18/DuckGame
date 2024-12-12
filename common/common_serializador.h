@@ -34,7 +34,8 @@ public:
     std::shared_ptr<AccionNuevaPartida> deserializar_nueva_partida(
         const uint8_t* data_nombre, size_t, const uint8_t* data_jugadores, const uint8_t* mapa);
     
-    std::vector<uint8_t> serializar_partidas(std::list<Partida> partidas);
+    
+    std::vector<uint8_t> serializar_partida(Partida &partida);
 
     std::vector<uint8_t> serializar_evento(const Evento& evento);
     std::vector<uint8_t> serializar_pickup(const Evento& evento);

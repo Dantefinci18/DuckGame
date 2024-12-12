@@ -116,20 +116,21 @@ std::shared_ptr<AccionNuevaPartida> Serializador::deserializar_nueva_partida(con
 }
 
 
-std::vector<uint8_t> Serializador::serializar_partidas(std::list<Partida> partidas){  
-    std::vector<uint8_t> buffer;
-    serializar_numero_entero(partidas.size(),buffer,0);
+std::vector<uint8_t> Serializador::serializar_partida(Partida &partida){  
+    std::vector<uint8_t> buffer(64);
+    serializar_numero_entero(partida.id,buffer,0);
+    std::cout << "id_partida\n";
+    imprimir_uint8_t_array(buffer.data(),buffer.size());
 
-    int i = 32;
+    serializar_numero_entero(partida.nombre.size(),buffer,32);
+    std::cout << "tamanio nombre\n";
+    imprimir_uint8_t_array(buffer.data(),buffer.size());
 
-    for(auto partida : partidas){
-        serializar_numero_entero(partida.id,buffer,i);
-        i += 32;
-        serializar_numero_entero(partida.nombre.size(),buffer,i);
-        i+= 32;
-        serializar_string(partida.nombre,buffer,i);
-        i+= partida.nombre.size();
-    }
+    /*serializar_string(partida.nombre,buffer,64);
+    std::cout << "nombre\n";
+    imprimir_uint8_t_array(buffer.data(),buffer.size());*/
+
+    return buffer;
 }
 
 

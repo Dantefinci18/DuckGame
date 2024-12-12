@@ -54,7 +54,7 @@ void VentanaCargarPartida::volver_clicked(){
 }
 
 void VentanaCargarPartida::agregar_partida(int id, std::string nombre_partida){
-            QWidget *rowWidget = new QWidget();
+        QWidget *rowWidget = new QWidget();
         QHBoxLayout *rowLayout = new QHBoxLayout(rowWidget);
         std::string partida = std::to_string(id) + " " +  nombre_partida;
         QLabel *rowLabel = new QLabel(partida.data(), rowWidget);
@@ -70,6 +70,17 @@ void VentanaCargarPartida::agregar_partida(int id, std::string nombre_partida){
         connect(joinButton, &QPushButton::clicked, this, [=](){
             emit unirse(id,nombre_partida);
         });
+}
+
+void VentanaCargarPartida::vaciar_partidas() {
+    while (QLayoutItem* item = scrollLayout->takeAt(0)) {
+        
+        if (QWidget* widget = item->widget()) {
+            widget->deleteLater();
+        }
+
+        delete item;
+    }
 }
 
 
@@ -181,6 +192,7 @@ void MainWindow::cargar_partida_clicked(){
 ClienteLobby::ClienteLobby(int argc, char* argv[], Socket&& skt): 
     app(new QApplication(argc, argv)),
     protocolo(std::move(skt)),
+    id(protocolo.recibir_id()),
     receiver(QThread::create([=]() {recibir_eventos();})){}
 
 void ClienteLobby::recibir_eventos(){
@@ -188,11 +200,13 @@ void ClienteLobby::recibir_eventos(){
         auto evento = protocolo.recibir_evento();
 
         if(evento->get_tipo() == Evento::EventoMapa){
+            std::cout << "evento mapa\n";
             auto evento_mapa = static_cast<EventoMapa*>(evento.get());
             collidables = evento_mapa->collidables;
             leaderboard = evento_mapa->leaderboard;
                 
         }else if (evento->get_tipo() == Evento::EventoMovimiento) {
+            std::cout << "evento movimiento\n";
             auto evento_mov = static_cast<EventoMovimiento*>(evento.get());
                     
             if(evento_mov->id == id){
@@ -212,22 +226,38 @@ int ClienteLobby::run(){
 
     connect(&mainWindow, &MainWindow::cargar_partida, this,[&] () {
 
-        ComandoAccion comando = CARGAR_PARTIDA;
+        ComandoAccion comando = ESTABLECER_PARTIDAS;
         
         if(!protocolo.enviar_accion(comando)){
             QApplication::quit();
             
         }else{
-            id = protocolo.recibir_id();
-            receiver->start();
-            ventanaEsperando.show();
+            ventanaCargarPartida.show();
+            ventanaCargarPartida.vaciar_partidas();
+            std::list<Partida> partidas = protocolo.recibir_partidas();
+            std::cout << "voy a agregar las partidas\n";
+            for(Partida partida : partidas){
+                
+                //std::cout << "id: " << partida.id << "nombre: " << partida.nombre << std::endl;
+                ventanaCargarPartida.agregar_partida(partida.id,partida.nombre);
+            }
         }
 
 
     });
 
     connect(&ventanaCargarPartida,&VentanaCargarPartida::unirse,this,[&](int id, std::string nombre_partida){
+        ComandoAccion comando = CARGAR_PARTIDA;
         
+        if(!protocolo.enviar_accion(comando)){
+            QApplication::quit();
+            
+        }else{
+            ventanaCargarPartida.hide();
+            receiver->start();
+            ventanaEsperando.show();
+        }
+   
     });
 
 
@@ -249,7 +279,6 @@ int ClienteLobby::run(){
             }else{
                 
                 ventanaNuevaPartida.hide();
-                id = protocolo.recibir_id();
                 receiver->start();
                 ventanaEsperando.show();        
             }

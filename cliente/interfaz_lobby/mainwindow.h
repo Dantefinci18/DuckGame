@@ -40,6 +40,7 @@ class VentanaCargarPartida : public QMainWindow{
     public:
         explicit VentanaCargarPartida(QWidget *parent = nullptr);
         void agregar_partida(int id,std::string nombre_partida);
+        void vaciar_partidas();
 };
 
 class VentanaNuevaPartida: public QMainWindow {
@@ -110,7 +111,7 @@ class ClienteLobby : public QObject{
         std::vector<Collidable*> collidables;
         Leaderboard leaderboard; 
         QThread *receiver;
-        int id = 0;
+        int id;
         float x_inicial = 0;
         float y_inicial = 0;
         ColorDuck color = ColorDuck::MAX_COLOR;

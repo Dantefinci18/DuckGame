@@ -44,7 +44,7 @@ Queue<std::unique_ptr<Evento>>& Jugador::get_cola_eventos(){
     return cola_eventos;
 }
 
-bool Jugador::enviar_partidas(std::list<Partida> &partidas){
+bool Jugador::enviar_partidas(std::list<Partida> partidas){
     return protocolo.enviar_partidas(partidas);
 }
 

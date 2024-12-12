@@ -25,6 +25,7 @@ class ServerLobby : public Thread {
         void eliminar_partidas();
         void eliminar_jugadores_de_una_partida(Gameloop *partida);
         void cerrar_conexiones();
+        std::list<Partida> obtener_partidas_en_espera();
         void comenzar_partida(Gameloop *partida);
     public:
         explicit ServerLobby(int id);

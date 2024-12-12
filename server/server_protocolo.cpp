@@ -93,6 +93,9 @@ void ProtocoloServidor::enviar_estado(const Evento& evento) {
         throw std::runtime_error("Error al enviar estado");
     }
 
+    std::cout << "envio evento\n";
+    serializador.imprimir_uint8_t_array(bits.data(),bits.size());
+
     /*
     switch (evento.get_tipo()){
         case Evento::EventoMovimiento: {
@@ -115,6 +118,35 @@ void ProtocoloServidor::enviar_estado(const Evento& evento) {
 }
 
 bool ProtocoloServidor::enviar_partidas(std::list<Partida> &partidas){
+    bool was_closed = false;
+    std::vector<uint8_t> bits_tamanio_partidas(32);
+    serializador.serializar_numero_entero(partidas.size(),bits_tamanio_partidas,0);
+    std::cout<< "tamanio partidas\n";
+    serializador.imprimir_uint8_t_array(bits_tamanio_partidas.data(),bits_tamanio_partidas.size());
+    conexion.sendall(bits_tamanio_partidas.data(),bits_tamanio_partidas.size(),&was_closed);
+
+    if(was_closed){
+        return false;
+    }
+
+    for(auto& partida : partidas){
+        auto partida_bits = serializador.serializar_partida(partida);
+        conexion.sendall(partida_bits.data(),partida_bits.size(),&was_closed);
+
+        if(was_closed){
+            return false;
+        }
+
+        std::vector<uint8_t> nombre_bits(0);
+        serializador.serializar_string(partida.nombre,nombre_bits,0);
+        conexion.sendall(nombre_bits.data(),nombre_bits.size(),&was_closed);
+
+        if(was_closed){
+            return false;
+        }
+
+    }
+
     return true;
 }
 
