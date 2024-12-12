@@ -35,7 +35,7 @@ class VentanaCargarPartida : public QMainWindow{
     signals:
         void restablecer_partidas();
         void volver();
-        void unirse(int id, std::string partida);
+        void unirse(int id);
 
     public:
         explicit VentanaCargarPartida(QWidget *parent = nullptr);

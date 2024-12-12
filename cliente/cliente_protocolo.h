@@ -33,7 +33,7 @@ class ClienteProtocolo{
         bool crear_partida(const std::string& nombre_partida,
                 const std::string& mapa_seleccionado, const unsigned int cantidad_de_jugadores);
         
-        bool cargar_partida(int id, const std::string& nombre_partida);
+        bool cargar_partida(int id);
 
         /*
          * Funcion que recibe un id

@@ -65,7 +65,20 @@ std::shared_ptr<Accion> ProtocoloServidor::recibir_accion() {
         std::cout << "nombre partida en protocolo: \n" << nuevaPartida->nombre_partida << std::endl;
         return nuevaPartida;
 
-    } 
+    }else if(tipo_accion == CARGAR_PARTIDA){
+        uint8_t data_id_partida[32];
+        conexion.recvall(data_id_partida,sizeof(data_id_partida),&was_closed);
+
+        if (was_closed) {
+            return std::make_shared<Accion>(NONE_ACCION);
+        }
+
+        std::cout << "id_partida:\n";
+        serializador.imprimir_uint8_t_array(data_id_partida,sizeof(data_id_partida)); 
+        
+        int id_partida = serializador.deserializar_numero_entero(data_id_partida);
+        return   std::make_shared<AccionCargarPartida>(id_partida);
+    }
 
     return std::make_shared<Accion>(tipo_accion);
 

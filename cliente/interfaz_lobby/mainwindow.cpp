@@ -68,7 +68,7 @@ void VentanaCargarPartida::agregar_partida(int id, std::string nombre_partida){
         scrollLayout->insertWidget(0,rowWidget);
         
         connect(joinButton, &QPushButton::clicked, this, [=](){
-            emit unirse(id,nombre_partida);
+            emit unirse(id);
         });
 }
 
@@ -246,10 +246,9 @@ int ClienteLobby::run(){
 
     });
 
-    connect(&ventanaCargarPartida,&VentanaCargarPartida::unirse,this,[&](int id, std::string nombre_partida){
-        ComandoAccion comando = CARGAR_PARTIDA;
-        
-        if(!protocolo.enviar_accion(comando)){
+    connect(&ventanaCargarPartida,&VentanaCargarPartida::unirse,this,[&](int id){
+        std::cout << "me uno a una partida\n";
+        if(!protocolo.cargar_partida(id)){
             QApplication::quit();
             
         }else{

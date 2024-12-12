@@ -44,7 +44,9 @@ void ServerLobby::run(){
 
             }else if(partida == CARGAR_PARTIDA){
                 std::cout << "Cargar partida" << std::endl;
-                Gameloop *gameloop = obtener_partida_en_espera();
+                std::shared_ptr<AccionCargarPartida> cargar_partida = std::dynamic_pointer_cast<AccionCargarPartida>(accion_partida);
+                Gameloop *gameloop = partidas[cargar_partida->id_partida];
+
                 if(gameloop != nullptr){
                     gameloop->agregar_jugador(id_jugador,jugador->get_cola_eventos());
                     
@@ -89,7 +91,7 @@ std::list<Partida> ServerLobby::obtener_partidas_en_espera(){
 
 }
 
-Gameloop* ServerLobby::obtener_partida_en_espera(){
+/*Gameloop* ServerLobby::obtener_partida_en_espera(){
     for(auto& pair : partidas){
         auto partida = pair.second;
         
@@ -99,7 +101,7 @@ Gameloop* ServerLobby::obtener_partida_en_espera(){
     }
 
     return nullptr;
-}
+}*/
 
 void ServerLobby::eliminar_terminadas(){
     for (auto it = partidas.begin(); it != partidas.end();) {

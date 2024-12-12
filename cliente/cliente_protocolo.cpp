@@ -18,15 +18,25 @@ bool ClienteProtocolo::crear_partida(const std::string& nombre_partida,
     if (was_closed) {
         return false;
     }
+    
+    std::vector<uint8_t> nombre_partida_bits(0);
+    serializador.serializar_string(nombre_partida,nombre_partida_bits,0);
+    socket.sendall(nombre_partida_bits.data(),nombre_partida_bits.size(),&was_closed);
+
+    if(was_closed){
+        return false;
+    }
 
     return true;
     
 }
 
-bool ClienteProtocolo::cargar_partida(int id, const std::string& nombre_partida){
+bool ClienteProtocolo::cargar_partida(int id){
+    std::cout<< "protocolo cargar partida\n";
+
     bool was_closed = false;
 
-    auto partida_serializada = serializador.serializar_accion(std::make_unique<AccionCargarPartida>(id,nombre_partida));
+    auto partida_serializada = serializador.serializar_accion(std::make_unique<AccionCargarPartida>(id));
     socket.sendall(partida_serializada.data(), partida_serializada.size(), &was_closed);
     
     if (was_closed) {

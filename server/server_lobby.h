@@ -19,7 +19,7 @@ class ServerLobby : public Thread {
         std::mutex mtx;
         int cantidad_de_partidas = 0;
 
-        Gameloop *obtener_partida_en_espera();
+        //Gameloop *obtener_partida_en_espera();
         void cerrar_gameloops_terminados();
         void eliminar_terminadas();
         void eliminar_partidas();
