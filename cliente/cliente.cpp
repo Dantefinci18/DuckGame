@@ -370,6 +370,7 @@ void Cliente::ejecutar_juego() {
         if (should_end) {
             SDL_Delay(3000);
             conectado = false;
+            continue;
         }
         lastRenderTime = SDL_GetTicks();
         procesar_eventos_recibidos();

@@ -29,7 +29,6 @@ private:
     ColorDuck color;
     bool is_dead;
     bool esta_agachado;
-    bool juntar_item;
     DireccionApuntada direccion_apuntada;
     DireccionApuntada ultima_direccion_horizontal;
     std::unique_ptr<Weapon> weapon;
@@ -50,25 +49,25 @@ public:
 
     void move() {
 
-    if (esta_agachado) {
-        velocity.x = 0;  
-        
-    }
+        if (esta_agachado) {
+            velocity.x = 0;  
+            
+        }
 
-    if (velocity.y > gravity && jump_force == 0) {
-        velocity.y -= 1;
+        if (velocity.y > gravity && jump_force == 0) {
+            velocity.y -= 1;
+        }
+        if (jump_force > 0) {
+            jump_force--;
+            velocity.y += 1;
+        }
+        if (velocity.y < gravity) {
+            velocity.y = gravity;
+        }
+        
+        position.y += velocity.y;
+        position.x += velocity.x * speed;  
     }
-    if (jump_force > 0) {
-        jump_force--;
-        velocity.y += 1;
-    }
-    if (velocity.y < gravity) {
-        velocity.y = gravity;
-    }
-    
-    position.y += velocity.y;
-    position.x += velocity.x * speed;  
-}
 
 
     Vector get_direccion_apuntada() const {
@@ -117,14 +116,6 @@ public:
     void morir() {
         eventos.push_back(std::make_shared<EventoMuerte>(id));
         is_dead = true;
-    }
-
-    void intenta_juntar(){
-        juntar_item = true;
-    }
-
-    void dejar_de_juntar(){
-        juntar_item = false;
     }
 
     // deberia subir shooting=true a primera linea, como esta si no tiene arma no agarra armadura
@@ -292,7 +283,7 @@ public:
             
         }
 
-        if (other.getType() == CollidableType::SpawnPlace /*&& juntar_item*/) {
+        if (other.getType() == CollidableType::SpawnPlace) {
             SpawnPlace& spawnPlace = static_cast<SpawnPlace&>(other);
             CollidableSide side = getCollisionSide(spawnPlace);
             if (side == CollidableSide::None) {
@@ -306,7 +297,7 @@ public:
         }
 
 
-        if (other.getType() == CollidableType::SpawnBox /*&& juntar_item*/) {
+        if (other.getType() == CollidableType::SpawnBox) {
             SpawnBox& spawnBox = static_cast<SpawnBox&>(other);
             CollidableSide side = getCollisionSide(spawnBox);
 
@@ -443,7 +434,6 @@ public:
           color(color),
           is_dead(false),
           esta_agachado(false),
-          juntar_item(false),
           direccion_apuntada(DireccionApuntada::APUNTADO_DERECHA),
           ultima_direccion_horizontal(DireccionApuntada::APUNTADO_DERECHA),
           weapon(nullptr),

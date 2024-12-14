@@ -55,13 +55,5 @@ Queue<std::unique_ptr<Evento>>& Jugador::get_cola_eventos(){
 }
 
 void Jugador::enviar_evento(const Evento& evento){
-
-    std::unique_ptr<Evento> evento_ptr;
-
-    if(evento.get_tipo() == Evento::EventoEspera){
-        std::cout<< "evento espera enviado\n";
-        evento_ptr = std::make_unique<EventoEspera>();
-    }
-
-    protocolo.enviar_estado(*evento_ptr);;
+    protocolo.enviar_estado(evento);;
 }
