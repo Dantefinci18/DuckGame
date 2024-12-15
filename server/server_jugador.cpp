@@ -65,3 +65,8 @@ void Jugador::enviar_evento(const Evento& evento){
 
     protocolo.enviar_estado(*evento_ptr);;
 }
+
+int Jugador::recibir_cantidad_jugadores(){
+    std::cout << "recibiendo cantidad de jugadores\n";
+    return protocolo.recibir_cantidad_jugadores();
+}

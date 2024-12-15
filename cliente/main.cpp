@@ -34,8 +34,8 @@ int main(int argc, char* argv[]) {
     float y_inicial = 0;
     ColorDuck color = ColorDuck::MAX_COLOR;
 
-    QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
-        lobby.crear_partida(mapaSeleccionado);
+    QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado, const int cantidad_jugadores) {
+        lobby.crear_partida(mapaSeleccionado, cantidad_jugadores);
         int id = lobby.recibir_id();
         std::cout <<  id << std::endl;
 

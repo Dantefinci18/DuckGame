@@ -12,6 +12,15 @@ void Receiver::run() {
         while (_keep_running) {
             ComandoAccion command = protocolo.recibir_accion();
 
+            if (command == NUEVA_PARTIDA) {
+                int cantidad_jugadores = protocolo.recibir_cantidad_jugadores();
+                std::cout << "cantidad: "<< cantidad_jugadores << std::endl;
+
+                Accion accion(id, command,cantidad_jugadores);
+                std::lock_guard<std::mutex> lock(mtx);
+                acciones->push(std::move(accion));
+            }
+
             if(command == NONE_ACCION){
                 _keep_running = false;
                 break;

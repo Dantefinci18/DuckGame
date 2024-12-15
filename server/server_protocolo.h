@@ -19,6 +19,7 @@ class ProtocoloServidor{
         
         bool enviar_id(int id);
         void enviar_estado(const Evento& evento); 
+        int recibir_cantidad_jugadores();
         Socket get_socket();  
         void cerrar_conexion();
         int ACCION_RECIBIDA = 5;

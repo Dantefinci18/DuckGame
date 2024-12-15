@@ -10,7 +10,6 @@
 #include "../lobby.h"
 #include <string>  
 
-
 class VentanaEsperando : public QMainWindow {
     Q_OBJECT
 
@@ -30,7 +29,7 @@ public:
     explicit MainWindow(Lobby* lobby, QWidget *parent = nullptr);
 
 signals:
-    void crear_partida(const std::string& mapaSeleccionado);
+    void crear_partida(const std::string& mapaSeleccionado, const int numeroJugadores); // Ahora con el número de jugadores
     void cargar_partida(); 
 
 private slots:
@@ -43,6 +42,7 @@ private:
     QPushButton *cargar_partida_Button;
     QLabel *statusLabel;
     QComboBox *mapaComboBox; 
+    QComboBox *jugadoresComboBox; // Nuevo QComboBox para el número de jugadores
 };
 
 #endif // MAINWINDOW_H

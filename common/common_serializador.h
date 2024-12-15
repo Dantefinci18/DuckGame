@@ -22,6 +22,9 @@ private:
     uint8_t deserializar_enum(const uint8_t* data);
 
 public:
+    std::vector<uint8_t> serializar_num_jugadores(int num_jugadores);
+    int deserializar_cantidad_jugadores(const uint8_t* data);
+    std::vector<uint8_t> serializar_mapa_elegido(const std::string& mapa);
 
     std::vector<uint8_t> serializar_accion(ComandoAccion &accion);
 

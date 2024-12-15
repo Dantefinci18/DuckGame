@@ -23,8 +23,10 @@ void ServerLobby::run(){
                 jugadores_esperando.erase(id_jugador);
 
             }else if(partida == NUEVA_PARTIDA){
+                std::cout << "Nueva partida" << std::endl;
+                int cantidad_jugadores = accion_partida.get_cantidad_jugadores();
                 jugador->enviar_evento(EventoEspera());
-                Gameloop *gameloop = new Gameloop(accion_partida.get_player_id(),2,jugador->get_cola_eventos());
+                Gameloop *gameloop = new Gameloop(accion_partida.get_player_id(),cantidad_jugadores,jugador->get_cola_eventos());
                 partidas.push_back(gameloop);
             
             }else if(partida == CARGAR_PARTIDA){
@@ -40,6 +42,9 @@ void ServerLobby::run(){
                     }
                 }
 
+            }
+            else { 
+                std::cerr << "Comando desconocido\n";
             }
 
        } catch (std::exception& e) {

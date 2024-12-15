@@ -5,7 +5,7 @@
 
 Lobby::Lobby(const char* hostname, const char* servname) : socket(hostname, servname) {}
 
-void Lobby::crear_partida(const std::string& mapa_seleccionado) {
+void Lobby::crear_partida(const std::string& mapa_seleccionado, const int cantidad_jugadores) {
     (void)mapa_seleccionado;
     bool was_closed = false;
     ComandoAccion comando = NUEVA_PARTIDA;
@@ -14,6 +14,13 @@ void Lobby::crear_partida(const std::string& mapa_seleccionado) {
     if (was_closed) {
         throw std::runtime_error("Error al enviar comando de nueva partida");
     }
+
+    std::vector<uint8_t> cantidad_jugadores_serializada = serializador.serializar_num_jugadores(cantidad_jugadores);
+    socket.sendall(cantidad_jugadores_serializada.data(), cantidad_jugadores_serializada.size(), &was_closed);
+    if (was_closed) {
+        throw std::runtime_error("Error al enviar cantidad de jugadores");
+    }
+    
     
 }
 

@@ -44,6 +44,8 @@ public:
     Queue<std::unique_ptr<Evento>>& get_cola_eventos();
 
     void enviar_evento(const Evento& evento);
+
+    int recibir_cantidad_jugadores();
 };
 
 #endif

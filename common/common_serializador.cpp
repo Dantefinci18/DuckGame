@@ -13,6 +13,36 @@ std::vector<uint8_t> Serializador::serializar_enum(std::bitset<5> bits){
     return buffer;
 }
 
+std::vector<uint8_t> Serializador::serializar_num_jugadores(int num_jugadores) {
+    std::vector<uint8_t> buffer(4);
+    std::bitset<4> bits(num_jugadores);
+    for (int i = 0; i < 4; ++i) {
+        buffer[i] = bits[i];
+    }
+    return buffer;
+
+}
+
+int Serializador::deserializar_cantidad_jugadores(const uint8_t* data) {
+    int valor = 0;
+    std::bitset<4> bits;
+    for (int i = 0; i < 4; ++i) {
+        bits[i] = data[i];
+    }
+    valor = static_cast<int>(bits.to_ulong());
+    return valor;
+}
+std::vector<uint8_t> Serializador::serializar_mapa_elegido(const std::string& mapa) {
+    std::vector<uint8_t> buffer(8);
+    for (int i = 0; i < 8; ++i) {
+        buffer[i] = mapa[i];
+    }
+    return buffer;
+
+    }
+
+
+
 std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
     std::bitset<5> bits(accion);  
     return serializar_enum(bits);
