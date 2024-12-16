@@ -5,11 +5,11 @@
 #include <cstdint>
 #include "common_weapon.h" 
 #include "../server/Collidable.h"
-#include "../server/server_gameloop.h"
 #include "../common/common_color.h"
 #include "../common/common_direcciones.h"
 #include "../server/server_leaderboard.h"
 #include "common_proteccion.h"
+#include <list>
 
 
 

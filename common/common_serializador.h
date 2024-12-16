@@ -71,6 +71,10 @@ public:
 
     std::vector<uint8_t> serializar_mapa(const Evento& evento);
 
+    std::vector<uint8_t> serializar_partidas(const Evento& evento);
+
+    int deserializar_id_partida(const uint8_t* id_data);
+
     
     Collidable* deserializar_collidable(const uint8_t* collidable_data);
     std::tuple<int, int> deserializar_tuple64(const uint8_t* tuple_data);

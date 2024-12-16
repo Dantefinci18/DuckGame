@@ -121,6 +121,32 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
             return std::make_unique<EventoEspera>();
         }
 
+        case Evento::EventoPartidas: {
+            std::cout << "Recibiendo partidas" << std::endl;
+            uint8_t cantidad[6];
+            socket.recvall(cantidad, sizeof(cantidad), &was_closed);
+            if (was_closed) {
+                throw std::runtime_error("Error al recibir cantidad de partidas: conexión cerrada");
+            }
+
+            int cantidad_partidas = serializador.deserializar_cantidad_collidables(cantidad);
+            std::cout << "cantidad:" << cantidad_partidas << std::endl;
+            std::list<int> partidas_ids;
+            for (int i = 0; i < cantidad_partidas; i++) {
+                uint8_t id_data[4];
+                socket.recvall(id_data, sizeof(id_data), &was_closed);
+                if (was_closed) {
+                    throw std::runtime_error("Error al recibir ID de partida: conexión cerrada");
+                }
+
+                int id = serializador.deserializar_id_partida(id_data);
+                std::cout << id << ", ";
+                std::cout << std::endl;
+            }
+            std::cout << "Partidas recibidas: ";
+            return std::make_unique<EventoPartidas>(partidas_ids);
+        }
+
         default:
             throw std::runtime_error("Error: Tipo de evento desconocido");
             

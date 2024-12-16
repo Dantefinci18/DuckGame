@@ -133,6 +133,11 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
         return serializar_espera(Evento::TipoEvento::EventoDisparo);
     }
 
+    if (evento.get_tipo() == Evento::TipoEvento::EventoPartidas){
+        std::cout << "Serializando partidas" << std::endl;
+        return serializar_partidas(evento);
+    }
+
     return std::vector<uint8_t>();
 }
 
@@ -593,6 +598,42 @@ std::vector<uint8_t> Serializador::serializar_mapa(const Evento& evento) {
 
     bits.insert(bits.end(), map_bits.begin(), map_bits.end());
     return bits;
+}
+
+std::vector<uint8_t> Serializador::serializar_partidas(const Evento& evento) {
+    int cantidad = static_cast<const EventoPartidas&>(evento).partidas.size();
+    std::vector<uint8_t> bits(14 + cantidad * 4);
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    serializar_tipo_evento(bits, tipo_evento, 0);
+
+    serializar_cantidad(bits, cantidad, 8);
+
+    const std::list<int>& partidas = static_cast<const EventoPartidas&>(evento).partidas;
+
+    int offset = 14;
+
+    for (const auto& id : partidas) {
+
+        std::bitset <4> bits_id(id);
+        for (int i = 0; i < 4; ++i) {
+            bits[offset + i] = bits_id[i];
+        }
+
+        offset += 4;
+        
+    }
+
+    return bits;
+}
+
+
+int Serializador::deserializar_id_partida(const uint8_t* id_data) {
+    std::bitset<4> bits;
+    for (int i = 0; i < 4; ++i) {
+        bits[i] = id_data[i];
+    }
+    return static_cast<int>(bits.to_ulong());
 }
 
 Collidable* Serializador::deserializar_collidable(const uint8_t* collidable_data) {

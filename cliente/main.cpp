@@ -87,6 +87,13 @@ int main(int argc, char* argv[]) {
                     y_inicial = evento_mov->y;
                     color = evento_mov->color;
                 }
+            }else if (evento->get_tipo() == Evento::EventoPartidas){
+                auto evento_partidas = static_cast<EventoPartidas*>(evento.get());
+                std::cout << "Partidas: ";
+                for (const auto& partida : evento_partidas->partidas) {
+                    std::cout << partida << ", ";
+                }
+                std::cout << std::endl;
             }
         }
         Cliente cliente(id,color,lobby.get_socket(), collidables, leaderboard, x_inicial,y_inicial);

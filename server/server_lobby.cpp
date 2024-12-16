@@ -29,6 +29,13 @@ void ServerLobby::run(){
                 partidas.insert({contador_partidas++, gameloop});
             
             } else if (partida == CARGAR_PARTIDA) {
+                //lista de partidas
+                std::list<int> partidas_ids; 
+                for (auto& partida : partidas) {
+                    partidas_ids.push_back(partida.first);
+                }
+                jugador->enviar_evento(EventoPartidas(partidas_ids));
+
                 std::cout << "Cargar partida" << std::endl;
                 Gameloop *gameloop = obtener_partida_en_espera();
                 if (gameloop != nullptr) {

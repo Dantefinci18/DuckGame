@@ -63,6 +63,11 @@ void Jugador::enviar_evento(const Evento& evento){
         evento_ptr = std::make_unique<EventoEspera>();
     }
 
+    if (evento.get_tipo() == Evento::EventoPartidas){
+        std::cout << "Serializando partidas" << std::endl;
+        evento_ptr = std::make_unique<EventoPartidas>(static_cast<const EventoPartidas&>(evento).partidas);
+    }
+
     protocolo.enviar_estado(*evento_ptr);;
 }
 
