@@ -3,9 +3,13 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QComboBox>
+#include <QListWidget>
 #include <QPixmap>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <string>  
 
+// Ventana de espera (opcional)
 VentanaEsperando::VentanaEsperando(QWidget *parent) :
     QMainWindow(parent),
     statusLabel(new QLabel("Esperando conexión...", this))
@@ -22,9 +26,10 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     lobby(lobby),
     crear_partida_Button(new QPushButton("Crear partida", this)),
     cargar_partida_Button(new QPushButton("Cargar partida", this)),
+    partidasListWidget(new QListWidget(this)),  // Lista de partidas
     statusLabel(new QLabel("Esperando conexión...", this)),
     mapaComboBox(new QComboBox(this)),
-    jugadoresComboBox(new QComboBox(this)) // Inicialización del combo de jugadores
+    jugadoresComboBox(new QComboBox(this))
 {
     setWindowTitle("Lobby");
     setFixedSize(800, 600);
@@ -39,19 +44,18 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
 
     QVBoxLayout *layout = new QVBoxLayout(centralWidget);
     
-    // Agregar opciones al combo de mapas
     mapaComboBox->addItem("Mapa 1");
     mapaComboBox->addItem("Mapa 2");
 
-    // Agregar opciones al combo de número de jugadores (1 a 10)
-    for (int i = 1; i <= 10; ++i) {
-        jugadoresComboBox->addItem(QString::number(i)); // Agrega los números de 1 a 10
+    for (int i = 2; i <= 10; ++i) {
+        jugadoresComboBox->addItem(QString::number(i));
     }
 
     // Agregar widgets al layout
     layout->addWidget(mapaComboBox);
-    layout->addWidget(jugadoresComboBox); // Se añade el combo de jugadores
+    layout->addWidget(jugadoresComboBox);
     layout->addWidget(crear_partida_Button);
+    layout->addSpacing(20); // Espaciado entre lista y botón
     layout->addWidget(cargar_partida_Button);
     layout->addWidget(statusLabel);
     
@@ -61,20 +65,61 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
 }
 
 void MainWindow::crear_partida_clicked() {
-    // Obtener el mapa seleccionado
     QString mapaSeleccionadoQString = mapaComboBox->currentText();
     std::string mapaSeleccionado = mapaSeleccionadoQString.toStdString();
+    int numeroJugadores = jugadoresComboBox->currentIndex() + 2;
 
-    // Obtener el número de jugadores seleccionado
-    int numeroJugadores = jugadoresComboBox->currentIndex() + 1; // Los índices empiezan en 0, pero el número de jugadores va de 1 a 10
-
-    // Actualizar la etiqueta de estado
     statusLabel->setText("Partida creada: " + mapaSeleccionadoQString + " con " + QString::number(numeroJugadores) + " jugadores.");
-
-    // Emitir la señal para crear la partida
     emit crear_partida(mapaSeleccionado, numeroJugadores);
 }
 
 void MainWindow::cargar_partida_clicked(){
+    statusLabel->setText("Cargando partida seleccionada...");
+    QString partidaSeleccionada = partidasListWidget->currentItem()
+                                   ? partidasListWidget->currentItem()->text()
+                                   : "Ninguna partida seleccionada";
+    
+    // Aquí puedes conectar con lógica futura para manejar las partidas
     emit cargar_partida();
 }
+
+void MainWindow::actualizarListaPartidas(const std::list<int>& partidas) {
+    partidasListWidget->clear();  // Limpiar la lista existente
+    for (const auto& partida : partidas) {
+        partidasListWidget->addItem(QString::number(partida));  
+    }
+    mostrarListaPartidas();
+}
+
+void MainWindow::mostrarListaPartidas() {
+    QDialog* dialogoPartidas = new QDialog(this);
+    dialogoPartidas->setWindowTitle("Lista de Partidas");
+    dialogoPartidas->setFixedSize(300, 400);
+
+    QVBoxLayout* layout = new QVBoxLayout(dialogoPartidas);
+
+    for (int i = 0; i < partidasListWidget->count(); ++i) {
+        QWidget* partidaWidget = new QWidget(dialogoPartidas);
+        QHBoxLayout* partidaLayout = new QHBoxLayout(partidaWidget);
+
+        QString nombrePartida = partidasListWidget->item(i)->text();
+        QLabel* partidaLabel = new QLabel(nombrePartida, partidaWidget);
+        partidaLayout->addWidget(partidaLabel);
+
+        QPushButton* unirseButton = new QPushButton("Unirse", partidaWidget);
+        partidaLayout->addWidget(unirseButton);
+
+        connect(unirseButton, &QPushButton::clicked, this, [this, nombrePartida]() {
+        });
+
+        layout->addWidget(partidaWidget);  
+    }
+
+    QDialogButtonBox* botonera = new QDialogButtonBox(QDialogButtonBox::Close, dialogoPartidas);
+    layout->addWidget(botonera);
+
+    connect(botonera, &QDialogButtonBox::rejected, dialogoPartidas, &QDialog::accept);
+
+    dialogoPartidas->exec(); 
+}
+

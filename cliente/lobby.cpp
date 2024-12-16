@@ -130,7 +130,6 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
             }
 
             int cantidad_partidas = serializador.deserializar_cantidad_collidables(cantidad);
-            std::cout << "cantidad:" << cantidad_partidas << std::endl;
             std::list<int> partidas_ids;
             for (int i = 0; i < cantidad_partidas; i++) {
                 uint8_t id_data[4];
@@ -140,8 +139,7 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
                 }
 
                 int id = serializador.deserializar_id_partida(id_data);
-                std::cout << id << ", ";
-                std::cout << std::endl;
+                partidas_ids.push_back(id);
             }
             std::cout << "Partidas recibidas: ";
             return std::make_unique<EventoPartidas>(partidas_ids);
