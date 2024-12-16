@@ -5,6 +5,7 @@
 #include <cstdint>
 #include "common_weapon.h" 
 #include "../server/Collidable.h"
+#include "../server/server_gameloop.h"
 #include "../common/common_color.h"
 #include "../common/common_direcciones.h"
 #include "../server/server_leaderboard.h"
@@ -31,7 +32,8 @@ public:
         EventoCajaDestruida,
         EventoSpawnArmaBox,
         EventoSpawnProteccionBox,
-        EventoDisparo
+        EventoDisparo,
+        EventoPartidas
     };
 
     virtual ~Evento() = default;
@@ -361,5 +363,26 @@ class EventoDisparo : public Evento {
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoDisparo; }
+};
+
+class EventoPartidas : public Evento {
+    public:
+    std::list<int> partidas;
+
+    EventoPartidas(const std::list<int>& partidas) : partidas(partidas) {}
+
+    void print() const override {
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoPartidas\", "
+            << "\"partidas\": [";
+        for (const auto& partida : partidas) {
+            oss << partida << ", ";
+        }
+        oss << "] }";
+        std::cout << oss.str() << std::endl;
+    }
+
+    TipoEvento get_tipo() const override { return TipoEvento::EventoPartidas; }
+    
 };
 #endif // COMMON_EVENTO_H
