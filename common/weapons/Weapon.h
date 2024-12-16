@@ -1,9 +1,11 @@
 #ifndef COMMON_WEAPON_H
 #define COMMON_WEAPON_H
-#include "../server/Vector.h"
+
+#include "../../server/Vector.h"
 #include <vector>
 #include <cmath>
 #include <iostream>
+
 // Listar las armas como aparecen de izquierda a derecha en la imagen guns
 enum class WeaponType {
     PistolaCowboy,
@@ -15,23 +17,26 @@ enum class WeaponType {
     // Future types can be added here
 };
 
-class Weapon {    
-    public:
+class Weapon {
+public:
     static constexpr int TILES = 12;
     int ammo;
     WeaponType type;
     int range;
 
-    WeaponType get_type() {
-        return type;
-    }
+    // Constructor
+    Weapon(int ammo, WeaponType type, int range);
 
-    virtual ~Weapon() {}; 
-    Weapon(int ammo, WeaponType type, int range) : ammo(ammo), type(type), range(range) {}
+    // Destructor
+    virtual ~Weapon();
 
-    // Devuelve una lista de puntos a donde tiene que ir la bala.
+    // Getters
+    WeaponType get_type();
+
+    // Pure virtual functions
     virtual std::vector<Vector> shoot(Vector from, Vector direction, bool& tiene_retroceso) = 0;
     virtual void reload() = 0;
     virtual bool es_automatica() = 0;
 };
+
 #endif

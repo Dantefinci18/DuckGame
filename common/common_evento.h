@@ -4,10 +4,10 @@
 #include <vector>
 #include <cstdint>
 #include <memory>
-#include "common_weapon.h" 
-#include "../common/collidables/Collidable.h"
-#include "../common/common_color.h"
-#include "../common/common_direcciones.h"
+#include "weapons/Weapon.h" 
+#include "collidables/Collidable.h"
+#include "common_color.h"
+#include "common_direcciones.h"
 #include "../server/server_leaderboard.h"
 #include "common_proteccion.h"
 

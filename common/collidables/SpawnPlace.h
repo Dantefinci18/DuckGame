@@ -2,11 +2,11 @@
 #define SPAWN_PLACE_H
 
 #include "Collidable.h"
-#include "../common_pistola_cowboy.h"
-#include "../common_pistola_magnum.h"
-#include "../common_pistola_duelos.h"
-#include "../common_rifle_ak47.h"
-#include "../common_escopeta.h"
+#include "../weapons/PistolaCowboy.h"
+#include "../weapons/PistolaMagnum.h"
+#include "../weapons/PistolaDuelos.h"
+#include "../weapons/RifleAK47.h"
+#include "../weapons/Escopeta.h"
 #include "../common_evento.h"
 #include "../common_weapon_utils.h"
 #include <optional>

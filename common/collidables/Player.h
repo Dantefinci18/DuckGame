@@ -9,7 +9,7 @@
 #include "SpawnBox.h"
 #include "Box.h"
 
-#include "../common_weapon.h"
+#include "../weapons/Weapon.h"
 #include "../common_evento.h"
 #include "../common_color.h"
 
@@ -70,7 +70,7 @@ public:
     virtual bool onCollision(Collidable& other) override;
     void print_bounding_box() const override;
     void print_position() const override;
-    
+
     Vector get_posicion();
     bool is_able_to_jump();
     void agacharse();
