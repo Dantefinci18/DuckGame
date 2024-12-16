@@ -25,6 +25,8 @@ public:
 
     void cargar_partida();
 
+    void unirse_partida(int id_partida);
+
     /*
      * Funcion que se une a una partida
      * Recibe un string con el nombre de la partida

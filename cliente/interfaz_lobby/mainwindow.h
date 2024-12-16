@@ -9,8 +9,7 @@
 #include <QDialog>
 #include <string>
 #include <list>
-
-class Lobby;  // Declaración adelantada de la clase Lobby
+#include "../lobby.h"
 
 class VentanaEsperando : public QMainWindow {
     Q_OBJECT
@@ -33,20 +32,21 @@ public:
 private slots:
     void crear_partida_clicked();
     void cargar_partida_clicked();
-    void mostrarListaPartidas();  // Método para mostrar la lista de partidas en un QDialog
+    void mostrarListaPartidas(); 
 
 signals:
     void crear_partida(const std::string& mapa, int jugadores);
     void cargar_partida();
+    void unirse_partida(int id_partida);
 
 public slots:
     void actualizarListaPartidas(const std::list<int>& partidas);
 
 private:
-    Lobby* lobby;  // Puntero a la clase Lobby
+    Lobby* lobby; 
     QPushButton* crear_partida_Button;
     QPushButton* cargar_partida_Button;
-    QListWidget* partidasListWidget;  // Lista de partidas
+    QListWidget* partidasListWidget; 
     QLabel* statusLabel;
     QComboBox* mapaComboBox;
     QComboBox* jugadoresComboBox;

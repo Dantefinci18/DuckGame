@@ -19,6 +19,12 @@ void Receiver::run() {
                 acciones->push(std::move(accion));
             
             }
+            else if (command == UNIRSE_PARTIDA) {
+                int id_partida = protocolo.recibir_cantidad_jugadores();
+                Accion accion(id, command, id_partida);
+                std::lock_guard<std::mutex> lock(mtx);
+                acciones->push(std::move(accion));
+            }
 
             else if(command == NONE_ACCION){
                 _keep_running = false;

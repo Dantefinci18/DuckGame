@@ -29,26 +29,31 @@ void ServerLobby::run(){
                 partidas.insert({contador_partidas++, gameloop});
             
             } else if (partida == CARGAR_PARTIDA) {
-                //lista de partidas
                 std::list<int> partidas_ids; 
                 for (auto& partida : partidas) {
-                    partidas_ids.push_back(partida.first);
+                    if (!partida.second->esta_llena()) {
+                        partidas_ids.push_back(partida.first);
+                    }
                 }
                 jugador->enviar_evento(EventoPartidas(partidas_ids));
 
                 std::cout << "Cargar partida" << std::endl;
-                Gameloop *gameloop = obtener_partida_en_espera();
-                if (gameloop != nullptr) {
-                    gameloop->agregar_jugador(id_jugador, jugador->get_cola_eventos());
-                    
-                    if (gameloop->esta_llena()) {
-                        comenzar_partida(gameloop);
-                    } else {
-                        jugador->enviar_evento(EventoEspera());
-                    }
+                
+
+            } else if (partida == UNIRSE_PARTIDA) {
+                int id_partida = accion_partida.get_cantidad_jugadores();
+                Gameloop *partida = partidas[id_partida];
+                partida->agregar_jugador(id_jugador, jugador->get_cola_eventos());
+                if (partida->esta_llena()) {
+                    comenzar_partida(partida);
+                }
+                else {
+                    jugador->enviar_evento(EventoEspera());
                 }
 
-            } else { 
+            }
+            
+            else { 
                 std::cerr << "Comando desconocido\n";
             }
 

@@ -7,9 +7,8 @@
 #include <QPixmap>
 #include <QDialog>
 #include <QDialogButtonBox>
-#include <string>  
+#include <string>
 
-// Ventana de espera (opcional)
 VentanaEsperando::VentanaEsperando(QWidget *parent) :
     QMainWindow(parent),
     statusLabel(new QLabel("Esperando conexión...", this))
@@ -26,7 +25,7 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     lobby(lobby),
     crear_partida_Button(new QPushButton("Crear partida", this)),
     cargar_partida_Button(new QPushButton("Cargar partida", this)),
-    partidasListWidget(new QListWidget(this)),  // Lista de partidas
+    partidasListWidget(new QListWidget(this)),
     statusLabel(new QLabel("Esperando conexión...", this)),
     mapaComboBox(new QComboBox(this)),
     jugadoresComboBox(new QComboBox(this))
@@ -51,15 +50,13 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
         jugadoresComboBox->addItem(QString::number(i));
     }
 
-    // Agregar widgets al layout
     layout->addWidget(mapaComboBox);
     layout->addWidget(jugadoresComboBox);
     layout->addWidget(crear_partida_Button);
-    layout->addSpacing(20); // Espaciado entre lista y botón
+    layout->addSpacing(20);
     layout->addWidget(cargar_partida_Button);
     layout->addWidget(statusLabel);
     
-    // Conectar señales y slots
     connect(crear_partida_Button, &QPushButton::clicked, this, &MainWindow::crear_partida_clicked);
     connect(cargar_partida_Button, &QPushButton::clicked, this, &MainWindow::cargar_partida_clicked);
 }
@@ -75,16 +72,11 @@ void MainWindow::crear_partida_clicked() {
 
 void MainWindow::cargar_partida_clicked(){
     statusLabel->setText("Cargando partida seleccionada...");
-    QString partidaSeleccionada = partidasListWidget->currentItem()
-                                   ? partidasListWidget->currentItem()->text()
-                                   : "Ninguna partida seleccionada";
-    
-    // Aquí puedes conectar con lógica futura para manejar las partidas
     emit cargar_partida();
 }
 
 void MainWindow::actualizarListaPartidas(const std::list<int>& partidas) {
-    partidasListWidget->clear();  // Limpiar la lista existente
+    partidasListWidget->clear(); 
     for (const auto& partida : partidas) {
         partidasListWidget->addItem(QString::number(partida));  
     }
@@ -109,7 +101,10 @@ void MainWindow::mostrarListaPartidas() {
         QPushButton* unirseButton = new QPushButton("Unirse", partidaWidget);
         partidaLayout->addWidget(unirseButton);
 
-        connect(unirseButton, &QPushButton::clicked, this, [this, nombrePartida]() {
+        connect(unirseButton, &QPushButton::clicked, this, [this, nombrePartida, dialogoPartidas]() {
+            int numeroPartida = nombrePartida.toInt();
+            emit unirse_partida(numeroPartida);  // Emitimos la señal con el número de partida
+            dialogoPartidas->accept();          // Cerramos el diálogo
         });
 
         layout->addWidget(partidaWidget);  
@@ -122,4 +117,3 @@ void MainWindow::mostrarListaPartidas() {
 
     dialogoPartidas->exec(); 
 }
-

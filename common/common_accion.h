@@ -21,6 +21,7 @@ enum ComandoAccion : uint8_t {
     DEJAR_APUNTAR_ARRIBA,
     NUEVA_PARTIDA,
     CARGAR_PARTIDA,
+    UNIRSE_PARTIDA,
     NONE_ACCION
 };
 
