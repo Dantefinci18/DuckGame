@@ -6,8 +6,8 @@
 #include <optional>
 #include <random>
 
-#include "../common/common_evento.h"
-#include "../common/common_weapon_utils.h"
+#include "../common_evento.h"
+#include "../common_weapon_utils.h"
 
 #include "Collidable.h"
 

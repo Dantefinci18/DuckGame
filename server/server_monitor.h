@@ -17,7 +17,6 @@ class PlayerMonitor {
     public:
         void agregar_cola_evento(Queue<std::unique_ptr<Evento>>& cola_evento);
         void eliminar_cola_evento(Queue<std::unique_ptr<Evento>>& cola_evento);
-        std::unique_ptr<Evento>  broadcast_evento(const Evento& evento);
         void enviar_evento(const Evento& evento);
 };
 

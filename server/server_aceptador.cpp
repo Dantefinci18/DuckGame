@@ -13,9 +13,7 @@ void Aceptador::run() {
     lobby.start();
     while (_keep_running) {
         try {
-
             Socket conexion = skt.accept();
-            std::cout << "acepto una conexion\n";
             lobby.agregar_jugador(conexion);
 
         } catch (const LibError& e) {}
