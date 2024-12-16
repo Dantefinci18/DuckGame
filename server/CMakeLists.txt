@@ -1,13 +1,6 @@
 target_sources(taller_server
     PUBLIC
-    Player.h
     Vector.h
-    Platform.h
-    Collidable.h
-    SpawnPlace.h
-    SpawnWeaponBox.h
-    SpawnBox.h
-    Box.h
     server_aceptador.h
     server_gameloop.h
     server_receiver.h

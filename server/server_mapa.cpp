@@ -50,7 +50,7 @@ void Mapa::agregar_collidables(std::vector<Collidable*> nuevos_collidables) {
             if (collidable_viejo->getType() == CollidableType::Box) {
                 Box* box = static_cast<Box*>(collidable_viejo.get());
                 if (box->get_position().x == collidable->position.x && box->get_position().y == collidable->position.y){
-                box->desactivar();
+                    box->desactivar();
                 }
             }
         }

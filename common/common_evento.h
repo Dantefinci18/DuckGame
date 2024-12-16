@@ -3,10 +3,11 @@
 
 #include <vector>
 #include <cstdint>
-#include "common_weapon.h" 
-#include "../server/Collidable.h"
-#include "../common/common_color.h"
-#include "../common/common_direcciones.h"
+#include <memory>
+#include "weapons/Weapon.h" 
+#include "collidables/Collidable.h"
+#include "common_color.h"
+#include "common_direcciones.h"
 #include "../server/server_leaderboard.h"
 #include "common_proteccion.h"
 #include <list>
@@ -39,6 +40,7 @@ public:
     virtual ~Evento() = default;
     virtual TipoEvento get_tipo() const = 0; 
     virtual void print() const = 0; 
+    virtual std::unique_ptr<Evento> clone() const = 0;
 };
 
 class EventoMovimiento : public Evento {
@@ -63,8 +65,10 @@ public:
             << "\"is_flapping\": " << is_flapping << ", "
             << "\"reset\": " << reset
             << " }";
-        
-        
+    }
+
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoMovimiento>(*this);
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoMovimiento; }  
@@ -87,6 +91,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoMapa>(*this);
+    }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoMapa; }  
 };
 
@@ -107,6 +115,10 @@ public:
             << "\"weapon_type\": " << static_cast<int>(weapon_type)
             << " }";
         std::cout << oss.str() << std::endl;
+    }
+
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoSpawnArma>(*this);
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnArma; } 
@@ -133,6 +145,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoPickup>(*this);
+    }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoPickup; } 
 };
 
@@ -157,6 +173,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoPickupProteccion>(*this);
+    }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoPickupProteccion; } 
 };
 
@@ -174,6 +194,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoMuerte>(*this);
+    }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoMuerte; } 
 };
 
@@ -182,6 +206,10 @@ class EventoEspera : public Evento {
 public:
     void print() const override {
         std::cout << "{ \"type\": \"EventoEspera\" }" << std::endl;
+    }
+
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoEspera>(*this);
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoEspera; }
@@ -203,6 +231,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoApuntar>(*this);
+    }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoApuntar; } 
 };
 
@@ -218,6 +250,9 @@ public:
             << "\"id\": " << id
             << " }";
         std::cout << oss.str() << std::endl;
+    }
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoAgacharse>(*this);
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoAgacharse; } 
@@ -237,6 +272,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoLevantarse>(*this);
+    }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoLevantarse; } 
 };
 
@@ -254,6 +293,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoWinRound>(*this);
+    }
+    
     TipoEvento get_tipo() const override { return TipoEvento::EventoWinRound; } 
 };
 
@@ -271,6 +314,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoWinMatch>(*this);
+    }
+    
     TipoEvento get_tipo() const override { return TipoEvento::EventoWinMatch; } 
 };
 
@@ -285,6 +332,10 @@ public:
         
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoBala>(*this);
+    }
+    
     TipoEvento get_tipo() const override { return TipoEvento::EventoBala; }
 };
 
@@ -304,6 +355,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoCajaDestruida>(*this);
+    }
+    
     TipoEvento get_tipo() const override { return TipoEvento::EventoCajaDestruida; }
 
 };
@@ -328,6 +383,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoSpawnArmaBox>(*this);
+    }
+    
     TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnArmaBox; } 
 };
 
@@ -349,6 +408,10 @@ public:
         std::cout << oss.str() << std::endl;
     }
 
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoSpawnProteccionBox>(*this);
+    }
+
     TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnProteccionBox; } 
 };
 
@@ -360,6 +423,10 @@ class EventoDisparo : public Evento {
         std::ostringstream oss;
         oss << "{ \"type\": \"EventoDisparo\" }";
         std::cout << oss.str() << std::endl;
+    }
+
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoDisparo>(*this);
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoDisparo; }
@@ -380,6 +447,10 @@ class EventoPartidas : public Evento {
         }
         oss << "] }";
         std::cout << oss.str() << std::endl;
+    }
+
+    std::unique_ptr<Evento> clone() const override {
+        return std::make_unique<EventoPartidas>(*this);  
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoPartidas; }

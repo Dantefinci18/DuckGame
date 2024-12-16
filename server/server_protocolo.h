@@ -5,7 +5,7 @@
 #include "../common/common_accion.h"
 #include "../common/common_serializador.h"
 #include "../common/common_evento.h"
-#include "Collidable.h"
+#include "../common/collidables/Collidable.h"
 #include "Vector.h"
 
 class ProtocoloServidor{

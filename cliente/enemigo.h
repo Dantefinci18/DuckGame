@@ -4,8 +4,8 @@
 #include <string>
 #include "duck.h"  
 #include "Sdl/SdlWindow.h"
-#include "../server/Collidable.h"
-#include "../common/common_weapon.h"
+#include "../common/collidables/Collidable.h"
+#include "../common/weapons/Weapon.h"
 #include "../common/common_direcciones.h"
 #include "../common/common_proteccion.h"
 

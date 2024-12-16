@@ -68,7 +68,6 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         
         } else if (command == DISPARAR){
             monitor.enviar_evento(EventoDisparo());
-            player->intenta_juntar();
             player->iniciar_disparo();
             /*std::vector<std::shared_ptr<Evento>> eventos;
             if(player->has_weapon()){
@@ -76,7 +75,6 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             }*/
         } else if (command == DEJAR_DISPARAR){
             std::cout << "Dejo de disparar" << std::endl;
-            player->dejar_de_juntar();
             player->dejar_disparar();
         } else if (command == RECARGAR) {
             player->reload();
@@ -85,6 +83,7 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         } else if (command == DEJAR_APUNTAR_ARRIBA) {
             player->dejar_apuntar_arriba();
         } else if (command == AGACHARSE) {
+            std::cout << "agacharse" << std::endl;
             player->agacharse();
         } else if (command == LEVANTARSE) {
             player->levantarse();

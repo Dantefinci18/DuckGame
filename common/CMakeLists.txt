@@ -5,6 +5,20 @@ target_sources(taller_common
   common_resolvererror.cpp
   common_socket.cpp
   common_serializador.cpp
+  weapons/PistolaCowboy.cpp
+  weapons/Weapon.cpp
+  weapons/Escopeta.cpp
+  weapons/RifleAK47.cpp
+  weapons/PistolaDuelos.cpp
+  weapons/PistolaMagnum.cpp
+  collidables/Box.cpp
+  collidables/Collidable.cpp
+  collidables/Platform.cpp
+  collidables/SpawnBox.cpp
+  collidables/SpawnPlace.cpp
+  collidables/SpawnWeaponBox.cpp
+  collidables/Player.cpp
+
   PUBLIC
   common_accion.h
   common_evento.h
@@ -15,8 +29,19 @@ target_sources(taller_common
   common_thread.h
   common_queue.h
   common_serializador.h
-  common_pistola_cowboy.h
-  common_weapon.h
+  weapons/PistolaCowboy.h
+  weapons/Weapon.h
+  weapons/Escopeta.h
+  weapons/RifleAK47.h
+  weapons/PistolaDuelos.h
+  weapons/PistolaMagnum.h
   common_screen_utils.h
   common_color.h
+  collidables/Box.h
+  collidables/Collidable.h
+  collidables/Platform.h
+  collidables/SpawnBox.h
+  collidables/SpawnPlace.h
+  collidables/SpawnWeaponBox.h
+  collidables/Player.h
 )

@@ -9,11 +9,11 @@
 #include <tuple>
 #include "../common/common_accion.h"
 #include "../common/common_evento.h"
-#include "../server/Collidable.h"
-#include "../server/Platform.h"
-#include "../server/Player.h"
-#include "../server/SpawnPlace.h"
-#include "../server/Box.h"
+#include "collidables/Collidable.h"
+#include "collidables/Platform.h"
+#include "collidables/Player.h"
+#include "collidables/SpawnPlace.h"
+#include "collidables/Box.h"
 #include "../server/server_leaderboard.h"
 
 class Serializador {

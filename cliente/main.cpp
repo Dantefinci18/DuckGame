@@ -6,8 +6,8 @@
 #include "lobby.h"
 #include <QApplication>
 #include "interfaz_lobby/mainwindow.h"
-#include "../server/Collidable.h"
-#include "../server/Platform.h"
+#include "../common/collidables/Collidable.h"
+#include "../common/collidables/Platform.h"
 #include "../server/server_leaderboard.h"  
 #include "cliente_leaderboard.h"
 #include "../common/common_color.h"
