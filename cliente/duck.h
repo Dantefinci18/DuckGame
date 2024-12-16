@@ -7,7 +7,7 @@
 #include "Sdl/Area.h"
 #include "Sdl/SdlTexture.h"
 #include "Sdl/SdlWindow.h"
-#include "../server/Collidable.h"
+#include "../common/collidables/Collidable.h"
 #include "../common/common_weapon.h"
 #include "../common/common_color.h"
 #include "../common/common_direcciones.h"

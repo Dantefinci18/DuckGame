@@ -1,6 +1,7 @@
 #ifndef COMMON_PISTOLA_COWBOY_H
 #define COMMON_PISTOLA_COWBOY_H
 #include "common_weapon.h"
+
 class PistolaCowboy : public Weapon {
     public:
     PistolaCowboy() : Weapon(6, WeaponType::PistolaCowboy, 20 * TILES) {}

@@ -7,11 +7,11 @@
 #include <filesystem>
 #include <yaml-cpp/yaml.h>
 #include <unordered_map>
-#include "Platform.h"
-#include "SpawnPlace.h"
-#include "SpawnWeaponBox.h"
-#include "SpawnBox.h"
-#include "Box.h"
+#include "../common/collidables/Platform.h"
+#include "../common/collidables/SpawnPlace.h"
+#include "../common/collidables/SpawnWeaponBox.h"
+#include "../common/collidables/SpawnBox.h"
+#include "../common/collidables/Box.h"
 
 namespace fs = std::filesystem;
 class Mapa {

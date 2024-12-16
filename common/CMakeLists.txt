@@ -5,6 +5,14 @@ target_sources(taller_common
   common_resolvererror.cpp
   common_socket.cpp
   common_serializador.cpp
+  collidables/Box.cpp
+  collidables/Collidable.cpp
+  collidables/Platform.cpp
+  collidables/SpawnBox.cpp
+  collidables/SpawnPlace.cpp
+  collidables/SpawnWeaponBox.cpp
+  collidables/Player.cpp
+
   PUBLIC
   common_accion.h
   common_evento.h
@@ -19,4 +27,11 @@ target_sources(taller_common
   common_weapon.h
   common_screen_utils.h
   common_color.h
+  collidables/Box.h
+  collidables/Collidable.h
+  collidables/Platform.h
+  collidables/SpawnBox.h
+  collidables/SpawnPlace.h
+  collidables/SpawnWeaponBox.h
+  collidables/Player.h
 )

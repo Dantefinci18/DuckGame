@@ -5,7 +5,7 @@
 #include <chrono>
 #include <random>
 #include <vector>
-
+#include <iostream>
 class PistolaDuelos : public Weapon {
 public:
     PistolaDuelos()

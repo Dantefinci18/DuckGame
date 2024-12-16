@@ -6,10 +6,11 @@
 #include "enemigo.h"
 #include <iostream>
 #include <memory>
-#include "../server/Platform.h"  
-#include "../server/SpawnWeaponBox.h"
+#include "../common/collidables/Platform.h"  
+#include "../common/collidables/SpawnWeaponBox.h"
+#include "../common/collidables/SpawnBox.h"
 #include "cliente_zoom_utils.cpp"
-#include "../server/SpawnBox.h"
+
 
 Cliente::Cliente(int id,ColorDuck color,Socket&& socket, std::vector<Collidable*> collidables, Leaderboard leaderboard, float x_inicial, float y_inicial)
     : id(id),

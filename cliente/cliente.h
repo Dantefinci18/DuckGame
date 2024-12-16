@@ -18,7 +18,7 @@
 #include "../common/common_accion.h"
 #include "../common/common_socket.h"
 #include "../common/common_color.h"
-#include "../server/Collidable.h"
+#include "../common/collidables/Collidable.h"
 #include "../server/server_leaderboard.h"
 #include <SDL2/SDL.h>
 #include <unordered_map>

@@ -1,13 +1,13 @@
 #ifndef DISPARO_MANAGER_H
 #define DISPARO_MANAGER_H
 
-#include "Player.h"
-#include "Collidable.h"
-#include "Platform.h"
-#include "SpawnPlace.h"
-#include "Box.h"
-#include "SpawnWeaponBox.h"
-#include "SpawnBox.h"
+#include "../common/collidables/Player.h"
+#include "../common/collidables/Collidable.h"
+#include "../common/collidables/Platform.h"
+#include "../common/collidables/SpawnPlace.h"
+#include "../common/collidables/Box.h"
+#include "../common/collidables/SpawnWeaponBox.h"
+#include "../common/collidables/SpawnBox.h"
 #include "bala.h"
 #include "../common/common_evento.h"
 #include <vector>

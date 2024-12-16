@@ -3,12 +3,12 @@
 #include "Sdl/Area.h"
 #include "Sdl/SdlTexture.h"
 #include "Sdl/SdlWindow.h"
-#include "../server/Collidable.h"
-#include "../server/Platform.h"
-#include "../server/SpawnPlace.h"
-#include "../server/SpawnWeaponBox.h"
-#include "../server/SpawnBox.h"
-#include "../server/Box.h"
+#include "../common/collidables/Collidable.h"
+#include "../common/collidables/Platform.h"
+#include "../common/collidables/SpawnPlace.h"
+#include "../common/collidables/SpawnWeaponBox.h"
+#include "../common/collidables/SpawnBox.h"
+#include "../common/collidables/Box.h"
 
 Mapa::Mapa(SdlWindow& window, const std::string& ruta_fondo, std::vector<Collidable*> collidables)
     : 

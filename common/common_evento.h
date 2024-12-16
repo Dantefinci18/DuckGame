@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <memory>
 #include "common_weapon.h" 
-#include "../server/Collidable.h"
+#include "../common/collidables/Collidable.h"
 #include "../common/common_color.h"
 #include "../common/common_direcciones.h"
 #include "../server/server_leaderboard.h"

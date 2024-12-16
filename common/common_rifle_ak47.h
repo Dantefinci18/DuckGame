@@ -5,6 +5,7 @@
 #include <chrono>
 #include <random>
 #include <vector>
+#include <iostream>
 
 class RifleAK47 : public Weapon {
 public:

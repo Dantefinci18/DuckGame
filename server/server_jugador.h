@@ -14,7 +14,7 @@
 #include "server_receiver.h"
 #include "server_sender.h"
 #include "server_monitor.h"
-#include "Player.h"
+#include "../common/collidables/Player.h"
 
 class Jugador {
 private:

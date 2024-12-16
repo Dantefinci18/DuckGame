@@ -5,7 +5,7 @@
 #include <cmath>
 #include <random>
 #include <vector>
-
+#include <iostream>
 class PistolaMagnum : public Weapon {
 public:
     PistolaMagnum() : Weapon(6, WeaponType::PistolaMagnum, 20 * TILES), retroceso(true), dispersion(4.0f) {}
