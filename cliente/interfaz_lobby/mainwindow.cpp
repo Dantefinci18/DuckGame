@@ -102,8 +102,9 @@ void MainWindow::mostrarListaPartidas() {
 
         connect(unirseButton, &QPushButton::clicked, this, [this, nombrePartida, dialogoPartidas]() {
             int numeroPartida = nombrePartida.toInt();
-            emit unirse_partida(numeroPartida);  // Emitimos la señal con el número de partida
             dialogoPartidas->accept();          // Cerramos el diálogo
+            emit unirse_partida(numeroPartida);  // Emitimos la señal con el número de partida
+            
         });
 
         layout->addWidget(partidaWidget);  
