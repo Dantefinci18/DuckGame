@@ -33,7 +33,6 @@ void SpawnPlace::update([[maybe_unused]] std::vector<Collidable*> others) {
         }
 
         if (countdown <= 0) {
-            std::cout << "Spawned weapon!" << std::endl;
             state = State::Spawned;
             countdown = min_server_ticks + get_random_number();
             weapon = elegir_arma_aleatoria();

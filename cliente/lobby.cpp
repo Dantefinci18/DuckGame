@@ -5,8 +5,7 @@
 
 Lobby::Lobby(const char* hostname, const char* servname) : socket(hostname, servname) {}
 
-void Lobby::crear_partida(const std::string& mapa_seleccionado, const int cantidad_jugadores) {
-    (void)mapa_seleccionado;
+void Lobby::crear_partida(const int cantidad_jugadores) {
     bool was_closed = false;
     ComandoAccion comando = NUEVA_PARTIDA;
     std::vector<uint8_t> partida_serializada = serializador.serializar_accion(comando);

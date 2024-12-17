@@ -29,10 +29,8 @@ std::vector<Vector> PistolaDuelos::shoot(Vector from, Vector direction, bool& ti
 
     Vector orthogonalDirection = direction;
     if (direction.x == 0 && direction.y == 1) { 
-        std::cout << "tira para arriba, dispersion en x" << std::endl;
         orthogonalDirection = Vector(dispersion_value, 0);
     } else {
-        std::cout << "tira para los costados, dispersion en y" << std::endl;
         orthogonalDirection = Vector(0, dispersion_value);
     }
 

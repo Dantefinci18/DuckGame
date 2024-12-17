@@ -64,6 +64,7 @@ public:
             << "\"is_flapping\": " << is_flapping << ", "
             << "\"reset\": " << reset
             << " }";
+        std::cout << oss.str() << std::endl;
     }
 
     std::unique_ptr<Evento> clone() const override {

@@ -94,9 +94,6 @@ public:
                     }
 
                     case CollidableType::Platform:
-                        std::cout << "Le pegaste a una plataforma en (" 
-                                  << punto_impacto->x << ", " 
-                                  << punto_impacto->y << ")" << std::endl;
                         break;
 
                     case CollidableType::Box: {
@@ -104,10 +101,6 @@ public:
                         if (caja_impactada && caja_impactada->esta_activa()) {
                             int caja_x = caja_impactada->get_position().x;
                             int caja_y = caja_impactada->get_position().y;
-
-                            std::cout << "Le pegaste a una caja en (" 
-                                      << caja_x << ", " 
-                                      << caja_y << ")" << std::endl;
 
                             EventoCajaDestruida evento_caja_destruida(caja_x, caja_y);
                             eventos.push_back(std::make_shared<EventoCajaDestruida>(evento_caja_destruida));
@@ -123,13 +116,7 @@ public:
                                 EventoSpawnProteccionBox evento_spawn_proteccion(caja_x, caja_y, recompensa->get_proteccion_type());
                                 eventos.push_back(std::make_shared<EventoSpawnProteccionBox>(evento_spawn_proteccion));
                                 collidables_a_agregar.push_back(recompensa);
-                            } else if (tipo_item == SpawnBox::ItemType::None) {
-                                std::cout << "La caja está vacía" << std::endl;
-                                std::cout << "ACA TENGO QUE MEJORARA QUE SEA NONE, DEBERIA SER NONE Y NO UNA ARMA NONE" << std::endl;
-                                std::cout << "OJO QUE CLIENTE Y DEMAS BUSCA POR TIPO DE ARMA NONE" << std::endl;
-                            } else{
-                               std::cout << "\033[43;31m(MANAGER) - TOCO ALGO RARO\033[0m" << std::endl; 
-                            }
+                            } 
                             //collidables_a_agregar.push_back(recompensa);
                         } else {
                             std::cerr << "Error: dynamic_cast a Box falló." << std::endl;
@@ -138,16 +125,10 @@ public:
                     }
 
                     default:
-                        std::cout << "Impacto desconocido en (" 
-                                  << punto_impacto->x << ", " 
-                                  << punto_impacto->y << ")" << std::endl;
                         break;
                 }
                 break; 
-            } else {
-                std::cout << "No hubo impacto en la dirección (" 
-                          << destino.x << ", " << destino.y << ")" << std::endl;
-            }
+            } 
         }
     }
 };

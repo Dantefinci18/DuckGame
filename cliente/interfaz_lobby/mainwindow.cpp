@@ -7,6 +7,7 @@
 #include <QPixmap>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QLineEdit>
 #include <string>
 
 VentanaEsperando::VentanaEsperando(QWidget *parent) :
@@ -27,7 +28,6 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     cargar_partida_Button(new QPushButton("Cargar partida", this)),
     partidasListWidget(new QListWidget(this)),
     statusLabel(new QLabel("Esperando conexión...", this)),
-    mapaComboBox(new QComboBox(this)),
     jugadoresComboBox(new QComboBox(this))
 {
     setWindowTitle("Lobby");
@@ -42,15 +42,12 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     setCentralWidget(centralWidget);
 
     QVBoxLayout *layout = new QVBoxLayout(centralWidget);
+    jugadoresComboBox->addItem("Seleccione la cantidad de jugadores para la partida");
     
-    mapaComboBox->addItem("Mapa 1");
-    mapaComboBox->addItem("Mapa 2");
-
     for (int i = 2; i <= 10; ++i) {
         jugadoresComboBox->addItem(QString::number(i));
     }
 
-    layout->addWidget(mapaComboBox);
     layout->addWidget(jugadoresComboBox);
     layout->addWidget(crear_partida_Button);
     layout->addSpacing(20);
@@ -62,12 +59,14 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
 }
 
 void MainWindow::crear_partida_clicked() {
-    QString mapaSeleccionadoQString = mapaComboBox->currentText();
-    std::string mapaSeleccionado = mapaSeleccionadoQString.toStdString();
-    int numeroJugadores = jugadoresComboBox->currentIndex() + 2;
+    int index = jugadoresComboBox->currentIndex();
+    if (index == 0) {
+        return;
+    }
+    int numeroJugadores = jugadoresComboBox->currentIndex() + 1;
 
-    statusLabel->setText("Partida creada: " + mapaSeleccionadoQString + " con " + QString::number(numeroJugadores) + " jugadores.");
-    emit crear_partida(mapaSeleccionado, numeroJugadores);
+    statusLabel->setText("Partida creada: " +  QString::number(numeroJugadores) + " jugadores.");
+    emit crear_partida(numeroJugadores);
 }
 
 void MainWindow::cargar_partida_clicked(){

@@ -66,10 +66,7 @@ void SdlText::render() const {
         textWidth
     };
 
-    int ret = SDL_RenderCopyEx(this->renderer, this->texture, nullptr, &dstRect, 0 , nullptr, SDL_FLIP_NONE);
-    if (ret != 0) {
-        std::cout << "Failed!" << std::endl;
-    }
+    SDL_RenderCopyEx(this->renderer, this->texture, nullptr, &dstRect, 0 , nullptr, SDL_FLIP_NONE);
 }
 
 void SdlText::set_text(std::string text) {

@@ -18,11 +18,6 @@ void Gameloop::agregar_jugador(int id_jugador, Queue<std::unique_ptr<Evento>>& c
 
     monitor.agregar_cola_evento(cola_eventos);
     ColorDuck color_asignado = static_cast<ColorDuck>(color % static_cast<int>(ColorDuck::MAX_COLOR));
-
-    if (color_asignado == ColorDuck::MAX_COLOR) {
-        std::cout << "MAX_COLOR\n";
-    }
-
     std::shared_ptr<Player> jugador = std::make_shared<Player>(id_jugador,color_asignado);
 
     jugadores[id_jugador] = jugador;
@@ -34,7 +29,6 @@ void Gameloop::agregar_jugador(int id_jugador, Queue<std::unique_ptr<Evento>>& c
 void Gameloop::run() {
 
     EventoMapa eventoMapa(mapa->getCollidables(), leaderboard);
-    std::cout << "se envia el evento mapa\n";
     monitor.enviar_evento(eventoMapa);
     
     while (_keep_running) {
@@ -61,7 +55,6 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         } else if (command == IZQUIERDA) {
             player->set_x_direction(-1.0f);
         } else if (command == SALTAR) {
-            std::cout << "jumps" << std::endl;
             player->jump();
         } else if (command == QUIETO) {
             player->set_x_direction(0.0f);
@@ -73,7 +66,6 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
                 DisparoManager::procesar_disparo(*player, collidables, jugadores);
             }*/
         } else if (command == DEJAR_DISPARAR){
-            std::cout << "Dejo de disparar" << std::endl;
             player->dejar_disparar();
         } else if (command == RECARGAR) {
             player->reload();
@@ -95,7 +87,6 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
         if (collidable->getType() == CollidableType::SpawnPlace) {
             SpawnPlace& sPlace = static_cast<SpawnPlace&>(*collidable);
             for (auto& evento : sPlace.eventos) {
-                std::cout << "hereeee" << std::endl;
                 monitor.enviar_evento(*evento);
             }
             sPlace.eventos.clear();
@@ -147,7 +138,6 @@ void Gameloop::cargar_acciones() {
     if (should_reset_round) {
         --ticks_round_win_screen;
         if (ticks_round_win_screen == 0) {
-            std::cout << "reseting!" << std::endl;
             mapa = std::make_unique<Mapa>(getRandomMapIndex());
             ticks_round_win_screen = 60;
             should_reset_round = false;

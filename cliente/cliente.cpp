@@ -43,7 +43,7 @@ void Cliente::procesar_eventos_recibidos() {
     while (tried) {
         tried = queue_eventos.try_pop(evento_recibido);
         if (tried && evento_recibido) {
-            evento_recibido->print();
+            //evento_recibido->print();
             switch (evento_recibido->get_tipo()) {
                 case Evento::EventoMovimiento: {
                     auto evento_mov = static_cast<EventoMovimiento*>(evento_recibido.get());
@@ -143,7 +143,6 @@ void Cliente::procesar_eventos_recibidos() {
                 }
 
                 default: {
-                    std::cout << "Error: Tipo de evento desconocido" << std::endl;
                     break;
                 }
             }
@@ -240,7 +239,6 @@ void Cliente::manejar_arma(const EventoPickup& evento_pickup, std::vector<Collid
         if (collidable->getType() == CollidableType::SpawnBox 
             && collidable->position.x == evento_pickup.x
             && collidable->position.y == evento_pickup.y) {
-            std::cout << "clearing weapon" << std::endl;
             SpawnBox* sBox = static_cast<SpawnBox*>(collidable);
             sBox->limpiar_item();
             mapa->clear_weapon(sBox);
@@ -261,7 +259,6 @@ void Cliente::manejar_proteccion(const EventoPickupProteccion& evento_pickup, st
         if (collidable->getType() == CollidableType::SpawnBox 
             && collidable->position.x == evento_pickup.x
             && collidable->position.y == evento_pickup.y) {
-            std::cout << "clearing proteccion" << std::endl;
             SpawnBox* sBox = static_cast<SpawnBox*>(collidable);
             sBox->limpiar_item();
         }

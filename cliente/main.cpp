@@ -33,14 +33,13 @@ int main(int argc, char* argv[]) {
     ColorDuck color = ColorDuck::MAX_COLOR;
     int jugador_id = -1;
 
-    QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado, const int cantidad_jugadores) {
-        lobby.crear_partida(mapaSeleccionado, cantidad_jugadores);
+    QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const int cantidad_jugadores) {
+        lobby.crear_partida(cantidad_jugadores);
         jugador_id = lobby.recibir_id();  
-        std::cout << jugador_id << std::endl;
 
         while (color == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
-            evento->print();
+            //evento->print();
             if (evento->get_tipo() == Evento::EventoMapa) {
                 auto evento_mapa = static_cast<EventoMapa*>(evento.get());
                 collidables = evento_mapa->collidables;
@@ -68,11 +67,10 @@ int main(int argc, char* argv[]) {
     QObject::connect(&mainWindow, &MainWindow::cargar_partida, [&]() {       
         lobby.cargar_partida();
         jugador_id = lobby.recibir_id();  
-        std::cout << jugador_id << std::endl;
 
         while (true) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
-            evento->print();
+            //evento->print();
     
             if (evento->get_tipo() == Evento::EventoPartidas) {
                 auto evento_partidas = static_cast<EventoPartidas*>(evento.get());
@@ -87,9 +85,11 @@ int main(int argc, char* argv[]) {
 
     QObject::connect(&mainWindow, &MainWindow::unirse_partida, [&] (int id_partida) {
         lobby.unirse_partida(id_partida);
+
+        //Tech debt, color assignment on movement.
         while (color == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
-            evento->print();
+            //evento->print();
             if (evento->get_tipo() == Evento::EventoMapa) {
                 auto evento_mapa = static_cast<EventoMapa*>(evento.get());
                 collidables = evento_mapa->collidables;
