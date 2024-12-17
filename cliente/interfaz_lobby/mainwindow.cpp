@@ -8,6 +8,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QLineEdit>
+#include <QEventLoop> 
 #include <string>
 
 VentanaEsperando::VentanaEsperando(QWidget *parent) :
@@ -53,6 +54,9 @@ MainWindow::MainWindow(Lobby* lobby, QWidget *parent) :
     layout->addSpacing(20);
     layout->addWidget(cargar_partida_Button);
     layout->addWidget(statusLabel);
+
+    statusLabel->setStyleSheet("QLabel { color : white; font-size: 16px; font-weight: bold; }");
+
     
     connect(crear_partida_Button, &QPushButton::clicked, this, &MainWindow::crear_partida_clicked);
     connect(cargar_partida_Button, &QPushButton::clicked, this, &MainWindow::cargar_partida_clicked);
@@ -102,8 +106,8 @@ void MainWindow::mostrarListaPartidas() {
 
         connect(unirseButton, &QPushButton::clicked, this, [this, nombrePartida, dialogoPartidas]() {
             int numeroPartida = nombrePartida.toInt();
-            dialogoPartidas->accept();          // Cerramos el diálogo
-            emit unirse_partida(numeroPartida);  // Emitimos la señal con el número de partida
+            dialogoPartidas->accept();         
+            emit unirse_partida(numeroPartida); 
             
         });
 
@@ -116,4 +120,14 @@ void MainWindow::mostrarListaPartidas() {
     connect(botonera, &QDialogButtonBox::rejected, dialogoPartidas, &QDialog::accept);
 
     dialogoPartidas->exec(); 
+}
+
+
+void MainWindow::mostrarMensajeEspera(int idPartida) {
+    statusLabel->setText("Esperando jugadores para comenzar la partida.\nID PARTIDA: " + QString::number(idPartida));
+}
+
+void MainWindow::restaurar() {
+    statusLabel->setText("Esperando conexión...");
+    jugadoresComboBox->setCurrentIndex(0);
 }

@@ -41,6 +41,10 @@ signals:
 
 public slots:
     void actualizarListaPartidas(const std::list<int>& partidas);
+    void mostrarMensajeEspera(int idPartida);
+    void restaurar();
+
+ 
 
 private:
     Lobby* lobby; 
