@@ -37,7 +37,6 @@ int main(int argc, char* argv[]) {
     QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado) {
         lobby.crear_partida(mapaSeleccionado);
         int id = lobby.recibir_id();
-        std::cout <<  id << std::endl;
 
         while (color == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
@@ -67,7 +66,6 @@ int main(int argc, char* argv[]) {
     QObject::connect(&mainWindow, &MainWindow::cargar_partida, [&]() {       
         lobby.cargar_partida();
         int id = lobby.recibir_id();
-        std::cout <<  id << std::endl;
         
          while (color == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();

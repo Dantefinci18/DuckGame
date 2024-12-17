@@ -41,7 +41,6 @@ int Jugador::generar_id() {
     std::uniform_int_distribution<int> distribution(INT32_MIN, INT32_MAX);
 
     int id = distribution(engine);
-    std::cout << id << std::endl;
     return id;
 }
 

@@ -43,14 +43,6 @@ std::vector<Vector> Player::disparar() {
     }
     bool tiene_retroceso = false;
     auto destinos = weapon->shoot(get_posicion_arma(), get_direccion_apuntada(), tiene_retroceso);
-    
-    if (tiene_retroceso) {
-        std::cout << "aca hacer el retroceso" << std::endl;
-    }
-
-    if (!destinos.empty()) {
-        std::cout << "Disparó el pato id " << id << std::endl;
-    }
     if (!weapon->es_automatica()) {
         shooting = false;
     }
@@ -292,7 +284,6 @@ bool Player::onCollision(Collidable& other) {
                 break;
             }
             case SpawnBox::ItemType::None:
-                std::cout << "La caja está vacía.\n";
                 break;
         }
     }

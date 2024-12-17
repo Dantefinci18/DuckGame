@@ -53,7 +53,6 @@ public:
 
     virtual std::optional<std::unique_ptr<Weapon>> get_weapon() {
         if (state == State::Appeared && weapon) {
-            std::cout << "Weapon picked!" << std::endl;
             std::unique_ptr<Weapon> picked_weapon = std::move(weapon);
             weapon.reset();
             return picked_weapon;

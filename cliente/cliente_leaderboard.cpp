@@ -9,11 +9,9 @@ void ClientLeaderboard::update_round(int round) {
     this->round.set_text(round_text);
 }
 void ClientLeaderboard::update_map(std::unordered_map<int,int> map) {
-    std::cout << "entered_updating_map" << std::endl;
     leaderboard.clear();
     int offset_players = 50;
     for (auto& player : map) {
-        std::cout << "pushing sdltext!" << std::endl;
         leaderboard.emplace(
             player.first,
             SdlText("Player: " + std::to_string(player.second),

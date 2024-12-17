@@ -77,9 +77,7 @@ void Duck::render_bala() {
 void Duck::render() {
     bool en_movimiento_x = (x_actual != x_des);
     bool en_movimiento_y = (y_actual != y_des);
-    //std::cout << "render_duck" << std::endl;
     if (reset) {
-        std::cout << "reset" << std::endl;
         weapon = std::nullopt;
         casco_equipado = std::nullopt;
         armadura_equipada = std::nullopt;

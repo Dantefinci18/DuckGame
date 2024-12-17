@@ -28,7 +28,6 @@ void ServerLobby::run(){
                 partidas.push_back(gameloop);
             
             }else if(partida == CARGAR_PARTIDA){
-                std::cout << "Cargar partida" << std::endl;
                 Gameloop *gameloop = obtener_partida_en_espera();
                 if(gameloop != nullptr){
                     gameloop->agregar_jugador(id_jugador,jugador->get_cola_eventos());
@@ -85,10 +84,8 @@ void ServerLobby::eliminar_terminadas(){
 }
 
 void ServerLobby::eliminar_jugadores_de_una_partida(Gameloop *partida){
-    std::cout << "elimino partida" << std::endl;
 
     for(int id_jugador : partida->get_ids()){
-        std::cout << "elimino jugador: " << id_jugador << std::endl;
         Jugador *jugador = jugadores_esperando[id_jugador];
         partida->eliminar_jugador(id_jugador,jugador->get_cola_eventos());
         delete jugador;
