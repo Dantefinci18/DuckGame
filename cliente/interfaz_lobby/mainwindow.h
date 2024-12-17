@@ -5,44 +5,51 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QComboBox>
+#include <QListWidget>
 #include <QDialog>
-#include <QVBoxLayout> 
+#include <string>
+#include <list>
 #include "../lobby.h"
-#include <string>  
-
 
 class VentanaEsperando : public QMainWindow {
     Q_OBJECT
 
 public:
     explicit VentanaEsperando(QWidget *parent = nullptr);
-    virtual ~VentanaEsperando() override;
+    ~VentanaEsperando();
 
 private:
-    QLabel *statusLabel;
+    QLabel* statusLabel;
 };
-
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     explicit MainWindow(Lobby* lobby, QWidget *parent = nullptr);
-
-signals:
-    void crear_partida(const std::string& mapaSeleccionado);
-    void cargar_partida(); 
+    ~MainWindow() override = default;
 
 private slots:
     void crear_partida_clicked();
     void cargar_partida_clicked();
+    void mostrarListaPartidas(); 
+
+signals:
+    void crear_partida(const std::string& mapa, int jugadores);
+    void cargar_partida();
+    void unirse_partida(int id_partida);
+
+public slots:
+    void actualizarListaPartidas(const std::list<int>& partidas);
 
 private:
-    Lobby* lobby;
-    QPushButton *crear_partida_Button;
-    QPushButton *cargar_partida_Button;
-    QLabel *statusLabel;
-    QComboBox *mapaComboBox; 
+    Lobby* lobby; 
+    QPushButton* crear_partida_Button;
+    QPushButton* cargar_partida_Button;
+    QListWidget* partidasListWidget; 
+    QLabel* statusLabel;
+    QComboBox* mapaComboBox;
+    QComboBox* jugadoresComboBox;
 };
 
 #endif // MAINWINDOW_H

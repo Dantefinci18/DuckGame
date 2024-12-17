@@ -5,7 +5,7 @@
 
 Lobby::Lobby(const char* hostname, const char* servname) : socket(hostname, servname) {}
 
-void Lobby::crear_partida(const std::string& mapa_seleccionado) {
+void Lobby::crear_partida(const std::string& mapa_seleccionado, const int cantidad_jugadores) {
     (void)mapa_seleccionado;
     bool was_closed = false;
     ComandoAccion comando = NUEVA_PARTIDA;
@@ -14,6 +14,13 @@ void Lobby::crear_partida(const std::string& mapa_seleccionado) {
     if (was_closed) {
         throw std::runtime_error("Error al enviar comando de nueva partida");
     }
+
+    std::vector<uint8_t> cantidad_jugadores_serializada = serializador.serializar_num_jugadores(cantidad_jugadores);
+    socket.sendall(cantidad_jugadores_serializada.data(), cantidad_jugadores_serializada.size(), &was_closed);
+    if (was_closed) {
+        throw std::runtime_error("Error al enviar cantidad de jugadores");
+    }
+    
     
 }
 
@@ -25,6 +32,24 @@ void Lobby::cargar_partida(){
     if (was_closed) {
         throw std::runtime_error("Error al enviar comando de cargar partida");
     }
+}
+
+void Lobby::unirse_partida(int id_partida) {
+    bool was_closed = false;
+    ComandoAccion comando = UNIRSE_PARTIDA;
+    std::vector<uint8_t> accion_serializada = serializador.serializar_accion(comando);
+    socket.sendall(accion_serializada.data(), accion_serializada.size(), &was_closed);
+    if (was_closed) {
+        throw std::runtime_error("Error al enviar comando de unirse a partida");
+    }
+
+    std::vector<uint8_t> id_partida_serializada = serializador.serializar_num_jugadores(id_partida);
+    socket.sendall(id_partida_serializada.data(), id_partida_serializada.size(), &was_closed);
+    if (was_closed) {
+        throw std::runtime_error("Error al enviar ID de partida");
+    }
+
+    
 }
 
 int Lobby::recibir_id() {
@@ -111,7 +136,37 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
         } 
         
         case Evento::EventoEspera: {
-            return std::make_unique<EventoEspera>();
+            std::cout << "Recibiendo evento de espera" << std::endl;
+            uint8_t id_data[4];
+            socket.recvall(id_data, sizeof(id_data), &was_closed);
+            if (was_closed) {
+                throw std::runtime_error("Error al recibir ID de jugador: conexión cerrada");
+            }
+
+            int id = serializador.deserializar_id_partida(id_data);
+            return std::make_unique<EventoEspera>(id);
+        }
+
+        case Evento::EventoPartidas: {
+            uint8_t cantidad[6];
+            socket.recvall(cantidad, sizeof(cantidad), &was_closed);
+            if (was_closed) {
+                throw std::runtime_error("Error al recibir cantidad de partidas: conexión cerrada");
+            }
+
+            int cantidad_partidas = serializador.deserializar_cantidad_collidables(cantidad);
+            std::list<int> partidas_ids;
+            for (int i = 0; i < cantidad_partidas; i++) {
+                uint8_t id_data[4];
+                socket.recvall(id_data, sizeof(id_data), &was_closed);
+                if (was_closed) {
+                    throw std::runtime_error("Error al recibir ID de partida: conexión cerrada");
+                }
+
+                int id = serializador.deserializar_id_partida(id_data);
+                partidas_ids.push_back(id);
+            }
+            return std::make_unique<EventoPartidas>(partidas_ids);
         }
 
         default:
@@ -120,6 +175,10 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
     }
 }
 
+void Lobby::reconectar_lobby(const char* hostname, const char* servname) {
+    Socket new_socket(hostname, servname);
+    socket = std::move(new_socket);
+}
 
 
 Lobby::~Lobby() {}

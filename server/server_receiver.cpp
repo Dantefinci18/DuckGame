@@ -12,13 +12,30 @@ void Receiver::run() {
         while (_keep_running) {
             ComandoAccion command = protocolo.recibir_accion();
 
-            if(command == NONE_ACCION){
+            if (command == NUEVA_PARTIDA) {
+                int cantidad_jugadores = protocolo.recibir_cantidad_jugadores();
+                Accion accion(id, command,cantidad_jugadores);
+                std::lock_guard<std::mutex> lock(mtx);
+                acciones->push(std::move(accion));
+            
+            }
+            else if (command == UNIRSE_PARTIDA) {
+                int id_partida = protocolo.recibir_cantidad_jugadores();
+                Accion accion(id, command, id_partida);
+                std::lock_guard<std::mutex> lock(mtx);
+                acciones->push(std::move(accion));
+            }
+
+            else if(command == NONE_ACCION){
                 _keep_running = false;
                 break;
             }
-            Accion accion(id, command);
-            std::lock_guard<std::mutex> lock(mtx);
-            acciones->push(std::move(accion));
+            else {
+                Accion accion(id, command);
+                std::lock_guard<std::mutex> lock(mtx);
+                acciones->push(std::move(accion));
+            }
+       
         }
 
     } catch (std::exception& e) {

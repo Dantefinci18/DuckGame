@@ -66,6 +66,19 @@ void ProtocoloServidor::enviar_estado(const Evento& evento) {
     }*/
 }
 
+int ProtocoloServidor::recibir_cantidad_jugadores() {
+    bool was_closed = false;
+    uint8_t data[4];
+    conexion.recvall(data, sizeof(data), &was_closed);
+
+    if (was_closed) {
+        throw std::runtime_error("Error al recibir cantidad de jugadores");
+    }
+
+    return serializador.deserializar_cantidad_jugadores(data);
+}
+
+
 Socket ProtocoloServidor::get_socket(){
     return std::move(conexion);
 }

@@ -21,9 +21,11 @@ public:
      * Funcion que crea una partida
      * Recibe un string con el mapa seleccionado
      */
-    void crear_partida(const std::string& mapa_seleccionado);
+    void crear_partida(const std::string& mapa_seleccionado, const int cantidad_jugadores);
 
     void cargar_partida();
+
+    void unirse_partida(int id_partida);
 
     /*
      * Funcion que se une a una partida
@@ -38,6 +40,8 @@ public:
      * 
      */
     std::unique_ptr<Evento> recibir_evento();
+
+    void reconectar_lobby(const char* hostname, const char* servname);
 
     ~Lobby();
     Socket get_socket();

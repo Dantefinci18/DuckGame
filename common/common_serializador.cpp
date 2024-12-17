@@ -13,6 +13,36 @@ std::vector<uint8_t> Serializador::serializar_enum(std::bitset<5> bits){
     return buffer;
 }
 
+std::vector<uint8_t> Serializador::serializar_num_jugadores(int num_jugadores) {
+    std::vector<uint8_t> buffer(4);
+    std::bitset<4> bits(num_jugadores);
+    for (int i = 0; i < 4; ++i) {
+        buffer[i] = bits[i];
+    }
+    return buffer;
+
+}
+
+int Serializador::deserializar_cantidad_jugadores(const uint8_t* data) {
+    int valor = 0;
+    std::bitset<4> bits;
+    for (int i = 0; i < 4; ++i) {
+        bits[i] = data[i];
+    }
+    valor = static_cast<int>(bits.to_ulong());
+    return valor;
+}
+std::vector<uint8_t> Serializador::serializar_mapa_elegido(const std::string& mapa) {
+    std::vector<uint8_t> buffer(8);
+    for (int i = 0; i < 8; ++i) {
+        buffer[i] = mapa[i];
+    }
+    return buffer;
+
+    }
+
+
+
 std::vector<uint8_t> Serializador::serializar_accion(ComandoAccion &accion) {
     std::bitset<5> bits(accion);  
     return serializar_enum(bits);
@@ -65,7 +95,7 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     }
 
     if (evento.get_tipo() == Evento::TipoEvento::EventoEspera){ 
-        return serializar_espera(Evento::TipoEvento::EventoEspera);
+        return serializar_espera(evento);
     }
 
     if (evento.get_tipo() == Evento::TipoEvento::EventoAgacharse){
@@ -99,20 +129,28 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoSpawnProteccionBox){
         return serializar_spawn_proteccion_box(evento);
     }
-    if (evento.get_tipo() == Evento::TipoEvento::EventoDisparo){
-        return serializar_espera(Evento::TipoEvento::EventoDisparo);
+
+    if (evento.get_tipo() == Evento::TipoEvento::EventoPartidas){
+        std::cout << "Serializando partidas" << std::endl;
+        return serializar_partidas(evento);
     }
 
     return std::vector<uint8_t>();
 }
 
-std::vector<uint8_t> Serializador::serializar_espera(const Evento::TipoEvento& tipo_evento){
+std::vector<uint8_t> Serializador::serializar_espera(const Evento &evento) {
 
-    std::vector<uint8_t> buffer(8);  
-
-    uint8_t tipo = static_cast<uint8_t>(tipo_evento);
-    serializar_tipo_evento(buffer, tipo, 0);
-    return buffer;
+    std::vector<uint8_t> bits(12);
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    serializar_tipo_evento(bits, tipo_evento, 0);
+    
+    uint8_t id_partida = static_cast<uint8_t>(static_cast<const EventoEspera&>(evento).id_partida);
+    
+    std::bitset<4> bits_id(id_partida);
+    for (int i = 0; i < 4; ++i) {
+        bits[8 + i] = bits_id[i];
+    }
+    return bits;
     
 }
 
@@ -563,6 +601,42 @@ std::vector<uint8_t> Serializador::serializar_mapa(const Evento& evento) {
 
     bits.insert(bits.end(), map_bits.begin(), map_bits.end());
     return bits;
+}
+
+std::vector<uint8_t> Serializador::serializar_partidas(const Evento& evento) {
+    int cantidad = static_cast<const EventoPartidas&>(evento).partidas.size();
+    std::vector<uint8_t> bits(14 + cantidad * 4);
+
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    serializar_tipo_evento(bits, tipo_evento, 0);
+
+    serializar_cantidad(bits, cantidad, 8);
+
+    const std::list<int>& partidas = static_cast<const EventoPartidas&>(evento).partidas;
+
+    int offset = 14;
+
+    for (const auto& id : partidas) {
+
+        std::bitset <4> bits_id(id);
+        for (int i = 0; i < 4; ++i) {
+            bits[offset + i] = bits_id[i];
+        }
+
+        offset += 4;
+        
+    }
+
+    return bits;
+}
+
+
+int Serializador::deserializar_id_partida(const uint8_t* id_data) {
+    std::bitset<4> bits;
+    for (int i = 0; i < 4; ++i) {
+        bits[i] = id_data[i];
+    }
+    return static_cast<int>(bits.to_ulong());
 }
 
 Collidable* Serializador::deserializar_collidable(const uint8_t* collidable_data) {

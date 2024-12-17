@@ -141,12 +141,7 @@ void Cliente::procesar_eventos_recibidos() {
                     agregar_collidable_proteccion(*evento_spawn_proteccion_box);
                     break;
                 }
-                case Evento::EventoDisparo: {
-                    auto evento_disparo = static_cast<EventoDisparo*>(evento_recibido.get());
-                    mixer.reproducir_efecto_disparo("../sounds/shotgun.wav");
-                    
-                    break;
-                }
+
                 default: {
                     break;
                 }
@@ -408,10 +403,11 @@ std::unordered_map<ColorDuck, int> Cliente::get_colors(std::unordered_map<int,in
     return colors;
 }
 void Cliente::stop() {
+    conectado = false;
     teclado.stop();
     receiver.stop();
-    sender.stop();
     protocolo.cerrar_conexion();
+    sender.stop();
     queue_eventos.close();
     queue_acciones.close();
 }
@@ -421,5 +417,6 @@ void Cliente::join() {
     receiver.join();
     sender.join();
 }
+
 
 Cliente::~Cliente() {}

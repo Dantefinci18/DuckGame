@@ -12,7 +12,8 @@
 class ServerLobby : public Thread {
     private:
         int id;
-        std::list<Gameloop*> partidas;
+        int contador_partidas = 0;
+        std::unordered_map<int, Gameloop*> partidas; 
         Queue<Accion> cola_comando_partidas;
         std::unordered_map<int, Jugador*> jugadores_esperando;
         std::mutex mtx;

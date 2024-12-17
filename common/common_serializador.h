@@ -22,6 +22,9 @@ private:
     uint8_t deserializar_enum(const uint8_t* data);
 
 public:
+    std::vector<uint8_t> serializar_num_jugadores(int num_jugadores);
+    int deserializar_cantidad_jugadores(const uint8_t* data);
+    std::vector<uint8_t> serializar_mapa_elegido(const std::string& mapa);
 
     std::vector<uint8_t> serializar_accion(ComandoAccion &accion);
 
@@ -36,7 +39,7 @@ public:
     std::vector<uint8_t> serializar_movimiento(const Evento& evento);
     std::vector<uint8_t> serializar_muerte(const Evento& evento);
     std::vector<uint8_t> serializar_apuntar(const Evento& evento);
-    std::vector<uint8_t> serializar_espera(const Evento::TipoEvento& evento);
+    std::vector<uint8_t> serializar_espera(const Evento& evento);
     std::vector<uint8_t> serializar_agacharse(const Evento& evento);
     std::vector<uint8_t> serializar_levantarse(const Evento& evento);
     std::vector<uint8_t> serializar_win_round(const Evento& evento);
@@ -67,6 +70,10 @@ public:
     int deserializar_cantidad(const uint8_t* cantidad_data);
 
     std::vector<uint8_t> serializar_mapa(const Evento& evento);
+
+    std::vector<uint8_t> serializar_partidas(const Evento& evento);
+
+    int deserializar_id_partida(const uint8_t* id_data);
 
     
     Collidable* deserializar_collidable(const uint8_t* collidable_data);

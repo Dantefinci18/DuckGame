@@ -10,6 +10,7 @@
 #include "common_direcciones.h"
 #include "../server/server_leaderboard.h"
 #include "common_proteccion.h"
+#include <list>
 
 
 
@@ -32,7 +33,7 @@ public:
         EventoCajaDestruida,
         EventoSpawnArmaBox,
         EventoSpawnProteccionBox,
-        EventoDisparo
+        EventoPartidas
     };
 
     virtual ~Evento() = default;
@@ -202,8 +203,15 @@ public:
 
 class EventoEspera : public Evento {
 public:
+    int id_partida;
+
+    EventoEspera(int id_partida) : id_partida(id_partida) {}
     void print() const override {
-        std::cout << "{ \"type\": \"EventoEspera\" }" << std::endl;
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoEspera\", "
+            << "\"id_partida\": " << id_partida
+            << " }";
+        std::cout << oss.str() << std::endl;
     }
 
     std::unique_ptr<Evento> clone() const override {
@@ -413,20 +421,28 @@ public:
     TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnProteccionBox; } 
 };
 
-class EventoDisparo : public Evento {
+class EventoPartidas : public Evento {
     public:
-    EventoDisparo() {}
+    std::list<int> partidas;
+
+    EventoPartidas(const std::list<int>& partidas) : partidas(partidas) {}
 
     void print() const override {
         std::ostringstream oss;
-        oss << "{ \"type\": \"EventoDisparo\" }";
+        oss << "{ \"type\": \"EventoPartidas\", "
+            << "\"partidas\": [";
+        for (const auto& partida : partidas) {
+            oss << partida << ", ";
+        }
+        oss << "] }";
         std::cout << oss.str() << std::endl;
     }
 
     std::unique_ptr<Evento> clone() const override {
-        return std::make_unique<EventoDisparo>(*this);
+        return std::make_unique<EventoPartidas>(*this);  
     }
 
-    TipoEvento get_tipo() const override { return TipoEvento::EventoDisparo; }
+    TipoEvento get_tipo() const override { return TipoEvento::EventoPartidas; }
+    
 };
 #endif // COMMON_EVENTO_H

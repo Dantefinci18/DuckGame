@@ -310,8 +310,11 @@ bool Player::is_able_to_jump() {
 }
 
 void Player::agacharse() {
-    esta_agachado = true;
-}
+    if (is_standing_on_something && !esta_agachado) {
+        esta_agachado = true;
+        eventos.push_back(std::make_shared<EventoAgacharse>(id));
+    }
+    }   
 
 bool Player::is_agachado() {
     return esta_agachado;
@@ -336,9 +339,12 @@ bool Player::is_flapping() {
 }
 
 void Player::levantarse() {
-    esta_agachado = false;
-}
-
+        if (esta_agachado) {
+            esta_agachado = false;
+            eventos.push_back(std::make_shared<EventoLevantarse>(id));
+        }
+    }
+    
 void Player::reset() {
     gravity = -8;
     velocity = Vector(0,0);
