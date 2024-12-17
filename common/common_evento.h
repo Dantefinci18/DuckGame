@@ -33,7 +33,6 @@ public:
         EventoCajaDestruida,
         EventoSpawnArmaBox,
         EventoSpawnProteccionBox,
-        EventoDisparo,
         EventoPartidas
     };
 
@@ -204,8 +203,15 @@ public:
 
 class EventoEspera : public Evento {
 public:
+    int id_partida;
+
+    EventoEspera(int id_partida) : id_partida(id_partida) {}
     void print() const override {
-        std::cout << "{ \"type\": \"EventoEspera\" }" << std::endl;
+        std::ostringstream oss;
+        oss << "{ \"type\": \"EventoEspera\", "
+            << "\"id_partida\": " << id_partida
+            << " }";
+        std::cout << oss.str() << std::endl;
     }
 
     std::unique_ptr<Evento> clone() const override {
@@ -413,23 +419,6 @@ public:
     }
 
     TipoEvento get_tipo() const override { return TipoEvento::EventoSpawnProteccionBox; } 
-};
-
-class EventoDisparo : public Evento {
-    public:
-    EventoDisparo() {}
-
-    void print() const override {
-        std::ostringstream oss;
-        oss << "{ \"type\": \"EventoDisparo\" }";
-        std::cout << oss.str() << std::endl;
-    }
-
-    std::unique_ptr<Evento> clone() const override {
-        return std::make_unique<EventoDisparo>(*this);
-    }
-
-    TipoEvento get_tipo() const override { return TipoEvento::EventoDisparo; }
 };
 
 class EventoPartidas : public Evento {

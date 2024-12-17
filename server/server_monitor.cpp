@@ -67,7 +67,8 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
         }
 
         case Evento::EventoEspera: {
-            evento_ptr = std::make_unique<EventoEspera>();
+            const EventoEspera& evento_espera = static_cast<const EventoEspera&>(evento);
+            evento_ptr = std::make_unique<EventoEspera>(evento_espera.id_partida);
             break;
         }
 
@@ -110,12 +111,6 @@ std::unique_ptr<Evento> PlayerMonitor::broadcast_evento(const Evento& evento){
         case Evento::EventoSpawnProteccionBox: {
             const EventoSpawnProteccionBox& evento_spawn_proteccion_box = static_cast<const EventoSpawnProteccionBox&>(evento);
             evento_ptr = std::make_unique<EventoSpawnProteccionBox>(evento_spawn_proteccion_box.x, evento_spawn_proteccion_box.y, evento_spawn_proteccion_box.proteccion_type);
-            break;
-        }
-
-        case Evento::EventoDisparo: {
-            const EventoDisparo& evento_disparo = static_cast<const EventoDisparo&>(evento);
-            evento_ptr = std::make_unique<EventoDisparo>();
             break;
         }
 

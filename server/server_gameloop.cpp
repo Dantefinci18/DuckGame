@@ -67,7 +67,6 @@ void Gameloop::procesar_acciones(std::vector<Accion> acciones, std::vector<Colli
             player->set_x_direction(0.0f);
         
         } else if (command == DISPARAR){
-            monitor.enviar_evento(EventoDisparo());
             player->iniciar_disparo();
             /*std::vector<std::shared_ptr<Evento>> eventos;
             if(player->has_weapon()){

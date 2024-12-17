@@ -136,11 +136,18 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
         } 
         
         case Evento::EventoEspera: {
-            return std::make_unique<EventoEspera>();
+            std::cout << "Recibiendo evento de espera" << std::endl;
+            uint8_t id_data[4];
+            socket.recvall(id_data, sizeof(id_data), &was_closed);
+            if (was_closed) {
+                throw std::runtime_error("Error al recibir ID de jugador: conexión cerrada");
+            }
+
+            int id = serializador.deserializar_id_partida(id_data);
+            return std::make_unique<EventoEspera>(id);
         }
 
         case Evento::EventoPartidas: {
-            std::cout << "Recibiendo partidas" << std::endl;
             uint8_t cantidad[6];
             socket.recvall(cantidad, sizeof(cantidad), &was_closed);
             if (was_closed) {
@@ -159,7 +166,6 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
                 int id = serializador.deserializar_id_partida(id_data);
                 partidas_ids.push_back(id);
             }
-            std::cout << "Partidas recibidas: ";
             return std::make_unique<EventoPartidas>(partidas_ids);
         }
 
@@ -169,6 +175,10 @@ std::unique_ptr<Evento> Lobby::recibir_evento() {
     }
 }
 
+void Lobby::reconectar_lobby(const char* hostname, const char* servname) {
+    Socket new_socket(hostname, servname);
+    socket = std::move(new_socket);
+}
 
 
 Lobby::~Lobby() {}

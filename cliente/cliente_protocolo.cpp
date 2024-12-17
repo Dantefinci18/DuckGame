@@ -254,9 +254,7 @@ std::unique_ptr<Evento> ClienteProtocolo::recibir_evento() {
             return serializador.deserializar_spawn_proteccion_box(x, y, proteccion_type);
 
         }
-        case Evento::EventoDisparo: {
-            return std::make_unique<EventoDisparo>();
-        }
+
 
         default:
             return nullptr; 
@@ -292,3 +290,4 @@ void ClienteProtocolo::cerrar_conexion() {
     socket.shutdown(2);
     socket.close();
 }
+

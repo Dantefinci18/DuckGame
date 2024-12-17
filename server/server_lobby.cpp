@@ -22,23 +22,20 @@ void ServerLobby::run(){
                 jugador->stop();
                 jugadores_esperando.erase(id_jugador);
 
-            } else if (partida == NUEVA_PARTIDA) {
+            }else if (partida == NUEVA_PARTIDA) {
                 int cantidad_jugadores = accion_partida.get_cantidad_jugadores();
-                jugador->enviar_evento(EventoEspera());
+                int id_partida = contador_partidas++;
+                jugador->enviar_evento(EventoEspera(id_partida));
                 Gameloop *gameloop = new Gameloop(accion_partida.get_player_id(), cantidad_jugadores, jugador->get_cola_eventos());
-                partidas.insert({contador_partidas++, gameloop});
-            
-            } else if (partida == CARGAR_PARTIDA) {
+                partidas.insert({id_partida, gameloop});
+            }else if (partida == CARGAR_PARTIDA) {
                 std::list<int> partidas_ids; 
                 for (auto& partida : partidas) {
                     if (!partida.second->esta_llena()) {
                         partidas_ids.push_back(partida.first);
                     }
                 }
-                jugador->enviar_evento(EventoPartidas(partidas_ids));
-
-                std::cout << "Cargar partida" << std::endl;
-                
+                jugador->enviar_evento(EventoPartidas(partidas_ids));                
 
             } else if (partida == UNIRSE_PARTIDA) {
                 int id_partida = accion_partida.get_cantidad_jugadores();
@@ -48,7 +45,7 @@ void ServerLobby::run(){
                     comenzar_partida(partida);
                 }
                 else {
-                    jugador->enviar_evento(EventoEspera());
+                    jugador->enviar_evento(EventoEspera(id_partida));
                 }
 
             }

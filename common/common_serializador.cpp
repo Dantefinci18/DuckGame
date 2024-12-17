@@ -95,7 +95,7 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     }
 
     if (evento.get_tipo() == Evento::TipoEvento::EventoEspera){ 
-        return serializar_espera(Evento::TipoEvento::EventoEspera);
+        return serializar_espera(evento);
     }
 
     if (evento.get_tipo() == Evento::TipoEvento::EventoAgacharse){
@@ -129,9 +129,6 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     if (evento.get_tipo() == Evento::TipoEvento::EventoSpawnProteccionBox){
         return serializar_spawn_proteccion_box(evento);
     }
-    if (evento.get_tipo() == Evento::TipoEvento::EventoDisparo){
-        return serializar_espera(Evento::TipoEvento::EventoDisparo);
-    }
 
     if (evento.get_tipo() == Evento::TipoEvento::EventoPartidas){
         std::cout << "Serializando partidas" << std::endl;
@@ -141,13 +138,19 @@ std::vector<uint8_t> Serializador::serializar_evento(const Evento& evento) {
     return std::vector<uint8_t>();
 }
 
-std::vector<uint8_t> Serializador::serializar_espera(const Evento::TipoEvento& tipo_evento){
+std::vector<uint8_t> Serializador::serializar_espera(const Evento &evento) {
 
-    std::vector<uint8_t> buffer(8);  
-
-    uint8_t tipo = static_cast<uint8_t>(tipo_evento);
-    serializar_tipo_evento(buffer, tipo, 0);
-    return buffer;
+    std::vector<uint8_t> bits(12);
+    uint8_t tipo_evento = static_cast<uint8_t>(evento.get_tipo());
+    serializar_tipo_evento(bits, tipo_evento, 0);
+    
+    uint8_t id_partida = static_cast<uint8_t>(static_cast<const EventoEspera&>(evento).id_partida);
+    
+    std::bitset<4> bits_id(id_partida);
+    for (int i = 0; i < 4; ++i) {
+        bits[8 + i] = bits_id[i];
+    }
+    return bits;
     
 }
 

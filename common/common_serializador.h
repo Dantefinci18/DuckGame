@@ -39,7 +39,7 @@ public:
     std::vector<uint8_t> serializar_movimiento(const Evento& evento);
     std::vector<uint8_t> serializar_muerte(const Evento& evento);
     std::vector<uint8_t> serializar_apuntar(const Evento& evento);
-    std::vector<uint8_t> serializar_espera(const Evento::TipoEvento& evento);
+    std::vector<uint8_t> serializar_espera(const Evento& evento);
     std::vector<uint8_t> serializar_agacharse(const Evento& evento);
     std::vector<uint8_t> serializar_levantarse(const Evento& evento);
     std::vector<uint8_t> serializar_win_round(const Evento& evento);

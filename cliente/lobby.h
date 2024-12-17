@@ -41,6 +41,8 @@ public:
      */
     std::unique_ptr<Evento> recibir_evento();
 
+    void reconectar_lobby(const char* hostname, const char* servname);
+
     ~Lobby();
     Socket get_socket();
 private:

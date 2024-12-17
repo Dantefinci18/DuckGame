@@ -141,6 +141,7 @@ private:
      */
     void join();
 
+
 public:
 
     /*
@@ -152,6 +153,7 @@ public:
      * Funcion que inicia el cliente
      */
     void start();
+    
 
     /*
      * Destructor de la clase Cliente
