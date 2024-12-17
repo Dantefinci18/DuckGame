@@ -55,5 +55,22 @@ Queue<std::unique_ptr<Evento>>& Jugador::get_cola_eventos(){
 }
 
 void Jugador::enviar_evento(const Evento& evento){
-    protocolo.enviar_estado(evento);;
+    std::unique_ptr<Evento> evento_ptr;
+
+    if (evento.get_tipo() == Evento::EventoEspera) {
+        std::cout << "evento espera enviado\n";
+        evento_ptr = std::make_unique<EventoEspera>(static_cast<const EventoEspera&>(evento).id_partida);
+    } else if (evento.get_tipo() == Evento::EventoPartidas) {
+        std::cout << "Serializando partidas" << std::endl;
+        evento_ptr = std::make_unique<EventoPartidas>(static_cast<const EventoPartidas&>(evento).partidas);
+    } else {
+        evento_ptr = evento.clone();
+    }
+
+    protocolo.enviar_estado(*evento_ptr);
+}
+
+int Jugador::recibir_cantidad_jugadores(){
+    std::cout << "recibiendo cantidad de jugadores\n";
+    return protocolo.recibir_cantidad_jugadores();
 }
