@@ -8,6 +8,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QLineEdit>
+#include <QEventLoop> 
 #include <string>
 
 VentanaEsperando::VentanaEsperando(QWidget *parent) :
@@ -102,8 +103,8 @@ void MainWindow::mostrarListaPartidas() {
 
         connect(unirseButton, &QPushButton::clicked, this, [this, nombrePartida, dialogoPartidas]() {
             int numeroPartida = nombrePartida.toInt();
-            dialogoPartidas->accept();          // Cerramos el diálogo
-            emit unirse_partida(numeroPartida);  // Emitimos la señal con el número de partida
+            dialogoPartidas->accept();         
+            emit unirse_partida(numeroPartida); 
             
         });
 
@@ -117,3 +118,26 @@ void MainWindow::mostrarListaPartidas() {
 
     dialogoPartidas->exec(); 
 }
+
+void MainWindow::mostrarVentanaEsperando(int id_partida) {
+    dialogoEsperando = new QDialog(this);
+    dialogoEsperando->setWindowTitle("Esperando Jugadores");
+
+    QLabel* label = new QLabel(QString("Esperando jugadores para comenzar partida\nID PARTIDA: %1").arg(id_partida), dialogoEsperando);
+    QVBoxLayout* layout = new QVBoxLayout(dialogoEsperando);
+    layout->addWidget(label);
+    dialogoEsperando->setLayout(layout);
+
+    dialogoEsperando->show(); 
+}
+
+
+
+
+void MainWindow::cerrarVentanaEsperando() {
+    if (dialogoEsperando != nullptr) {
+        dialogoEsperando->close();  
+        dialogoEsperando = nullptr; 
+    }
+}
+
