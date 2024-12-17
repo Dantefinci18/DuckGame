@@ -33,8 +33,8 @@ int main(int argc, char* argv[]) {
     ColorDuck color = ColorDuck::MAX_COLOR;
     int jugador_id = -1;
 
-    QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const std::string& mapaSeleccionado, const int cantidad_jugadores) {
-        lobby.crear_partida(mapaSeleccionado, cantidad_jugadores);
+    QObject::connect(&mainWindow, &MainWindow::crear_partida, [&] (const int cantidad_jugadores) {
+        lobby.crear_partida(cantidad_jugadores);
         jugador_id = lobby.recibir_id();  
 
         while (color == ColorDuck::MAX_COLOR) {
@@ -85,6 +85,8 @@ int main(int argc, char* argv[]) {
 
     QObject::connect(&mainWindow, &MainWindow::unirse_partida, [&] (int id_partida) {
         lobby.unirse_partida(id_partida);
+
+        //Tech debt, color assignment on movement.
         while (color == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
             evento->print();

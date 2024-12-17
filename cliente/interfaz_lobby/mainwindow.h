@@ -35,7 +35,7 @@ private slots:
     void mostrarListaPartidas(); 
 
 signals:
-    void crear_partida(const std::string& mapa, int jugadores);
+    void crear_partida(int jugadores);
     void cargar_partida();
     void unirse_partida(int id_partida);
 
@@ -48,7 +48,6 @@ private:
     QPushButton* cargar_partida_Button;
     QListWidget* partidasListWidget; 
     QLabel* statusLabel;
-    QComboBox* mapaComboBox;
     QComboBox* jugadoresComboBox;
 };
 

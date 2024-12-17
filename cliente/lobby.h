@@ -19,9 +19,9 @@ public:
     Lobby(const char* hostname, const char* servname);
     /*
      * Funcion que crea una partida
-     * Recibe un string con el mapa seleccionado
+     * Recibe un string con la cantidad de jugadores
      */
-    void crear_partida(const std::string& mapa_seleccionado, const int cantidad_jugadores);
+    void crear_partida(const int cantidad_jugadores);
 
     void cargar_partida();
 
