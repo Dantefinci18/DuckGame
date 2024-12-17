@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 
         while (color == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
-            evento->print();
+            //evento->print();
             if (evento->get_tipo() == Evento::EventoMapa) {
                 auto evento_mapa = static_cast<EventoMapa*>(evento.get());
                 collidables = evento_mapa->collidables;
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
 
         while (true) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
-            evento->print();
+            //evento->print();
     
             if (evento->get_tipo() == Evento::EventoPartidas) {
                 auto evento_partidas = static_cast<EventoPartidas*>(evento.get());
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
         //Tech debt, color assignment on movement.
         while (color == ColorDuck::MAX_COLOR) {
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
-            evento->print();
+            //evento->print();
             if (evento->get_tipo() == Evento::EventoMapa) {
                 auto evento_mapa = static_cast<EventoMapa*>(evento.get());
                 collidables = evento_mapa->collidables;
