@@ -54,8 +54,10 @@ int main(int argc, char* argv[]) {
                 }
             } else if (evento->get_tipo() == Evento::EventoEspera) {
                 auto evento_espera = static_cast<EventoEspera*>(evento.get());
-                mainWindow.hide();
-                mainWindow.mostrarVentanaEsperando(evento_espera->id_partida);
+                mainWindow.mostrarMensajeEspera(evento_espera->id_partida);
+                QApplication::processEvents(); 
+
+
                 
             }
         }
@@ -63,6 +65,7 @@ int main(int argc, char* argv[]) {
         Cliente cliente(jugador_id, color, lobby.get_socket(), collidables, leaderboard, x_inicial, y_inicial);
         cliente.start();
         lobby.reconectar_lobby(hostname, servname);
+        mainWindow.restaurar();
         mainWindow.show();
         jugador_id = -1;
         color = ColorDuck::MAX_COLOR;
@@ -107,8 +110,8 @@ int main(int argc, char* argv[]) {
                 }
             } else if (evento->get_tipo() == Evento::EventoEspera) {
                 auto evento_espera = static_cast<EventoEspera*>(evento.get());
-                mainWindow.hide();
-                mainWindow.mostrarVentanaEsperando(evento_espera->id_partida);
+                mainWindow.mostrarMensajeEspera(evento_espera->id_partida);
+                QApplication::processEvents(); 
 
             }
         }
@@ -116,6 +119,7 @@ int main(int argc, char* argv[]) {
         Cliente cliente(jugador_id, color, lobby.get_socket(), collidables, leaderboard, x_inicial, y_inicial);
         cliente.start();
         lobby.reconectar_lobby(hostname, servname);
+        mainWindow.restaurar();
         mainWindow.show(); 
         jugador_id = -1;
         color = ColorDuck::MAX_COLOR;

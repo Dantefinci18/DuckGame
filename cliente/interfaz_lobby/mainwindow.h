@@ -41,8 +41,10 @@ signals:
 
 public slots:
     void actualizarListaPartidas(const std::list<int>& partidas);
-    void mostrarVentanaEsperando(int id_partida);
-    void cerrarVentanaEsperando();
+    void mostrarMensajeEspera(int idPartida);
+    void restaurar();
+
+ 
 
 private:
     Lobby* lobby; 
@@ -51,7 +53,6 @@ private:
     QListWidget* partidasListWidget; 
     QLabel* statusLabel;
     QComboBox* jugadoresComboBox;
-    QDialog* dialogoEsperando;
 };
 
 #endif // MAINWINDOW_H
