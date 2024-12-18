@@ -56,9 +56,6 @@ int main(int argc, char* argv[]) {
                 auto evento_espera = static_cast<EventoEspera*>(evento.get());
                 mainWindow.mostrarMensajeEspera(evento_espera->id_partida);
                 QApplication::processEvents(); 
-
-
-                
             }
         }
         mainWindow.hide();  
@@ -96,6 +93,7 @@ int main(int argc, char* argv[]) {
     QObject::connect(&mainWindow, &MainWindow::unirse_partida, [&] (int id_partida) {
         lobby.unirse_partida(id_partida);
         while (color == ColorDuck::MAX_COLOR) {
+            QApplication::processEvents(); 
             std::unique_ptr<Evento> evento = lobby.recibir_evento();
             if (evento->get_tipo() == Evento::EventoMapa) {
                 auto evento_mapa = static_cast<EventoMapa*>(evento.get());
@@ -111,8 +109,6 @@ int main(int argc, char* argv[]) {
             } else if (evento->get_tipo() == Evento::EventoEspera) {
                 auto evento_espera = static_cast<EventoEspera*>(evento.get());
                 mainWindow.mostrarMensajeEspera(evento_espera->id_partida);
-                QApplication::processEvents(); 
-
             }
         }
         mainWindow.hide();  

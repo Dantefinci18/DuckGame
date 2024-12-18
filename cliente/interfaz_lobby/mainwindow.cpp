@@ -125,9 +125,13 @@ void MainWindow::mostrarListaPartidas() {
 
 void MainWindow::mostrarMensajeEspera(int idPartida) {
     statusLabel->setText("Esperando jugadores para comenzar la partida.\nID PARTIDA: " + QString::number(idPartida));
+    crear_partida_Button->setEnabled(false);
+    cargar_partida_Button->setEnabled(false);
 }
 
 void MainWindow::restaurar() {
     statusLabel->setText("Esperando conexión...");
+    crear_partida_Button->setEnabled(true);
+    cargar_partida_Button->setEnabled(true);
     jugadoresComboBox->setCurrentIndex(0);
 }
